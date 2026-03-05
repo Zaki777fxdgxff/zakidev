@@ -1,0 +1,650 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sitezapk.online</title>
+   
+  
+  
+<!-- Sitezapk App Page - Isolated from Blogger Template -->
+<style id="sitezapk-styles">
+/* استخدم id بدلاً من class لتقوية CSS */
+#sitezapk-wrapper {
+    --sz-primary: #007aff;
+    --sz-primary-hover: #005bb5;
+    --sz-bg-dark: #151E29;
+    --sz-bg-darker: #090c11;
+    --sz-bg-header: #2d40589a;
+    --sz-text: #bbbbbb;
+    --sz-text-light: #eeeeee;
+    --sz-text-white: #ffffff;
+    --sz-border: #333333;
+    
+    font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--sz-bg-dark);
+    color: var(--sz-text);
+    line-height: 1.5;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+    padding: 0;
+    margin: 0;
+}
+
+/* Reset قوي مع !important */
+#sitezapk-wrapper * {
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: 'Tajawal', sans-serif !important;
+}
+
+/* إخفاء العناصر غير المرغوبة من القالب */
+#sitezapk-wrapper .feedLinks,
+#sitezapk-wrapper .blog-pager,
+#sitezapk-wrapper .post-footer-line,
+#sitezapk-wrapper .author-profile {
+    display: none !important;
+}
+
+/* ========== HEADER ========== */
+#sitezapk-wrapper .sz-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+    width: 100% !important;
+}
+
+#sitezapk-wrapper .sz-header-inner {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 80vw !important;
+    height: 4em !important;
+    background-color: var(--sz-bg-header) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    margin: 12px auto !important;
+    padding: 12px !important;
+    border-radius: 10px !important;
+}
+
+#sitezapk-wrapper .sz-nav-list {
+    list-style-type: none !important;
+    display: flex !important;
+    flex-direction: row !important;
+    padding: 0 !important;
+    gap: 20px !important;
+    margin: 0 !important;
+}
+
+#sitezapk-wrapper .sz-nav-link {
+    text-decoration: none !important;
+    color: rgba(255, 255, 255, 0.575) !important;
+    border-bottom: 2px solid transparent !important;
+    transition: all 0.3s !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+#sitezapk-wrapper .sz-nav-link:hover {
+    color: rgba(255, 255, 255, 0.758) !important;
+    border-bottom: 2px solid #007bff9c !important;
+}
+
+#sitezapk-wrapper .sz-nav-link.active {
+    border-bottom: 2px solid #007aff !important;
+    color: white !important;
+}
+
+/* Mobile Header */
+#sitezapk-wrapper .sz-mobile-header {
+    display: none !important;
+}
+
+#sitezapk-wrapper .sz-menu-btn {
+    all: unset !important;
+    cursor: pointer !important;
+    color: white !important;
+    font-size: 1.2em !important;
+    padding: 8px !important;
+}
+
+/* Mobile Menu */
+#sitezapk-wrapper .sz-mobile-menu {
+    display: none !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 15px !important;
+    padding: 20px !important;
+    background-color: var(--sz-bg-header) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    width: 90vw !important;
+    position: absolute !important;
+    top: 5.5em !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    border-radius: 10px !important;
+    z-index: 1000 !important;
+}
+
+#sitezapk-wrapper .sz-mobile-menu.show {
+    display: flex !important;
+}
+
+/* ========== MAIN CONTENT ========== */
+#sitezapk-wrapper .sz-main {
+    flex: 1 !important;
+    max-width: 600px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 20px !important;
+    padding-bottom: 5em !important;
+}
+
+/* App Info */
+#sitezapk-wrapper .sz-app-info {
+    text-align: center !important;
+    margin-top: 20px !important;
+}
+
+#sitezapk-wrapper .sz-app-icons {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: auto !important;
+    gap: 1em !important;
+}
+
+#sitezapk-wrapper .sz-app-icon {
+    width: 100px !important;
+    height: 100px !important;
+    border-radius: 25% !important;
+    object-fit: cover !important;
+}
+
+#sitezapk-wrapper .sz-app-name {
+    font-size: 2em !important;
+    font-weight: bold !important;
+    color: var(--sz-text-white) !important;
+    margin: 10px 0 !important;
+}
+
+#sitezapk-wrapper .sz-app-desc {
+    font-size: 1em !important;
+    color: var(--sz-text-light) !important;
+    margin-bottom: 20px !important;
+    padding: 0 20px !important;
+}
+
+/* Buttons */
+#sitezapk-wrapper .sz-btn {
+    background-color: var(--sz-primary) !important;
+    color: white !important;
+    border: none !important;
+    padding: 10px 20px !important;
+    border-radius: 25px !important;
+    font-size: 1em !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: background-color 0.3s !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+    text-align: center !important;
+}
+
+#sitezapk-wrapper .sz-btn:hover {
+    background-color: var(--sz-primary-hover) !important;
+}
+
+/* Screenshots */
+#sitezapk-wrapper .sz-screenshots {
+    width: 100% !important;
+    overflow-x: auto !important;
+    display: flex !important;
+    gap: 10px !important;
+    padding: 20px 0 !important;
+    margin-bottom: 20px !important;
+    scroll-behavior: smooth !important;
+}
+
+#sitezapk-wrapper .sz-screenshot {
+    width: 15rem !important;
+    height: 32.55rem !important;
+    border-radius: 15px !important;
+    object-fit: cover !important;
+    flex: 0 0 auto !important;
+    
+}
+
+/* Features */
+#sitezapk-wrapper .sz-feature {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 30px !important;
+    margin: 40px 0 !important;
+}
+
+#sitezapk-wrapper .sz-feature > div {
+    width: 100% !important;
+}
+
+#sitezapk-wrapper .sz-feature-title {
+    font-size: 1.5em !important;
+    font-weight: bold !important;
+    color: #cacaca !important;
+    margin-bottom: 15px !important;
+    text-align: center !important;
+}
+
+#sitezapk-wrapper .sz-feature-content {
+    font-size: 1em !important;
+    color: var(--sz-text) !important;
+    line-height: 1.6 !important;
+    margin-bottom: 10px !important;
+}
+
+/* Links */
+#sitezapk-wrapper .sz-link-inline {
+    text-decoration: underline !important;
+    text-underline-offset: 2px !important;
+    color: var(--sz-primary) !important;
+}
+
+/* Divider */
+#sitezapk-wrapper .sz-divider {
+    width: 80% !important;
+    margin: 2em auto !important;
+    border: 0 !important;
+    border-top: 1px solid var(--sz-border) !important;
+}
+
+/* CTA Section */
+#sitezapk-wrapper .sz-cta {
+    text-align: center !important;
+    margin: 40px 0 !important;
+}
+
+#sitezapk-wrapper .sz-cta h2 {
+    font-size: 1.8em !important;
+    color: var(--sz-text-white) !important;
+    margin-bottom: 10px !important;
+}
+
+/* Footer */
+#sitezapk-wrapper .sz-footer {
+    background-color: #000000 !important;
+    width: 100% !important;
+    min-height: 10vh !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 20px !important;
+}
+
+#sitezapk-wrapper .sz-footer-text {
+    color: rgba(255, 255, 255, 0.575) !important;
+    font-size: 0.9em !important;
+    max-width: 100% !important;
+    line-height: 1.5 !important;
+}
+
+/* Section */
+#sitezapk-wrapper .sz-section {
+    background-color: var(--sz-bg-darker) !important;
+    width: 100% !important;
+    min-height: auto !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 30px 20px !important;
+}
+
+#sitezapk-wrapper .sz-section-inner {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+    align-items: center !important;
+}
+
+/* ========== RESPONSIVE ========== */
+@media screen and (max-width: 734px) {
+    #sitezapk-wrapper .sz-header-inner {
+        width: 90vw !important;
+    }
+    
+    #sitezapk-wrapper .sz-desktop-header {
+        display: none !important;
+    }
+    
+    #sitezapk-wrapper .sz-mobile-header {
+        display: flex !important;
+    }
+    
+    #sitezapk-wrapper .sz-screenshot {
+        width: 12rem !important;
+        height: 26rem !important;
+    }
+}
+
+/* إخفاء عناصر Blogger */
+#sitezapk-wrapper #main,
+#sitezapk-wrapper .blog-posts,
+#sitezapk-wrapper .post-outer-container {
+    display: none !important;
+}
+  
+  
+  
+  
+  
+  
+  
+  
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    .sz-nav-item {
+      list-style: none;
+    }
+    
+
+    
+    .nav-text {
+      font-size: 5px;
+    }
+    
+    .nav-icon {
+      width: 30px;
+      height: 30px;
+      display: block;
+    }
+    
+    /* للتأكد من عدم وجود مسافات إضافية */
+    .sz-nav-link span,
+    .sz-nav-link img {
+      margin: 0;
+      padding: 0;
+    }
+    
+</style>
+
+<script>
+function szToggleMenu() {
+    var menu = document.getElementById('szMobileMenu');
+    if (menu) {
+        menu.classList.toggle('show');
+    }
+}
+
+// إغلاق القائمة عند النقر خارجها
+document.addEventListener('click', function(event) {
+    var menu = document.getElementById('szMobileMenu');
+    var btn = document.querySelector('.sz-menu-btn');
+    
+    if (menu && btn) {
+        if (!menu.contains(event.target) && !btn.contains(event.target)) {
+            menu.classList.remove('show');
+        }
+    }
+});
+
+
+</script>
+
+<!-- الـ HTML الخاص بصفحة Sitezapk -->
+<div id="sitezapk-wrapper">
+
+    <!-- Desktop Header -->
+    <header class="sz-header sz-desktop-header">
+        <div class="sz-header-inner">
+            <ul class="sz-nav-list">
+          
+              <a href="https://www.sitezapk.online "><img style="width: 60px; height: 60px;" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1770351186/1770351146981_nufuca.png "></a>
+            
+                </a></li>
+            </ul>
+            <ul class="sz-nav-list">
+              <li><a href="#" class="sz-nav-link active">
+              </li>
+      Home Page
+     
+
+</li>
+              
+               </a>
+       <a href="https://www.socialcreator.com/reportaproblemforsitezapk" class="sz-nav-link ">
+Report
+</li>
+
+  
+             <li><a href="https://www.freeprivacypolicy.com/live/d55dd561-b30c-4cb4-9f76-d385febada42" class="sz-nav-link ">
+              </li>
+      Privacy Policy
+      </a>
+<li class="sz-nav-item">
+    <li>
+
+  <a href="https://www.instagram.com/zakisherifdev" class="sz-nav-link">
+   Instagram
+  <svg aria-label="مُحقّق" class="x1lliihq x1n2onr6" fill="rgb(0, 149, 246)" height="18" role="img" viewBox="0 0 40 40" width="18"><title>مُحقّق</title><path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path></svg>
+  </a>
+</li>
+</li>
+       <a href="https://twitter.com/zakisherifatty" class="sz-nav-link ">
+Twitter 
+</li>
+
+
+
+               
+</ul>
+  <a href="https://www.sitezapk.online/p/price-page.html" class="sz-btn" style="margin-top: 10px;">About now</a>
+              
+        </div>
+    </header>
+
+    <!-- Mobile Header -->
+    <header class="sz-header sz-mobile-header">
+        <div class="sz-header-inner">
+            <ul class="sz-nav-list">
+                <li><button class="sz-menu-btn" onclick="szToggleMenu()">
+                    <p style="color: #fff;">☰</p>
+                    
+                </button></li>
+                <li><a href="#" class="sz-nav-link active">
+              </li>
+      Home 
+                </a>
+       <a href="https://www.socialcreator.com/reportaproblemforsitezapk" class="sz-nav-link ">
+Report
+         
+          <li><a href="https://www.freeprivacypolicy.com/live/d55dd561-b30c-4cb4-9f76-d385febada42" class="sz-nav-link ">
+              </li>
+      Privacy
+      </a>
+</li>
+            </ul>
+           <a href="https://www.sitezapk.online "> <img style="width: 60px; height: 60px;" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1770351186/1770351146981_nufuca.png "></a></i>
+        </div>
+        
+        <div class="sz-mobile-menu" id="szMobileMenu">
+            <a href="https://www.instagram.com/zakisherifdev" class="sz-nav-link" target="_blank">
+                <i class="fa-brands fa-instagram"></i> Instagram
+            </a>
+            <a href="https://twitter.com/zakisherifatty" class="sz-nav-link" target="_blank">
+                <i class="fa-brands fa-twitter"></i> Twitter
+            </a>
+            <a href="https://www.sitezapk.online/p/price-page.html" class="sz-btn" style="margin-top: 10px;">About now</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="sz-main">
+        
+        <!-- App Info -->
+        <div class="sz-app-info">
+            <div class="sz-app-icons">
+                <img class="sz-app-icon" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1770336530/20260119_210342_cjwnrd.png" alt="Sitezapk App Icon">
+            </div>
+            <div>
+                <h1 class="app-name" style="color: #fff;">Sitezapk</h1>
+                <p class="app-description" style="color: #fff;">Convert your site into an Android application at a price that suits you, quickly and without a subscription</p>
+            </div>
+        </div>
+
+        <!-- Screenshots -->
+        <div class="sz-screenshots">
+            <img class="sz-screenshot" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1770338266/20260206_022712_n4jmk9.png" alt="App Screenshot 1">
+            <img class="sz-screenshot" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1770338265/20260206_023722_seqjcn.png" alt="App Screenshot 2">
+        </div>
+
+        <hr class="sz-divider">
+
+        <!-- Features -->
+        <div class="sz-feature">
+            <div>
+                <h2 class="feature-title" style="color: #fff;">"So stylish"<br></h2>
+                <p class="feature-content" style="color: #fff;">Make people's phones have your own unique app instead of using your site on a browser</p>
+            </div>
+            <div>
+        <div style="text-align: center;">
+    <img class="sz-screenshot" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1770338660/20260206_024404_o7qgdb.png" alt="Play Store">
+</div>
+
+    </div>
+        </div>
+
+        <div class="sz-feature">
+            <div>
+                <p class="feature-content" style="color: #fff;">You will be able to easily publish the application on the Google Play Store, and the application size will be small.</p>
+            </div>
+            <div>
+                <div style="text-align: center;">
+    <img class="sz-screenshot" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1770348093/1770348049407_r9yomv.png" alt="Play Store">
+</div>
+
+            </div>
+        </div>
+
+         <div class="feature flipped">
+            <div>
+                <h2 class="feature-title" style="color: #fff;">What will you benefit from converting your site to an Android application </h2>
+                <br/>
+                <p class="feature-content" style="color: #fff;">An application independent of any browser for the safe use of your site only</p>
+                <br/>
+                <p class="feature-content" style="color: #fff;">Ali published Google Play Store </p>
+                <br/>
+                <p class="feature-content" style="color: #fff;">Fast to use Find the location with one click via the app </p>
+                <br/>
+                <p class="feature-content" style="color: #fff;">An application for you and your website</p>
+                <br/>
+                <p class="feature-content" style="color: #fff;">Any change to the site reaches the application immediately without updates to the application</p>
+                <br/>
+                <p class="feature-content" style="color: #fff;">Without a subscription, the application will continue to work 
+Fixed price and suitable for you to pay only once </p>
+<br/>
+                <h2 class="feature-title" style="color: #fff;">Can I add features to the app?</h2>
+                <br/>
+                <p class="feature-content" style="color: #fff;">Yes, you can add features to the application such as:</p>
+                
+
+
+<br/>
+                
+               <p style="color: #fff;">Notifications feature associated with <a class="inline"  style="color: #fff;" href="https://www.onesignal.com ">onesignal.com</a>
+               <br/>
+                <p style="color: #fff;">Add site-independent ads via <a class="inline" style="color: #fff;" href="https://www.admob.google.com ">admob.google.com</a>
+                <br/>
+                <p class="feature-content" style="color: #fff;">Access to permissions (Note: If the user agrees only)</p>
+                <br/>
+                <p class="feature-content" style="color: #fff;"> The application can access me</p>
+                <p class="feature-content" style="color: #fff;">Camera</p>
+                <p class="feature-content" style="color: #fff;">Storage</p>
+                <p class="feature-content" style="color: #fff;">Calendar</p>
+                <p class="feature-content" style="color: #fff;">The site </p>
+                <br/>
+                <h2 class="feature-title" style="color: #fff;">New features coming soon...</h2>
+                <p class="feature-content" style="color: #fff;">Link to the Google Play Store subscription feature </p>
+                <p class="feature-content" style="color: #fff;">And other features coming soon...</p>
+   
+            </div>
+        </div>
+
+        
+
+        <!-- Customer Service -->
+        <div class="sz-feature">
+            <div style="text-align: center;">
+                <h2 class="feature-title" style="color: #fff;">Customer Service</h2>
+                
+<div style="text-align: center;">
+    <img class="sz-screenshot" 
+         src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1770342068/6070926_fuay2l.png" 
+         alt="Play Store" 
+         style="width: 60px !important; height: 60px !important;">
+</div>
+
+                <p class="feature-content" style="color: #fff;">24-hour customer service to create an app update or add features</p>
+           <p class="feature-content" style="color: #fff;">Note: Solving application problems is not mentioned because we do not create applications with recent or upcoming problems</p>
+            
+
+        <hr class="sz-divider">
+
+        <!-- CTA -->
+        <div class="cta">
+            <div>
+                <h2 style="color: #fff;">What are you waiting for?</h2>
+                <p style="color: #fff;">About your site now</p>
+            </div>
+            </div>
+            <br/>
+            <a href="https://www.sitezapk.online/p/price-page.html " class="sz-btn" target="_blank">About now</a>
+            <div>
+
+        <hr class="sz-divider">
+
+        <!-- Reviews -->
+        <div style="text-align: center;">
+            <h2 style="color: #fff;">Write your review of your experience creating the app. </h2>
+            <div class="powr-comments" id="5aeb868d_1770346270"></div><script src="https://www.powr.io/powr.js?platform=blogger "></script>
+        </div>
+        
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="sz-footer">
+        <p class="sz-footer-text">
+            <p> 
+            
+            <p style="color: #fff;">All rights to the site, the developer, and the person responsible for everything on the site and the service, not the content of the application </p>
+          
+
+
+  
+</footer>
+
+</main>
+
+
+  <a  style="color: #fff; " href="https://www.instagram.com/zakisherifdev ">@zakisherifdev</a> 
+    </footer>
+            
+
+
+</html>
