@@ -1814,9 +1814,9 @@ a {
 
                  data-light="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773121626/20260310_074647_cbmma7.png"
 
-                 data-dark="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1757913250/1757913106318_tlktyw.png"
+                 data-dark="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773286747/20260312_053733_x32ing.png"
 
-                 data-blue="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1757913250/1757913106318_tlktyw.png"
+                 data-blue="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773286747/20260312_053733_x32ing.png"
 
                  src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773121626/20260310_074647_cbmma7.png" style="width:165px; height:38px;" />
 
@@ -2104,6 +2104,9 @@ a {
 
             <li class="icon-text-item"><a href="https://ko-fi.com/zakisharifdev"><i class="fas fa-heart"></i><p id="menu41"><b>Support us</b></p></a></li>
 
+            <li class="icon-text-item"><a onclick="toggleTheme()"><i class="fas fa-moon icon" style="font-size: 28px;"></i><p id="menu41"><b>Changing the sky</b></p></a></li>
+
+                
             </b></p></a></li>
 
     </ul>
@@ -2468,7 +2471,7 @@ html[lang="id"] .sidebar.active {
 
         	
 
-        <li class="icon-text-item"><i class="fas fa-chevron-down arrow"></i><p id="menu57"><b>Advanced settings</b></p></a></li>
+        <li class="icon-text-item"><i class="fas fa-chevron-down arrow"></i><p id="menu57"><b>.Advanced settings</b></p></a></li>
 
 </i> </div>
 
@@ -2498,6 +2501,10 @@ html[lang="id"] .sidebar.active {
 
         </li>
 
+          
+          
+          
+          
           
 
      </div>
@@ -3554,7 +3561,114 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </html>
 
+    <script>
+        // روابط صور الأيقونات لكل ثيم
+        const icons = {
+            light: {
+            	logozaki: "https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773121626/20260310_074647_cbmma7.png",
+                     },
+            dark: {
+            	logozaki: "https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773286747/20260312_053733_x32ing.png",
+                
+                
+            },
+            blue: {
+            	logozaki: "https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773286747/20260312_053733_x32ing.png",
+                
+            }
+        };
 
+        // دالة تحديث الأيقونات بناءً على الثيم
+        function updateFooterIcons(theme) {
+            const iconMap = {
+            	'logozaki-icon': icons[theme].logozaki,
+                'logolist-icon': icons[theme].logolist,
+                'home-icon': icons[theme].home,
+                'quran-icon': icons[theme].quran,
+                'video-icon': icons[theme].video,
+                'grok-icon': icons[theme].grok,
+                'spaces-icon': icons[theme].spaces,
+                'account-icon': icons[theme].account,
+                'Imagesoon-icon': icons[theme].Imagesoon,
+                'alcha-icon': icons[theme].alcha,
+            };
+
+            Object.keys(iconMap).forEach(id => {
+                const img = document.getElementById(id);
+                if (img) img.src = iconMap[id];
+            });
+        }
+
+        // تحميل الثيم المخزن وتطبيق الأيقونات
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            updateFooterIcons(theme);
+        }
+
+        // عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            setTheme(savedTheme);
+            
+            // Add ripple effect to footer icons
+            document.querySelectorAll('footer div').forEach(div => {
+                div.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.classList.add('ripple');
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+        });
+
+        // دالة تبديل الثيم
+        function toggleTheme() {
+            const themes = ['light', 'dark', 'blue'];
+            const current = localStorage.getItem('theme') || 'light';
+            const nextIndex = (themes.indexOf(current) + 1) % themes.length;
+            setTheme(themes[nextIndex]);
+        }
+
+        // كود إخفاء وإظهار الشريط السفلي عند التمرير
+        let lastScrollTop = 0;
+        const footer = document.getElementById("foot");
+        window.addEventListener("scroll", function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                footer.classList.add("hidden");
+            } else {
+                footer.classList.remove("hidden");
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+
+        // Modal functions
+        function openModal() {
+            document.getElementById('customizeModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('customizeModal').style.display = 'none';
+        }
+
+        function applyCustomization() {
+            // Implementation for customization
+            closeModal();
+        }
+    </script>
 
 <script language="JavaScript">
 
