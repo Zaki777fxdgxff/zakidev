@@ -1,994 +1,2059 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Genki - Modern Ghost Theme</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 <link href="favicon.png" type="image/x-icon"rel="icon" />
+
   <!-- للـ Favicon -->
+
 <link rel="icon" href="favicon.png" type="image/png">
 
+
+
 <!-- للـ Manifest -->
+
 <link rel="manifest" href="/manifest.json">
+
     <style>
+
         :root {
+
             --primary: #ff5e57;
+
             --secondary: #3d4c5c;            
+
             --light: #f8f9fa;
+
             --dark: #1a1a1a;
+
             --accent: #4bcffa;
+
             --text: #333333;
+
             --gray: #718096;
+
             --transition: all 0.3s ease;
+
         }
+
         
+
         * {
+
             margin: 0;
+
             padding: 0;
+
             box-sizing: border-box;
+
         }
+
         
+
         body {
+
             font-family: 'Inter', sans-serif;
+
             color: var(--text);
+
             line-height: 1.6;
+
             background-color: #fff;
+
             overflow-x: hidden;
+
         }
+
         
+
         h1, h2, h3, h4, h5 {
+
             font-family: 'Playfair Display', serif;
+
             font-weight: 700;
+
             margin-bottom: 1rem;
+
             line-height: 1.3;
+
         }
+
         
+
         .container {
+
             width: 100%;
+
             max-width: 1200px;
+
             margin: 0 auto;
+
             padding: 0 2rem;
+
         }
+
         
+
         /* Header */
+
         header {
+
             background-color: #fff;
+
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
             position: fixed;
+
             width: 100%;
+
             top: 0;
+
             z-index: 1000;
+
         }
+
         
+
         .navbar {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             padding: 1.5rem 0;
+
         }
+
         
+
         .logo {
+
             font-family: 'Playfair Display', serif;
+
             font-size: 1.8rem;
+
             font-weight: 700;
+
             color: var(--primary);
+
             text-decoration: none;
+
         }
+
         
+
         .nav-links {
+
             display: flex;
+
             list-style: none;
+
         }
+
         
+
         .nav-links li {
+
             margin-left: 2rem;
+
         }
+
         
+
         .nav-links a {
+
             text-decoration: none;
+
             color: var(--dark);
+
             font-weight: 500;
+
             transition: var(--transition);
+
         }
+
         
+
         .nav-links a:hover {
+
             color: var(--primary);
+
         }
+
         
+
         .btn {
+
             display: inline-block;
+
             padding: 0.8rem 1.8rem;
+
             background-color: white;
+
             color: #000;
+
             border-radius: 30px;
+
             text-decoration: none;
+
             font-weight: 600;
+
             transition: var(--transition);
+
             border: none;
+
             cursor: pointer;
+
         }
+
         
+
         .btn:hover {
+
             background-color: #bbb;
+
             transform: translateY(-2px);
+
             box-shadow: 0 4px 10px rgba(255, 94, 87, 0.3);
+
         }
+
         
+
         /* Hero Section */
+
         .hero {
+
             padding: 10rem 0 5rem;
-            background: linear-gradient(135deg, var(--secondary) 0%, #2d3748 100%);
-            text-align: center;
+
+                  text-align: center;
+
         }
+
         
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            color: #fff;
-        }
+
+    
+       
         
+
         .hero p {
+
             font-size: 1.2rem;
+
             max-width: 700px;
+
             margin: 0 auto 2rem;
+
             color: #fff;
+
         }
+
         
+
         /* Features */
+
         .features {
+
             padding: 5rem 0;
+
         }
+
         
+
         .section-title {
+
             text-align: center;
+
             margin-bottom: 4rem;
+
         }
+
         
+
         .section-title h2 {
+
             font-size: 2.5rem;
+
             
+
         }
+
         
+
         .section-title p {
+
             
+
             max-width: 600px;
+
             margin: 0 auto;
+
         }
+
         
+
         .features-grid {
+
             display: grid;
+
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
             gap: 2rem;
+
         }
+
         
+
         .feature-card {
+
             background-color: var(--secondary);
+
             border-radius: 10px;
+
             padding: 2rem;
+
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+
             transition: var(--transition);
+
         }
+
         
+
         .feature-card:hover {
+
             transform: translateY(-5px);
+
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+
         }
+
         
+
         .feature-icon {
+
             font-size: 2.5rem;
+
             color: var(--primary);
+
             margin-bottom: 1.5rem;
+
         }
+
         
+
         .feature-card h3 {
+
             font-size: 1.5rem;
+
             margin-bottom: 1rem;
+
         }
+
         
+
         /* Demo Section */
+
         .demo {
+
             padding: 5rem 0;
+
             
+
         }
+
         
+
         .demo-grid {
+
             display: grid;
+
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
             gap: 2rem;
+
             margin-top: 3rem;
+
         }
+
         
+
         .demo-card {
+
             border-radius: 15px;
+
             overflow: hidden;
+
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+
             transition: var(--transition);
+
         }
+
         
+
         .demo-card:hover {
+
             transform: translateY(-5px);
+
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+
         }
+
         
+
         .demo-img {
+
             height: 210px;
+
             background-color: var(--secondary);
+
             display: flex;
+
             align-items: center;
+
             justify-content: center;
+
            color: #ffffff; /* لون أزرق */
+
             font-size: 1.5rem;
+
         }
+
         
+
         .demo-content {
+
             padding: 1.5rem;
+
              box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+
         }
+
         
+
         .demo-content h3 {
+
             font-size: 1.3rem;
+
             margin-bottom: 0.5rem;
+
         }
+
         
+
         /* CTA Section */
+
         .cta {
+
             padding: 5rem 0;
+
             text-align: center;
+
             background: linear-gradient(135deg, var(--secondary) 0%, #2d3748 100%);
+
             color: white;
+
         }
+
         
+
         .cta h2 {
+
             font-size: 2.5rem;
+
             margin-bottom: 1.5rem;
+
             color: white;
+
         }
+
         
+
         .cta p {
+
             max-width: 600px;
+
             margin: 0 auto 2rem;
+
             font-size: 1.1rem;
+
         }
+
         
+
         .btn-light {
+
             background-color: white;
+
             color: var(--secondary);
+
         }
+
         
+
         .btn-light:hover {
+
             background-color: var(--light);
+
             color: var(--dark);
+
         }
+
         
+
         /* Footer */
+
         footer {
+
             background-color: var(--dark);
+
             color: white;
+
             padding: 4rem 0 2rem;
+
         }
+
         
+
  
+
         
+
         
+
         
+
               .feature-card h3 {
+
   color: #fff;   /* أو أي لون اخترته */
+
 }
+
 .feature-card p {
+
   color: #fff;   /* رمادي أخف للفقرات */
+
 } 
+
         
+
  
+
         
+
     </style>
+
 </head>
+
 <body>
+
     
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>Welcome to the Zakidev</h1>
-            <p>The official website for zakidev.shop applications</p>
-            <a href="https://en.uptodown.com/developer/zaki-apps" class="btn">My apps on Uptodown<img style="width: 30px; height: 30px;" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773122069/20260310_075333_zojyb5.png"></a>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    
-        <div class="container">
-            <div class="section-title">
-                <h2>Details</h2>
-
-            </div>
-     <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-paint-brush"></i>
-                    </div>
-                    <h3>Design</h3>
-                    <p>Each application has been carefully designed to be convenient and easy to use. </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h3>Programming</h3>
-                    <p>I have extensive experience in creating Android applications, 3 years of experience
-Examples of Alquran applications | Alkitaab</p>
-                </div>
-        <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-user-tie"></i>
-                    </div>
-                    <h3>Administration</h3>
-                    <p>Corporate management, liability, paperwork, financial and sensitive secretariats</p>
-                </div>
-          <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-language"></i>
-                    </div>
-                    <h3>Language</h3>
-                    <p>Many languages have been added to make the applications suitable for all countries. </p>
-                </div>
-               <a href="https://www.sitezapk.online"> <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-edit"></i>
-                    </div>
-                    <h3>Create an application </h3>
-                    <p>Do you have a website and want to convert it into an Android app? Click to learn more...</p>
-                </div>
-               <a href="https://www.instagram.com/zakisherifdev"> <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fa fa-instagram"></i>
-                    </div>
-                    <h3>Instagram?</h3>
-                    <p>Follow me on Instagram to learn more about me and the new.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
-    <!-- Demo Section -->
-    <section class="demo" id="demos">
-        <div class="container">
-            <div class="section-title">
-                <h2>Applications</h2>
-                <p>All my apps</p>
-            </div>
-           <a href="https://com-alquran-alkarim.en.uptodown.com/android"> <div class="demo-grid">
-                <div class="demo-card">
-                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773119028/20260310_065816_urv13w.png"></div>
-                    <div class="demo-content">
-                        <h3>Alquran app</h3>
-                      <p>This app seamlessly blends modern technology with rich Islamic content, offering a comprehensive spiritual experience. It allows users to listen to the Quran, watch Islamic channels, and explore the complete stories of all prophets in an engaging and accessible way.</p>
-                    </div>
-                </div>
-              <a href="https://com-bible-shamil.en.uptodown.com/android">  <div class="demo-card">
-                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773119397/20260310_070935_oj3cal.png"></div>
-                    <div class="demo-content">
-                        <h3>Alkitab app</h3>
-                        <p>This app seamlessly blends modern technology with rich Christian content, offering a comprehensive spiritual experience. It allows users to explore Christian articles, listen to Bible radio stations, and watch live broadcasts of Bible channels—all in one place.</p>
-                    </div>
-                </div>
-                <a href="https://copy-appwsrgggfg.en.uptodown.com/android"><div class="demo-card">
-                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773119025/20260310_070237_btb4sh.png"></div>
-                    <div class="demo-content">
-                        <h3>Almajd Quran Channel app</h3>
-                        <p>It is an application that displays Al-Majd Islamic channels live video and radio broadcasts in an easy and simple way. </p>
-                    </div>
-                    </div>
-                <a href="https://ap2319800-gri.en.uptodown.com/android"><div class="demo-card">
-                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773118621/20260310_065219_okgl8a.png"></div>
-                    <div class="demo-content">
-                        <h3>Weather app</h3>
-                        <p>It is a quick application to view live weather without having to wait to search for the weather forecast. </p>
-                    </div>
-                    </div>
-                <a href="https://com-radio-fm-zaki.en.uptodown.com/android"><div class="demo-card">
-                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773118616/20260310_065112_gg7rb3.png"></div>
-                    <div class="demo-content">
-                        <h3>Radio stations of Arab countries app</h3>
-                        <p>It is an application for listening to all radio stations in Arab countries for free, and it is easy and quick to use for listening without problems. </p>
-                    </div>
-                    </div>
-                <a href="https://qr-zaki.en.uptodown.com/android"><div class="demo-card">
-                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773118622/20260310_065321_xnars5.png"></div>
-                    <div class="demo-content">
-                        <h3>QR code generator app</h3>
-                        <p>It is an application for quickly scanning and creating QR codes without any problems or effort; it is fast, easy to use, and simple.</p>
-                    </div>
-                    </div>
-                <a href="https://aplic2001819-pmo.en.uptodown.com/android"><div class="demo-card">
-                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773119028/20260310_065843_pn643o.png"></div>
-                    <div class="demo-content">
-                        <h3>Alquran Alkarim Beta app</h3>
-                        <p>The Holy Quran application is a comprehensive application that contains all the needs of a Muslim, the feature of day and night mode, the feature of Qur’anic passages, and other advantages. Discover it now.</p>
-                    </div>
-                    </div>
-                <a href="https://com-w-17185438.en.uptodown.com/android"><div class="demo-card">
-                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773118618/20260310_065017_xjjiq4.png"></div>
-                    <div class="demo-content">
-                        <h3>Smart photo editor app</h3>
-                        <p>It is an application that allows you to edit photos quickly and easily with tools, and change photo filters to achieve a professional design. </p>
-                    </div>
-                    </div>
-                <a href="https://thesmartcalculato-com.en.uptodown.com/android"><div class="demo-card">
-                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773119001/20260310_065912_brinyj.png"></div>
-                    <div class="demo-content">
-                        <h3>Smart Calculator app</h3>
-                        <p>It's a small calculator app to help you get through your day quickly and without too many complications. </p>
-                    </div>
-                    </div>
-                <a href="https://rosary-zaki.en.uptodown.com/android"><div class="demo-card">
-                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773118618/20260310_065552_htoe8o.png"></div>
-                    <div class="demo-content">
-                        <h3>Rosary app</h3>
-                        <p>It is a Muslim prayer beads app for glorifying and remembering God with a single tap, with the ability to change the color of the tasbih counter. It is a simple and easy-to-use app that makes glorifying God easy with just one tap. </p>
-                    </div>
-                    </div>   
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <a href="https://com-mobeasyapp-app348189911273.en.uptodown.com/android"><div class="demo-card">
-                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773118618/20260310_065404_zdb5md.png"></div>
-                    <div class="demo-content">
-                        <h3>Al Mushaf app</h3>
-                        <p>It is an application for reading the Holy Quran without complications and with high text quality. </p>
-                    </div>
-                    </div>
-                <a href="https://apli2586399-fud.en.uptodown.com/android"><div class="demo-card">
-                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773118617/20260310_065502_it9sy7.png"></div>
-                    <div class="demo-content">
-                        <h3>Holy Quran Channel from Saudi Arabia live broadcast app</h3>
-                        <p>It's an application that allows you to watch the Holy Quran Channel from Saudi Arabia live, broadcast from the Kingdom of Saudi Arabia 🇸🇦. It's free and easy to use. </p>
-                    </div>
-                    </div>
-                </a> 
-    
-  </body>
-</html>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta" id="purchase">
-        <div class="container">
-            <h2>Do you want your website to be an Android app? </h2>
-            <p>Convert your featured website into an Android app via sitezapk.online</p>
-            <a href="https://www.sitezapk.online" class="btn">Buy the service now</a>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <h3>Mr. Zaki Sherif</h3>
-                    <p>Zaki Sherif builds powerful, user-friendly Android apps that blend smart features with seamless design. Every app is crafted to feel intuitive, whether you're using it for the first time or the hundredth. From smooth navigation to practical tools, the focus is always on making your experience easier and more enjoyable. Clean performance and thoughtful features ensure your device stays efficient while you get things done. With attention to detail and a passion for innovation, Zaki ensures that each app not only works flawlessly but also adds real value to your daily life. Reliable, simple, and thoughtfully designed-just the way apps should be.</p>
-<br/>
-                   
+<section class="hero">
+  <!-- الفيديو -->
+  <video autoplay muted loop playsinline class="hero-video">
+    <source src="https://res.cloudinary.com/dtdnb4yp1/video/upload/v1773279303/com.bongasoft.addremovewatermark_1001122930_dubddv.mp4" type="video/mp4">
+  </video>
+  
+  <!-- المحتوى -->
+  <div class="container">
+    <h1>Welcome to the Zakidev</h1>
+    <p>The official website for zakidev.shop applications</p>
+    <a href="https://en.uptodown.com/developer/zaki-apps" class="btn">
+      My apps on Uptodown
+      
+    </a>
+  </div>
+  
+  <video 
+  autoplay 
+  muted 
+  loop 
+  playsinline 
+  webkit-playsinline 
+  x5-playsinline
+  class="hero-video"
+  id="hero-video">
+  <source src="https://res.cloudinary.com/dtdnb4yp1/video/upload/v1773279303/com.bongasoft.addremovewatermark_1001122930_dubddv.mp4" type="video/mp4">
+</video>
+</section>
 <style>
-    .social-links a i {
-        font-size: 25px;
-        margin: 0 5px;
-        
-        transition: color 0.1s ease;
-    }
+.hero {
+  position: relative;
+  padding: 10rem 0 5rem;
+  text-align: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--secondary) 0%, #2d3748 100%);
+}
 
-    /* الألوان تظهر فقط عند النقر */
-    .social-links a.youtube:active i {
-        color: #FF0000;
-    }
+/* صورة placeholder */
+.video-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--secondary) 0%, #2d3748 100%);
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
 
-    .social-links a.instagram:active i {
-        background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
+.hero-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1; /* فوق الصورة */
+  opacity: 0; /* مخفي في البداية */
+  transition: opacity 0.5s ease; /* تأثير ظهور ناعم */
+}
 
-    .social-links a.twitter:active i {
-        color: #1DA1F2;
-    }
+/* عندما يبدأ الفيديو بالعمل */
+.hero-video.playing {
+  opacity: 1;
+}
 
-    .social-links a.tiktok:active i {
-        color: #000;
-        text-shadow: 0 0 2px #ff0050, 0 0 5px #00f2ea;
-    }
+.hero .container {
+  position: relative;
+  z-index: 2;
+  color: white;
+}
 
-    .social-links a.linkedin:active i {
-        color: #0077b5;
-    }
+
 </style>
 
-<div class="social-links">
-    <a href="https://twitter.com/zakisherifatty" class="twitter"><i class="fab fa-twitter"></i></a>
-    <a href="https://www.instagram.com/zakisherifdev" class="instagram"><i class="fab fa-instagram"></i></a>
-    <a href="https://www.tiktok.com/@zakisherifdev" class="tiktok"><i class="fab fa-tiktok"></i></a>
-    <a href="https://youtube.com/@zakisherifdev" class="youtube"><i class="fab fa-youtube"></i></a>
-    <a href="https://www.linkedin.com/in/zakisharifdev" class="linkedin"><i class="fa fa-linkedin-square"></i></a>
-        
-                   </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var video = document.getElementById('hero-video');
+  
+  video.addEventListener('canplay', function() {
+    video.classList.add('playing');
+  });
+  
+  // محاولة التشغيل
+  video.play().catch(function(error) {
+    console.log("Autoplay prevented:", error);
+  });
+});
+</script>
+    <!-- Hero Section -->
+
+    
         </div>
-                </div>
-                <div class="footer-col">
-                    <h3>Quick Links</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Home</a></li>
-                        
-                        <li><a href="https://www.sitezapk.online">Request a service </a></li>
-                        <li><a href="https://ko-fi.com/zakisharifdev">Support us</a></li>
-                 
-   </ul>
-                </div>
-                <div class="footer-col">
-                    <h3>Support</h3>
-                    <ul class="footer-links">
-                        <li><a href="mailto:zakisherifdev@gmail.com">Report a problem</a></li>
-                        <li><a href="mailto:zakisherifdev@gmail.com">Contact Us</a></li>
-                        <li><a href="https://www.freeprivacypolicy.com/live/4727808a-9831-4398-a785-40bf13767d4d">Privacy Policy</a></li>
-                    </ul>
-                </div>
+
+    </section>
+
+
+
+    <!-- Features Section -->
+
+    
+
+        <div class="container">
+
+            <div class="section-title">
+
+                <br/>
+
+
+<h2>Details</h2>
             </div>
-            <br/>
-            <div class="copyright">
-                <li>All rights reserved to zakidev.shop 2026 &copy; </li>
+
+     <div class="features-grid">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+
+                        <i class="fas fa-paint-brush"></i>
+
+                    </div>
+
+                    <h3>Design</h3>
+
+                    <p>Each application has been carefully designed to be convenient and easy to use. </p>
+
+                </div>
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+
+                        <i class="fas fa-mobile-alt"></i>
+
+                    </div>
+
+                    <h3>Programming</h3>
+
+                    <p>I have extensive experience in creating Android applications, 3 years of experience
+
+Examples of Alquran applications | Alkitaab</p>
+
+                </div>
+
+        <div class="feature-card">
+
+                    <div class="feature-icon">
+
+                        <i class="fas fa-user-tie"></i>
+
+                    </div>
+
+                    <h3>Administration</h3>
+
+                    <p>Corporate management, liability, paperwork, financial and sensitive secretariats</p>
+
+                </div>
+
+          <div class="feature-card">
+
+                    <div class="feature-icon">
+
+                        <i class="fas fa-language"></i>
+
+                    </div>
+
+                    <h3>Language</h3>
+
+                    <p>Many languages have been added to make the applications suitable for all countries. </p>
+
+                </div>
+
+               <a href="https://www.sitezapk.online"> <div class="feature-card">
+
+                    <div class="feature-icon">
+
+                        <i class="fas fa-edit"></i>
+
+                    </div>
+
+                    <h3>Create an application </h3>
+
+                    <p>Do you have a website and want to convert it into an Android app? Click to learn more...</p>
+
+                </div>
+
+               <a href="https://www.instagram.com/zakisherifdev"> <div class="feature-card">
+
+                    <div class="feature-icon">
+
+                        <i class="fa fa-instagram"></i>
+
+                    </div>
+
+                    <h3>Instagram?</h3>
+
+                    <p>Follow me on Instagram to learn more about me and the new.</p>
+
+                </div>
+
             </div>
+
         </div>
-    </footer>
-    <br/>
-    <br/>
-</body>
+
+    </section>
+
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+
+    <!-- Demo Section -->
+
+    <section class="demo" id="demos">
+
+        <div class="container">
+
+            <div class="section-title">
+
+                <h2>Applications</h2>
+
+                <p>All my apps</p>
+
+            </div>
+
+           <a href="https://com-alquran-alkarim.en.uptodown.com/android"> <div class="demo-grid">
+
+                <div class="demo-card">
+
+                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773119028/20260310_065816_urv13w.png"></div>
+
+                    <div class="demo-content">
+
+                        <h3>Alquran app</h3>
+
+                      <p>This app seamlessly blends modern technology with rich Islamic content, offering a comprehensive spiritual experience. It allows users to listen to the Quran, watch Islamic channels, and explore the complete stories of all prophets in an engaging and accessible way.</p>
+
+                    </div>
+
+                </div>
+
+              <a href="https://com-bible-shamil.en.uptodown.com/android">  <div class="demo-card">
+
+                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773119397/20260310_070935_oj3cal.png"></div>
+
+                    <div class="demo-content">
+
+                        <h3>Alkitab app</h3>
+
+                        <p>This app seamlessly blends modern technology with rich Christian content, offering a comprehensive spiritual experience. It allows users to explore Christian articles, listen to Bible radio stations, and watch live broadcasts of Bible channels—all in one place.</p>
+
+                    </div>
+
+                </div>
+
+                <a href="https://copy-appwsrgggfg.en.uptodown.com/android"><div class="demo-card">
+
+                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773119025/20260310_070237_btb4sh.png"></div>
+
+                    <div class="demo-content">
+
+                        <h3>Almajd Quran Channel app</h3>
+
+                        <p>It is an application that displays Al-Majd Islamic channels live video and radio broadcasts in an easy and simple way. </p>
+
+                    </div>
+
+                    </div>
+
+                <a href="https://ap2319800-gri.en.uptodown.com/android"><div class="demo-card">
+
+                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773118621/20260310_065219_okgl8a.png"></div>
+
+                    <div class="demo-content">
+
+                        <h3>Weather app</h3>
+
+                        <p>It is a quick application to view live weather without having to wait to search for the weather forecast. </p>
+
+                    </div>
+
+                    </div>
+
+                <a href="https://com-radio-fm-zaki.en.uptodown.com/android"><div class="demo-card">
+
+                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773118616/20260310_065112_gg7rb3.png"></div>
+
+                    <div class="demo-content">
+
+                        <h3>Radio stations of Arab countries app</h3>
+
+                        <p>It is an application for listening to all radio stations in Arab countries for free, and it is easy and quick to use for listening without problems. </p>
+
+                    </div>
+
+                    </div>
+
+                <a href="https://qr-zaki.en.uptodown.com/android"><div class="demo-card">
+
+                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773118622/20260310_065321_xnars5.png"></div>
+
+                    <div class="demo-content">
+
+                        <h3>QR code generator app</h3>
+
+                        <p>It is an application for quickly scanning and creating QR codes without any problems or effort; it is fast, easy to use, and simple.</p>
+
+                    </div>
+
+                    </div>
+
+                <a href="https://aplic2001819-pmo.en.uptodown.com/android"><div class="demo-card">
+
+                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773119028/20260310_065843_pn643o.png"></div>
+
+                    <div class="demo-content">
+
+                        <h3>Alquran Alkarim Beta app</h3>
+
+                        <p>The Holy Quran application is a comprehensive application that contains all the needs of a Muslim, the feature of day and night mode, the feature of Qur’anic passages, and other advantages. Discover it now.</p>
+
+                    </div>
+
+                    </div>
+
+                <a href="https://com-w-17185438.en.uptodown.com/android"><div class="demo-card">
+
+                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773118618/20260310_065017_xjjiq4.png"></div>
+
+                    <div class="demo-content">
+
+                        <h3>Smart photo editor app</h3>
+
+                        <p>It is an application that allows you to edit photos quickly and easily with tools, and change photo filters to achieve a professional design. </p>
+
+                    </div>
+
+                    </div>
+
+                <a href="https://thesmartcalculato-com.en.uptodown.com/android"><div class="demo-card">
+
+                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773119001/20260310_065912_brinyj.png"></div>
+
+                    <div class="demo-content">
+
+                        <h3>Smart Calculator app</h3>
+
+                        <p>It's a small calculator app to help you get through your day quickly and without too many complications. </p>
+
+                    </div>
+
+                    </div>
+
+                <a href="https://rosary-zaki.en.uptodown.com/android"><div class="demo-card">
+
+                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773118618/20260310_065552_htoe8o.png"></div>
+
+                    <div class="demo-content">
+
+                        <h3>Rosary app</h3>
+
+                        <p>It is a Muslim prayer beads app for glorifying and remembering God with a single tap, with the ability to change the color of the tasbih counter. It is a simple and easy-to-use app that makes glorifying God easy with just one tap. </p>
+
+                    </div>
+
+                    </div>   
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    
+
+                    <a href="https://com-mobeasyapp-app348189911273.en.uptodown.com/android"><div class="demo-card">
+
+                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773118618/20260310_065404_zdb5md.png"></div>
+
+                    <div class="demo-content">
+
+                        <h3>Al Mushaf app</h3>
+
+                        <p>It is an application for reading the Holy Quran without complications and with high text quality. </p>
+
+                    </div>
+
+                    </div>
+
+                <a href="https://apli2586399-fud.en.uptodown.com/android"><div class="demo-card">
+
+                    <div class="demo-img"><img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773118617/20260310_065502_it9sy7.png"></div>
+
+                    <div class="demo-content">
+
+                        <h3>Holy Quran Channel from Saudi Arabia live broadcast app</h3>
+
+                        <p>It's an application that allows you to watch the Holy Quran Channel from Saudi Arabia live, broadcast from the Kingdom of Saudi Arabia 🇸🇦. It's free and easy to use. </p>
+
+                    </div>
+
+                    </div>
+
+                </a> 
+
+    
+
+  </body>
+
 </html>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- CTA Section -->
+
+    <section class="cta" id="purchase">
+
+        <div class="container">
+
+            <h2>Do you want your website to be an Android app? </h2>
+
+            <p>Convert your featured website into an Android app via sitezapk.online</p>
+
+            <a href="https://www.sitezapk.online" class="btn">Buy the service now</a>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- Footer -->
+
+    
+
+        <div class="container">
+
+            <div class="footer-grid">
+
+                <div class="footer-col">
+
+                    <h3>Mr. Zaki Sherif</h3>
+
+                    <p>Zaki Sherif builds powerful, user-friendly Android apps that blend smart features with seamless design. Every app is crafted to feel intuitive, whether you're using it for the first time or the hundredth. From smooth navigation to practical tools, the focus is always on making your experience easier and more enjoyable. Clean performance and thoughtful features ensure your device stays efficient while you get things done. With attention to detail and a passion for innovation, Zaki ensures that each app not only works flawlessly but also adds real value to your daily life. Reliable, simple, and thoughtfully designed-just the way apps should be.</p>
+
+<br/>
+
+                   
+
+<style>
+
+    .social-links a i {
+
+        font-size: 25px;
+
+        margin: 0 5px;
+
+        
+
+        transition: color 0.1s ease;
+
+    }
+
+
+
+    /* الألوان تظهر فقط عند النقر */
+
+    .social-links a.youtube:active i {
+
+        color: #FF0000;
+
+    }
+
+
+
+    .social-links a.instagram:active i {
+
+        background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+
+        -webkit-background-clip: text;
+
+        -webkit-text-fill-color: transparent;
+
+    }
+
+
+
+    .social-links a.twitter:active i {
+
+        color: #1DA1F2;
+
+    }
+
+
+
+    .social-links a.tiktok:active i {
+
+        color: #000;
+
+        text-shadow: 0 0 2px #ff0050, 0 0 5px #00f2ea;
+
+    }
+
+
+
+    .social-links a.linkedin:active i {
+
+        color: #0077b5;
+
+    }
+
+</style>
+
+
+
+<div class="social-links">
+
+    <a href="https://twitter.com/zakisherifatty" class="twitter"><i class="fab fa-twitter"></i></a>
+
+    <a href="https://www.instagram.com/zakisherifdev" class="instagram"><i class="fab fa-instagram"></i></a>
+
+    <a href="https://www.tiktok.com/@zakisherifdev" class="tiktok"><i class="fab fa-tiktok"></i></a>
+
+    <a href="https://youtube.com/@zakisherifdev" class="youtube"><i class="fab fa-youtube"></i></a>
+
+    <a href="https://www.linkedin.com/in/zakisharifdev" class="linkedin"><i class="fa fa-linkedin-square"></i></a>
+
+        
+
+                   </div>
+
+        </div>
+
+                </div>
+
+                <div class="footer-col">
+
+                    <h3>Quick Links</h3>
+
+                    <ul class="footer-links">
+
+                        <li><a href="#">Home</a></li>
+
+                        
+
+                        <li><a href="https://www.sitezapk.online">Request a service </a></li>
+
+                        <li><a href="https://ko-fi.com/zakisharifdev">Support us</a></li>
+
+                 
+
+   </ul>
+
+                </div>
+
+                <div class="footer-col">
+
+                    <h3>Support</h3>
+
+                    <ul class="footer-links">
+
+                        <li><a href="mailto:zakisherifdev@gmail.com">Report a problem</a></li>
+
+                        <li><a href="mailto:zakisherifdev@gmail.com">Contact Us</a></li>
+
+                        <li><a href="https://www.freeprivacypolicy.com/live/4727808a-9831-4398-a785-40bf13767d4d">Privacy Policy</a></li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+            <br/>
+
+            <div class="copyright">
+
+                <li>All rights reserved to zakidev.shop 2026 &copy; </li>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <br/>
+
+    <br/>
+
+</body>
+
+</html>
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>واجهة تشبه تويتر مع تبويبات وسلايدر</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
     <style>
+
         * {
+
             user-select: none;
+
             margin: 0;
+
             padding: 0;
+
             box-sizing: border-box;
+
             outline: none;
+
         }
+
+
 
         :root {
+
             /* Light Mode (Default) */
+
             --background-color: #ffffff;
+
             --text-color: #000000;
+
             --top-bar-bg: #ffffff;
+
             --tab-color: #657786;
+
             --tab-active-color: #1da1f2;
+
             --sidebar-bg: #f5f8fa;
+
             --sidebar-hover-bg: #e1e8ed;
+
            
+
+
 
             /* Dark Mode */
+
             &[data-theme="dark"] {
+
                 --background-color: #000;
+
                 --text-color: #ffffff;
+
                 --top-bar-bg: #000;
+
                 --tab-color: #657786;
+
                 --tab-active-color: #1da1f2;
+
                 --sidebar-bg: #000;
+
                 --sidebar-hover-bg: #000;
+
                 
+
             }
 
+
+
             
+
             
+
             
+
             
+
             /* Blue Mode */
+
             &[data-theme="blue"] {
+
                 --background-color: #15202b;
+
                 --text-color: #ffffff;
+
                 --top-bar-bg: #15202b;
+
                 --tab-color: #657786;
+
                 --tab-active-color: #1da1f2;
+
                 --sidebar-bg: #1c252e;
+
                 --sidebar-hover-bg: #2a3b4c;
+
                 
+
             }
+
                /* 
+
             لون قسم البث المباشر في الرئيسية 
+
              --content-bg: #ffffff;
+
             --content-bg: 
+
             */
+
         }
+
+
 
         body {
+
             background-color: var(--background-color);
+
             color: var(--text-color);
+
             font-family: Arial, sans-serif;
+
             overflow-x: hidden;
+
             position: relative;
+
         }
+
+
 
         .header-wrapper {
+
             position: fixed;
+
             top: 0;
+
             left: 0;
+
             width: 100%;
+
             z-index: 1000;
+
             transition: transform 0.3s ease;
+
         }
+
+
 
         .header-wrapper.hidden {
+
             transform: translateY(-100%);
+
         }
+
+
 
         .top-bar {
+
             display: flex;
+
             align-items: center;
+
             justify-content: space-between;
+
             padding: 10px 20px;
+
             color: var(--text-color);
+
             background-color: var(--top-bar-bg);
+
         }
+
+
 
         .left-section i {
+
             font-size: 40px;
+
             color: var(--tab-active-color);
+
             cursor: pointer;
+
             transform: scaleX(-1);
+
         }
+
+
 
         .center-section {
+
             flex-grow: 1;
+
             text-align: center;
+
         }
+
         .center-section i {
+
             font-size: 30px;
+
             color: var(--tab-active-color);
+
         }
+
+
 
         .right-section i {
+
             font-size: 20px;
+
             color: var(--text-color);
+
         }
+
+
 
         .fixed-container {
+
             display: flex;
+
             justify-content: center;
+
             gap: 0;
+
             padding: 0;
+
             background-color: var(--top-bar-bg);
+
         }
+
+
 
         .tabs {
+
             display: flex;
+
             border-bottom: 1px solid var(--tab-color);
+
             width: 100%;
+
             justify-content: center;
+
         }
+
+
 
         .tab {
+
             flex: 1;
+
             text-align: center;
+
             color: var(--tab-color);
+
             padding: 15px 0; /* مساحة بين صور القنوات الاكثر مشاهدة وبين خط فاصل مواقيت الصلاة*/
+
             cursor: pointer;
+
             font-size: 18px;
+
             font-weight: bold;
+
         }
+
+
 
         .tab.active {
+
             color: var(--tab-active-color);
+
             border-bottom: 3px solid var(--tab-active-color);
+
         }
+
+
 
         #uniquePoster {
+
             overflow-x: scroll;
+
             overflow-y: hidden;
+
             white-space: nowrap;
+
             margin: 3px;
+
             position: relative;
+
             text-align: center;
+
             background-color: var(--content-bg);
+
         }
+
+
 
         #uniquePoster.initial-load {
+
             opacity: 0;
+
             transform: translateY(-30px);
+
             animation: slideFromTop 1s ease-out forwards;
+
         }
+
+
 
         @keyframes slideFromTop {
+
             0% {
+
                 opacity: 0;
+
                 transform: translateY(-30px);
+
             }
+
             100% {
+
                 opacity: 1;
+
                 transform: translateY(0);
+
             }
+
         }
+
+
 
         .arab {
+
             transition: transform 0.4s ease;
+
         }
+
         .arab:active {
+
             transform: scale(0.9);
+
         }
+
+
 
         .content {
+
             display: none;
+
             margin-top: 150px;
+
             background-color: var(--content-bg);
+
         }
+
+
 
         .content.active {
+
             display: block;
+
         }
+
+
 
         /* إعدادات القائمة الجانبية */
+
         .sidebar {
+
             position: fixed;
+
             top: 0;
+
             right: -300px; /* مخفية خارج الشاشة */
+
             width: 260px; /* زيادة العرض لاستيعاب الأيقونات والنصوص */
+
             height: 100%;
+
             background-color: var(--sidebar-bg);
+
             color: var(--text-color);
+
             
+
             
+
             z-index: 1001;
+
             overflow-y: auto; /* السماح بالتمرير داخل القائمة */
+
         }
+
+
 
         .sidebar.active {
+
             right: 0;
+
         }
+
+
 
         .sidebar ul {
+
             list-style: none;
+
             padding: 0;
+
             text-align: left;
+
         }
 
+
+
         
+
+
 
         .sidebar ul li i {
+
             margin-left: 5px;
+
         }
+
+
 
         .sidebar ul li:hover {
+
             background-color: var(--sidebar-hover-bg);
+
         }
+
+
 
         .sidebar-overlay {
+
             position: fixed;
+
             top: 0;
+
             left: 0;
+
             width: 100%;
+
             height: 100%;
+
             background-color: rgba(0, 0, 0, 0.5);
+
             display: none;
+
             z-index: 999;
+
         }
+
+
 
         .sidebar-overlay.active {
+
             display: block;
+
         }
+
+
 
         .overlay {
+
             position: fixed;
+
             top: 0;
+
             left: 0;
+
             width: 100%;
+
             height: 100%;
+
             background-color: rgba(0, 0, 0, 0.5);
+
             display: none;
+
             justify-content: center;
+
             align-items: center;
+
             z-index: 998;
+
         }
+
+
 
         .overlay.active {
+
             display: flex;
+
         }
+
+
 
         .overlay-content {
+
             width: 100%;
+
             height: 100%;
+
             margin: 0;
+
             
+
             border: none;
+
             overflow: hidden;
+
         }
+
+
 
         .close-btn {
+
             position: absolute;
+
             top: 20px;
+
             left: 20px;
+
             background-color: var(--background-color);
+
             color: var(--text-color);
+
             
+
             border: none;
+
             cursor: pointer;
+
             font-size: 16px;
+
             z-index: 10000;
+
         }
+
+
 
         .whatsapp-button img {
+
             width: 40px;
+
             height: 40px;
+
         }
+
         
+
         /* لإزالة خط التسطير من جميع الروابط في صفحتك */
+
 a {
+
     text-decoration: none;
+
 }
+
+
 
 /* لإزالة خط التسطير من عنصر معين فقط بواسطة ID */
+
 #myElementId {
+
     text-decoration: none;
+
 }
+
+
 
 /* لإزالة خط التسطير من عنصر معين بواسطة Class */
+
 .myClassName {
+
     text-decoration: none;
+
 }
 
+
+
     </style>
+
 </head>
+
 <body>
+
       <div class="header-wrapper" id="header-wrapper">
+
         <div class="top-bar" id=" "top-bar"">
+
             
+
             	<div class="right-section">
+
                          <i class="fas fa-bars" id="menu-toggle"></i>
+
             </div>
+
             <div class="center-section">
+
                 
+
                 
+
            
+
                 <div id="logozaki">
+
         <a href="https://www.zakidev.shop">
+
             <img id="logozaki-icon"
+
                  data-light="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773121626/20260310_074647_cbmma7.png"
+
                  data-dark="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1757913250/1757913106318_tlktyw.png"
+
                  data-blue="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1757913250/1757913106318_tlktyw.png"
+
                  src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773121626/20260310_074647_cbmma7.png" style="width:165px; height:38px;" />
+
         </a> 
+
     </div>
+
             </div>
+
             
+
             
+
 <div class="right-section">
+
 <a href="mailto:zakisherifdev@gmail.com"><i class="fas fa fa-envelope" id="menu-toggle"></i>
 
 
+
+
+
 </a> 
+
     
+
     
+
   </body>
+
 </html>
+
     
+
   
 
 
 
+
+
+
+
             </div>
+
         </div>
 
+
+
         <div class="tabs">
+
                   
 
 
+
+
+
     
 
+
+
     <div class="sidebar" id="sidebar">
+
     	
+
     
+
     	     <!DOCTYPE html>
 
 
+
+
+
 <html>
+
   <head>
+
     
+
+
 
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
     <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+
   </head>
+
   <style media="screen">
+
   .carousel-cell 
+
     width: 100%;
-    
 
     
-  </style>
-  <body>
+
+
+
     
+
+  </style>
+
+  <body>
+
+    
+
+
 
       <div class="carousel-cell">
+
 <img class="w3-image" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1773106297/20260308_060345_qhu1zw.png" alt="App logo" class="logo-image">
 
+
+
       </div>   
+
 </a> 
+
     
+
   </body>
+
 </html>
 
+
+
         
+
 <!DOCTYPE html>
+
 <html lang="ar" dir="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>قائمة أيقونات بمسافة قسرية وروابط</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
    <style>
+
         ul {
+
             list-style: none; /* إزالة النقاط الافتراضية للقائمة */
+
             
+
             width: 255px; /* عرض مثال للقائمة */
+
             border-radius: 8px;
+
         }
+
+
 
         /* الفئة الجديدة لعناصر القائمة لزيادة خصوصية CSS */
+
         .icon-text-item {
+
             padding: 12px 15px;
+
             border-bottom: 1px solid #eee;
+
             display: flex; /* لاستخدام flexbox لمحاذاة الأيقونة والنص */
+
             align-items: center; /* لمحاذاة العناصر عموديا في المنتصف */
+
             cursor: pointer; /* للإشارة إلى أنه قابل للنقر */
+
             transition: background-color 0.3s ease;
+
             font-size: 1.1em;
+
         }
+
+
 
         .icon-text-item:last-child {
+
             border-bottom: none; /* إزالة الحدود من العنصر الأخير */
+
         }
+
+
 
         .icon-text-item:hover {
+
             background-color: #E0E7ED; /* تأثير عند تمرير المؤشر */
+
         }
+
         
+
         
+
         
+
         
+
         
+
         
+
+
 
         /* إضافة مسافة بين الأيقونة والنص في القائمة الجانبية */
+
 .icon-text-item a {
+
     display: flex;
+
     align-items: center;
+
     gap: 15px; /* مسافة ثابتة بين الأيقونة والنص */
+
     width: 100%;
+
 }
 
+
+
 .icon-text-item i {
+
     margin-left: 0; /* إزالة الهامش القديم */
+
     width: 20px; /* عرض ثابت للأيقونة */
+
     text-align: center;
+
 }
+
+
+
+
+
+
+
 
 
 
@@ -996,96 +2061,197 @@ a {
 
 
 /* استهداف الأيقونات داخل القائمة */
+
 .icon-text-item i.fas {
+
     font-size: 22px; /* حجم الأيقونة، يمكنك تغييره حسب الحاجة */
+
         vertical-align: middle; /* محاذاة الأيقونة مع النص */
+
 }
 
+
+
 /* لتخصيص حجم النصوص إذا لزم الأمر */
+
 .icon-text-item a {
+
     font-size: 18px; /* حجم النص */
+
     display: flex;
+
     align-items: center; /* محاذاة النص مع الأيقونة */
+
 }
+
+
+
 
 
     </style>
+
 </head>
+
 <body>
+
 <script src="https://kit.fontawesome.com/2b7b2389d3.js"></script>
+
     <ul>
+
             <li class="icon-text-item"><a href="#"><i class="fas fa-home"></i><p id="menu34"><b>Home page 🔹 </b></p></a></li>
+
             <li class="icon-text-item"><a href="https://www.sitezapk.online"><i class="fa fa-edit" style="font-size: 24px;"></i><p id="menu36" ><b>Service request</b></p></a></li>
+
             <li class="icon-text-item"><a href="https://ko-fi.com/zakisharifdev"><i class="fas fa-heart"></i><p id="menu41"><b>Support us</b></p></a></li>
+
             </b></p></a></li>
+
     </ul>
 
+
+
 </body>
+
 </html>
 
+
+
 <style type="text/css">
+
 * { user-select: none; margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+
 body { font-family: Arial, sans-serif; }
+
 .poster { overflow-x: scroll; overflow-y: hidden; white-space: nowrap; margin: 3px; text-align: center; }
+
 .image-container { display: inline-block; margin: 5px; text-align: center; }
+
 .image-container img { display: block; margin: 0 auto; }
+
 .image-container p { font-size: 14px; margin-top: 5px; font-weight: bold; }
 
+
+
 /* أزرار تغيير اللغة */
+
 .lang-buttons {
+
     text-align: center;
+
     margin: 10px 0;
+
 }
+
 .lang-buttons button {
+
     padding: 10px 20px;
+
     margin: 0 5px;
+
     font-size: 16px;
+
     cursor: pointer;
+
     background-color: #4CAF50;
+
     color: white;
+
     border: none;
+
     border-radius: 5px;
+
 }
+
 .lang-buttons button:hover {
+
     background-color: #45a049;
+
 }
 
 
-html[lang="en"] .sidebar {
-    right: auto;
-    left: -300px;
-}
 
 
 
 html[lang="en"] .sidebar {
+
     right: auto;
+
     left: -300px;
+
 }
+
+
+
+
+
+
+
+html[lang="en"] .sidebar {
+
+    right: auto;
+
+    left: -300px;
+
+}
+
+
 
 html[lang="en"] .sidebar.active {
+
     left: 0;
+
 }
+
+
+
 
 
 html[lang="zh"] .sidebar {
+
     right: auto;
+
     left: -300px;
+
 }
 
+
+
 html[lang="zh"] .sidebar.active {
+
     left: 0;
+
 }
+
+
+
 
 
 html[lang="id"] .sidebar {
+
     right: auto;
+
     left: -300px;
+
 }
 
+
+
 html[lang="id"] .sidebar.active {
+
     left: 0;
+
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1097,280 +2263,555 @@ html[lang="id"] .sidebar.active {
 
 
 </style>
+
 <!DOCTYPE html>
+
 <html lang="ar" dir="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>قائمة الأدوات الاحترافية (مع Font Awesome)</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <style>
+
                {
+
             font-family: Arial, sans-serif;
+
             
+
             
+
             margin: 0;
+
             
+
             display: flex;
+
             justify-content: center;
+
             align-items: flex-start; /* لتبدأ من الأعلى */
+
             min-height: 100vh;
+
         }
+
+
 
         .accordion-item {
+
             width: 100%;
+
             max-width: 400px; /* تحديد أقصى عرض للعنصر */
+
             margin-bottom: 10px;
+
             border-radius: 8px;
+
             overflow: hidden; /* لضمان عدم تجاوز المحتوى للحدود الدائرية */
+
         }
+
+
 
         .accordion-header {
+
             
+
             
+
             cursor: pointer;
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             font-weight: bold;
+
             font-size: 1.1em;
+
             border-bottom: 3px 
+
             transition: background-color 0.3s ease;
+
         }
+
+
 
         .accordion-header:hover {
+
             
+
         }
+
+
 
         .accordion-header .arrow {
+
             transition: transform 0.3s ease;
+
             font-size: 1.2em; /* حجم أكبر للسهم */
+
         }
+
+
 
         /* سهم Font Awesome الافتراضي (لأسفل) */
+
         .accordion-header .arrow.fa-chevron-down {
+
             transform: rotate(0deg); /* تأكد من أنه غير مدور افتراضيا */
+
         }
 
+
+
         /* تدوير السهم لأعلى عند التفعيل */
+
         .accordion-header.active .arrow.fa-chevron-down {
+
             transform: rotate(180deg); /* تدوير 180 درجة ليصبح للأعلى */
+
         }
+
+
+
 
 
         .accordion-content {
+
             
+
             max-height: 0; /* إخفاء المحتوى في البداية */
+
             overflow: hidden;
+
             transition: max-height 0.4s ease-out; /* حركة سلسة للفتح والإغلاق */
+
         }
+
+
 
         .accordion-content.open {
+
             /* يتم ضبط max-height بواسطة JavaScript */
+
         }
+
+
 
         .accordion-content-inner {
+
          
+
         }
+
+
 
         .accordion-option {
+
             display: flex;
+
             align-items: center;
+
             padding: 10px 0;
+
             text-decoration: none;
+
             
+
             transition: background-color 0.3s ease;
+
         }
+
+
 
         .accordion-option:hover {
+
             
+
         }
+
+
 
         .accordion-option .icon {
+
             margin-left: 10px; /* مسافة بين الأيقونة والنص */
+
             font-size: 1.2em;
+
             width: 20px; /* لتثبيت عرض الأيقونة ومنع تذبذب النص */
+
             text-align: center; /* لتوسيط الأيقونة داخل عرضها */
+
         }
+
     </style>
+
 </head>
+
 <body>
 
+
+
     <div class="accordion-item">
+
         <div class="accordion-header" id="professionalToolsHeader">
+
         	
+
         <li class="icon-text-item"><i class="fas fa-chevron-down arrow"></i><p id="menu57"><b>Advanced settings</b></p></a></li>
+
 </i> </div>
 
+
+
         <div class="accordion-content" id="professionalToolsContent">
+
             <div class="accordion-content-inner">
+
             	
+
              <li class="icon-text-item">
+
             <a href="mailto:zakisherifdev@gmail.com"><i class="fas fa fa-exclamation-triangle"></i> <span id="menu54">Report a problem</span></a>
+
         </li>
+
         <li class="icon-text-item">
+
             <a href="mailto:zakisherifdev@gmail.com"><i class="fas fa fa-envelope"></i> <span id="menu55">Contact us</span></a>
+
         </li>
+
         <li class="icon-text-item">
+
             <a href="https://www.freeprivacypolicy.com/live/4727808a-9831-4398-a785-40bf13767d4d"><i class="fas fa fa-check-square-o"></i> <span id="menu56">Privacy Policy</span></a>
+
         </li>
+
           
+
      </div>
+
         </div>
+
     </div>
 
+
+
     <script>
+
         const header = document.getElementById('professionalToolsHeader');
+
         const content = document.getElementById('professionalToolsContent');
 
+
+
         header.addEventListener('click', function() {
+
             // تبديل فئة 'active' للرأس
+
             header.classList.toggle('active');
+
             // تبديل فئة 'open' للمحتوى
+
             content.classList.toggle('open');
 
+
+
             // إذا كان المحتوى مفتوحًا (له فئة 'open')، اضبط max-height على ارتفاعه الفعلي
+
             if (content.classList.contains('open')) {
+
                 // استخدم scrollHeight للحصول على الارتفاع الكامل للمحتوى المخفي
+
                 content.style.maxHeight = content.scrollHeight + 'px';
+
             } else {
+
                 content.style.maxHeight = '0'; // إغلاق المحتوى
+
             }
+
         });
+
     </script>
 
+
+
 </body>
+
 </html>
+
+
+
 
 
    </ul>
+
     </div>
+
+
 
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
     
+
     </div>
 
+
+
     <script>
+
 document.addEventListener('DOMContentLoaded', () => {
+
     const sidebar = document.getElementById('sidebar');
+
     const menuToggle = document.getElementById('menu-toggle');
+
     const sidebarOverlay = document.getElementById('sidebar-overlay');
+
     const headerWrapper = document.getElementById('header-wrapper'); // <--- أضفنا هذا السطر
+
     let lastScrollTop = 0; // <--- أضفنا هذا السطر لمتغير تتبع التمرير
 
+
+
     // التحقق من وجود العناصر الأساسية
+
     if (!sidebar || !menuToggle || !sidebarOverlay || !headerWrapper) { // <--- أضفنا headerWrapper هنا
+
         console.error('One or more essential elements (sidebar, menuToggle, sidebarOverlay, headerWrapper) not found in DOM');
+
         return;
+
     }
+
+
 
     // --- وظيفة الشريط الجانبي (Sidebar) ---
+
     // فتح/إغلاق القائمة عند النقر على زر القائمة
+
     menuToggle.addEventListener('click', (event) => {
+
         event.stopPropagation();
+
         sidebar.classList.toggle('active');
+
         sidebarOverlay.classList.toggle('active');
+
     });
+
+
 
     // إغلاق القائمة عند النقر على الـ overlay
+
     sidebarOverlay.addEventListener('click', (event) => {
+
         event.stopPropagation();
+
         closeSidebar();
+
     });
+
+
 
     // إغلاق القائمة عند اللمس على الـ overlay
+
     sidebarOverlay.addEventListener('touchend', (event) => {
+
         event.preventDefault();
+
         event.stopPropagation();
+
         closeSidebar();
+
     });
+
+
 
     // منع إغلاق القائمة عند النقر أو التمرير داخلها
+
     sidebar.addEventListener('click', (event) => {
+
         event.stopPropagation();
+
     });
+
+
 
     sidebar.addEventListener('touchmove', (event) => {
+
         event.stopPropagation(); // السماح بالتمرير داخل القائمة دون إغلاق
+
     });
+
+
 
     // دالة إغلاق القائمة
+
     function closeSidebar() {
+
         sidebar.classList.remove('active');
+
         sidebarOverlay.classList.remove('active');
+
     }
+
+
 
     // --- وظيفة الشريط العلوي (Header) - الإخفاء والإظهار عند التمرير ---
+
     window.addEventListener('scroll', () => {
+
         let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
 
+
+
         // إخفاء الشريط العلوي عند التمرير لأسفل (بعد 50 بكسل)
+
         if (currentScroll > lastScrollTop && currentScroll > 50) {
+
             headerWrapper.classList.add('hidden');
+
         }
+
         // إظهار الشريط العلوي عند التمرير لأعلى
+
         else {
+
             headerWrapper.classList.remove('hidden');
+
         }
+
+
 
         // تحديث قيمة lastScrollTop للمقارنة التالية
+
         lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+
     });
 
+
+
     // --- وظيفة تبديل الثيمات (Theme Toggle) ---
+
     // هذه الوظائف يمكن أن تبقى خارج DOMContentLoaded أو داخلها، كلاهما يعمل
+
     // ولكن لإبقاء كل ما يتعلق بالصفحة في مكان واحد، أفضل وضعها بالداخل.
+
     const themes = ['light', 'dark', 'blue'];
+
     let currentThemeIndex = 0;
 
+
+
     function setTheme(theme) {
+
         document.documentElement.setAttribute('data-theme', theme);
+
         localStorage.setItem('theme', theme);
+
         currentThemeIndex = themes.indexOf(theme);
+
     }
+
+
 
     function toggleTheme() {
+
         currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+
         setTheme(themes[currentThemeIndex]);
+
     }
 
+
+
     // تحميل الثيم المحفوظ أو الافتراضي إلى light
+
     const savedTheme = localStorage.getItem('theme') || 'light';
+
     setTheme(savedTheme);
 
+
+
     // إذا كان لديك زر لتبديل الثيم، تأكد من إضافة مستمع حدث له، مثلاً:
+
     // const themeToggleButton = document.getElementById('theme-toggle-button');
+
     // if (themeToggleButton) {
+
     //     themeToggleButton.addEventListener('click', toggleTheme);
+
     // }
+
 });
 
+
+
 // إذا كان لديك أي دوال أخرى مثل switchTab أو closeOverlay
+
 // التي يتم استدعاؤها مباشرة من HTML (مثل onclick)، يمكن أن تبقى خارج DOMContentLoaded
+
 // أو يجب أن تكون معرفة كـ window.switchTab = function() {...} لتكون متاحة عالميًا.
+
 // ولكن الطريقة الأفضل هي ربطها بأزرار باستخدام addEventListener داخل DOMContentLoaded.
 
+
+
 // Theme toggle functionality
+
 const themes = ['light', 'dark', 'blue']; //1
+
 let currentThemeIndex = 0;
 
+
+
 function setTheme(theme) {
+
     document.documentElement.setAttribute('data-theme', theme); //2
+
     localStorage.setItem('theme', theme); //3
+
     currentThemeIndex = themes.indexOf(theme);
+
 }
+
+
 
 function toggleTheme() {
+
     currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+
     setTheme(themes[currentThemeIndex]); //4
+
 }
 
+
+
 // Load saved theme or default to light
+
 const savedTheme = localStorage.getItem('theme') || 'light'; //5
+
 setTheme(savedTheme); //6
 
+
+
     </script>
+
 </body>
+
 </html>
 
 
@@ -1379,16 +2820,37 @@ setTheme(savedTheme); //6
 
 
 
- 
+
+
+
+
+
+
+
+
  
 
+ 
+
+
+
     
+
     
+
     
+
     
+
     
+
+
 
 <body dir="en">
+
+
+
+
 
 
 
@@ -1399,117 +2861,241 @@ setTheme(savedTheme); //6
 
 
 
+
+
+
+
+
+
+
 <style>
+
 .image-container img {
+
     transition: transform 0.2s ease-in-out;
+
 }
+
+
 
 .image-container img:active {
+
     transform: scale(1.1);
+
 }
+
 </style>
+
+
 
 <div class="lang-buttons">
+
     
+
 </div>
 
+
+
 <style>
+
 *{-webkit-tap-highlight-color:transparent;user-select:none;margin:0;padding:0;box-sizing:border-box;outline:none;user-select:none;}
+
 </style>
+
 </head>
+
 <!DOCTYPE html>
+
 <html lang="ar">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>منع نسخ الصور</title>
+
     
+
     <script>
+
 document.addEventListener('DOMContentLoaded', function() {
+
     const longClickElement = document.getElementById('myLongClickPrevent');
+
     let pressTimer;
 
+
+
     if (longClickElement) {
+
         longClickElement.addEventListener('mousedown', function(e) {
+
             // منع تحديد النص مباشرة عند بداية النقر إذا أردت
+
             e.preventDefault();
+
+
 
             pressTimer = setTimeout(function() {
+
                 // هذا الكود سيتم تشغيله بعد "نقر مطول" (مثلاً 500ms)
+
                 alert('تم اكتشاف نقرة طويلة! تم منع أي سلوك افتراضي.');
+
                 // هنا يمكنك منع المزيد من الإجراءات مثل عرض قائمة السياق
+
                 // إذا أردت منع قائمة السياق:
+
                 // longClickElement.addEventListener('contextmenu', function(ce) {
+
                 //     ce.preventDefault();
+
                 // });
 
+
+
             }, 500); // 500 ميلي ثانية للنقر المطول
+
         });
+
+
 
         longClickElement.addEventListener('mouseup', function(e) {
+
             clearTimeout(pressTimer); // مسح المؤقت إذا تم تحرير الزر قبل النقر المطول
+
         });
+
+
 
         longClickElement.addEventListener('mouseleave', function(e) {
+
             clearTimeout(pressTimer); // مسح المؤقت إذا غادر المؤشر العنصر
+
         });
+
+
 
         // لمنع قائمة السياق (context menu) التي قد تظهر عند النقر المطول بالزر الأيمن
+
         longClickElement.addEventListener('contextmenu', function(e) {
+
             e.preventDefault();
+
             alert('قائمة السياق معطلة لهذا العنصر.');
+
         });
+
         document.addEventListener('DOMContentLoaded', function() {
+
     // لمنع النسخ من عنصر معين (مثلاً فقرة بمعرف "noCopyParagraph")
+
     const noCopyParagraph = document.getElementById('noCopyParagraph');
+
     if (noCopyParagraph) {
+
         noCopyParagraph.addEventListener('copy', function(event) {
+
             event.preventDefault(); // يمنع النسخ
+
             console.log('تم منع النسخ من هذا العنصر.');
+
             // يمكنك إظهار رسالة للمستخدم هنا إذا أردت
+
             // alert('النسخ غير مسموح به!');
+
         });
+
     }
+
+
 
     // لمنع النسخ من كامل المستند (أكثر شمولاً)
+
     document.addEventListener('copy', function(event) {
+
         event.preventDefault(); // يمنع النسخ من أي مكان في الصفحة
+
         console.log('تم منع النسخ من الصفحة بأكملها.');
+
         // alert('لا يُسمح بالنسخ في هذه الصفحة!');
+
     });
+
 });
+
+
 
 document.addEventListener('DOMContentLoaded', function() {
+
     const elementToProtect = document.getElementById('myProtectedElement');
+
     if (elementToProtect) {
+
         elementToProtect.addEventListener('contextmenu', function(event) {
+
             event.preventDefault(); // يمنع ظهور قائمة السياق
+
             console.log('تم منع قائمة السياق.');
+
         });
+
     }
+
+
 
     // لمنع قائمة السياق من كامل المستند
+
     document.addEventListener('contextmenu', function(event) {
+
         event.preventDefault();
+
         console.log('تم منع قائمة السياق من كامل المستند.');
+
     });
+
 });
+
+
 
     }
+
 });
 
+
+
     </script>
+
 <script>
+
 // دمج كلا الكائنين مع إضافة اللغة الصينية
+
 const translations = {
 
+
+
    
+
  },
+
     en: {
+
         // القوائم السابقة
+
         text1: "Supplications", text2: "Request a service", text3: "Hadiths", text4: "Donate", text5: "Calendar", text6: "Test your faith", text7: "Bible Radios",
+
         text8: "Read the book", text9: "Live broadcast ", text10: "Nearest church", text11: "Prophets Stories", text12: "Ramadan Date", text13: "Donate",
+
         text14: "Request a service", 
+
+
+
+
+
+
+
 
 
 
@@ -1520,36 +3106,73 @@ const translations = {
 
 
 
+
+
+
+
         // القنوات + القائمة الجانبية
+
         
+
         text19: "Home", text20: "Read Bible", text21: "Request a service", text22: "Donate", text23: "Account",
+
       
+
   menu1: "Home Page", menu2: "Read the book", menu3: "Holy Quran", menu4: "Nearest church", menu5: "Live broadcast ",
+
         menu7: "Test your faith", menu8: "Donate", menu9: "Supplications", menu10: "Hadiths",
+
      
 
 
 
+
+
+
+
    menu11: " Glass birthday cakes ❄️ ", menu12: "Hot drinks 🍵", menu13: "Christmas cookies 🍪", menu14: "Hot food recipes 🍲", menu15: " Supplications today 𖹭", menu6: "Evening drinks 🍸",
+
         
 
 
 
+
+
+
+
 menu16: "Donate 🍩", menu17: "Request a service", menu18: "Live Stream", menu19: "Spaces", menu20: "Zynor AI",
+
         menu21: "Settings", menu22: "My Account", menu23: "Support", menu24: "..Installed by Alquran App 📌", 
+
         menu25: "........To donate and help", menu26: "Request a service",  menu28: "Show more 📖",
+
         menu29: "🔴 Live broadcast of Islamic channels", menu30: "🔴 Show more Live" ,menu31: "Home Page" ,menu32: "Request a service"  ,menu33: "..Spotlight ✪",
+
         menu34: "Home Page🔹 ", menu35: "All services",  menu36: "Request a service",  menu37: "Nearest church",  menu38: "Live broadcast ",  menu39: "Bible Radios",   menu40: "Test your faith",  menu41: "Support us",  menu42: "Supplications",   menu43: "Hadiths",   menu44: "Prophets Stories",   menu45: "Calendar",   menu46: "Events",  menu47: "Wallpapers",  menu48: "Islamic News",  menu49: "Donate 🍩",    menu50: "Request a service",  menu51: "Live Stream",  menu52: "Spaces",  menu53: "Zynor.Al",   menu54: "Report a problem",   menu55: "Contact Us",   menu56: "Privacy Policy",  menu57: ".Settings and Support",
+
    menu58: "Site Terms",
+
 menu59: " 🔴 Show more Live",
+
 menu60: "📖 Read the book",
+
 menu61: "📝 Test your faith",
+
  },
+
     zh: {
+
         // القوائم السابقة
+
         text1: "杜阿", text2: "Request a service", text3: "圣训", text4: "男 阿尔·穆斯林", text5: "日历", text6: "测试你的信仰", text7: "圣经广播",
+
         text8: "读", text9: "直播", text10: "最近的教堂", text11: "先知故事", text12: "斋月日期", text13: "捐款",
+
         text14: "Request a service", 
+
+
+
+
 
 
 
@@ -1557,215 +3180,429 @@ menu61: "📝 Test your faith",
 
 
 
+
+
+
+
         // القنوات + القائمة الجانبية
+
         
+
         text19: "家", text20: "读", text21: "Request a service", text22: "捐", text23: "帐户",
+
       
+
   menu1: "主页", menu2: "古兰经音频", menu3: "古兰经", menu4: "礼拜时间", menu5: "朝觐方向",
+
          menu7: "测试你的信仰", menu8: "记念词", menu9: "祈祷文", menu10: "圣训",
+
         
+
+
+
+
 
 
 
 menu11: " 玻璃生日蛋糕❄️", menu12: "热饮🍵", menu13: "圣诞饼干🍪", menu14: "热食食谱🍲",  menu15: "杜阿 今天 𖹭",  menu6: "晚间饮品🍸",
+
       
 
 
 
+
+
+
+
   menu16: "捐款 🍩", menu17: "Request a service", menu18: "直播", menu19: "空间", menu20: "Zynor AI",
+
         menu21: "设置", menu22: "我的账户", menu23: "支持", menu24: "..由古兰经应用安装 📌", 
+
         menu25: "捐款与帮助", menu26: "古兰经片段",  menu28: "显示更多 📖",
+
         menu29: "最著名的伊斯兰频道的现场直播 🔴", menu30: "显示更多直播 🔴" ,menu31: "主页" ,menu32: "Request a service",menu33: "..聚光 上 ✪",
+
        menu34: "主页🔹 ", menu35: "读",  menu36: "Request a service",  menu37: "最近的教堂",  menu38: "直播",  menu39: "圣经广播",   menu40: "测试你的信仰",  menu41: "捐",  menu42: "杜阿",   menu43: "圣训",   menu44: "先知故事",   menu45: "日历",   menu46: "斋月日期",  menu47: "伊斯兰壁纸",  menu48: "伊斯兰教新闻",  menu49: "捐款 🍩",    menu50: "Request a service",  menu51: "直播",  menu52: "古兰经电台",  menu53: "Zynor.Al",   menu54: "设置",   menu55: "我的账户",   menu56: "支持",  menu57: ".设置和支持",
+
         menu58: "🎄 圣诞食谱",
+
       menu59: "🔴 显示更多直播",
+
       menu60: "📖 阅读本书",
+
       menu61: "📝 测试你的信仰",
+
   },
+
         id: {
+
   // Menu utama
+
   "text1": "Doa-Doa islami",
+
   "text2": "Request a service",
+
   "text3": "Hadits",
+
   "text4": "Menyumbangkan",
+
   "text5": "Kalender Islam",
+
   "text6": "Uji imanmu",
+
   "text7": "Radio Alkitab",
+
   "text8": "Membaca ",
+
   "text9": "Siaran langsung",
+
   "text10": "Gereja terdekat",
+
   "text11": "Kisah Para Nabi",
+
   "text12": "Tanggal Ramadhan",
+
   "text13": "Sedekah",
+
   "text14": "Request a service",
 
 
 
 
+
+
+
+
+
   "text15": "Baca",
+
   "text16": "Gereja terdekat",
+
   "text17": "Siaran langsung",
+
   "text18": "Stasiun radio buku",
+
 "menu27": "Uji imanmu",
 
 
 
 
+
+
+
+
+
   // Saluran + menu samping
+
   "text19": "Rumah",
+
   "text20": "Membaca",
+
   "text21": "Request a service",
+
   "text22": "Donasi",
+
   "text23": "Akun",
 
+
+
   "menu1": "Halaman Utama",
+
   "menu2": "Membaca ",
+
   "menu3": "Request a service",
+
   "menu4": "Gereja terdekat",
+
   "menu5": "Siaran langsung",
+
   "menu6": "晚间饮品🍸",
+
   "menu7": "Uji imanmu",
+
   "menu8": "Menyumbangkan",
+
   "menu9": "Doa-doa islami",
+
   "menu10": "Hadits",
+
   
+
   
+
   
+
   
+
   
+
   
+
   "menu11": "Kue ulang tahun dari kaca ❄️",
+
   "menu12": "Minuman panas 🍵",
+
   "menu13": "Kue Natal 🍪 ",
+
   "menu14": "Resep makanan panas 🍲",
+
   "menu15": " Doa hari ini 𖹭",
+
   
+
   
+
   
+
   
+
   
+
   
+
   "menu16": "Sedekah 🍩",
+
   "menu17": "Request a service",
+
   "menu18": "Siaran Langsung",
+
   "menu19": "Ruang Diskusi",
+
   "menu20": "Zynor AI",
+
   "menu21": "Pengaturan",
+
   "menu22": "Akun Saya",
+
   "menu23": "Dukungan",
+
   "menu24": "..Diinstal oleh Aplikasi Al-Qur'an 📌",
+
   "menu25": "............................Untuk berdonasi dan membantu",
+
   "menu26": "Request a service",
+
   
+
   "menu28": "Tampilkan lebih banyak 📖",
+
   "menu29": "🔴 Siaran langsung saluran Islam",
+
   "menu30": "🔴 Tampilkan lebih banyak siaran langsung",
+
   "menu31": "Halaman Utama",
+
   "menu32": "Request a service",
+
   
+
   
+
   "menu34": "Halaman Utama🔹",
+
   "menu35": "Membaca ",
+
   "menu36": "Request a service",
+
   "menu37": "Gereja terdekat",
+
   "menu38": "Siaran langsung",
+
   "menu39": "Radio Alkitab",
+
   "menu40": "Uji imanmu",
+
   "menu41": "Menyumbangkan",
+
   "menu61": "📝 Uji imanmu",
+
   "menu43": "Hadits",
+
   "menu44": "Kisah Para Nabi",
+
   "menu60": "📖 Baca bukunya",
+
   "menu59": "🔴 Tampilkan lebih banyak Langsung",
+
   "menu47": "Wallpaper",
+
   "menu48": "Berita Islam",
+
   "menu58": "🎄 Resep Natal",
+
   "menu50": "Request a service",
+
   "menu51": "Siaran Langsung",
+
   "menu52": "Ruang Diskusi",
+
   "menu53": "Zynor.Al",
+
   "menu54": "Pengaturan",
+
   "menu55": "Akun Saya",
+
   "menu56": "Dukungan",
+
   "menu57": "Pengaturan dan Dukungan"
+
   
+
   
+
         
+
         
+
     }
+
 };
 
+
+
 // دالة تفعيل اللغة (مع الحفظ)
+
 function changeLanguage(lang) {
+
     const html = document.documentElement;
+
     const body = document.body;
 
+
+
     // حفظ اللغة المختارة
+
     localStorage.setItem('alquran-lang', lang);
 
+
+
     // تغيير اللغة والاتجاه
+
     html.lang = lang;
+
     html.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
     body.dir = lang === 'ar' ? 'rtl' : 'ltr';
 
+
+
     // تغيير النصوص
+
     for (let key in translations[lang]) {
+
         const element = document.getElementById(key);
+
         if (element) {
+
             element.textContent = translations[lang][key];
+
         }
+
     }
 
+
+
 // إغلاق القائمة عند تغيير اللغة
+
 sidebar.classList.remove('active');
+
 sidebarOverlay.classList.remove('active');
 
+
+
 // تعديل اتجاه القائمة بناءً على اللغة
+
 if (lang === 'en') {
+
     sidebar.style.right = '-300px';
+
     sidebar.style.left = 'auto';
+
 } else if (lang === 'ar') {
+
     sidebar.style.left = '-300px';
+
     sidebar.style.right = 'auto';
+
 }
+
     // تغيير اتجاه التمرير
+
     document.querySelectorAll('.poster').forEach(poster => {
+
         poster.style.direction = lang === 'ar' ? 'ltr' : 'rtl';
+
     });
+
 }
+
+
 
 // عند تحميل الصفحة
+
 document.addEventListener('DOMContentLoaded', () => {
+
     const savedLang = localStorage.getItem('alquran-lang') || 'ar';
+
     changeLanguage(savedLang);
+
 });
+
 </script>
+
 </body>
+
 </html>
 
+
+
 <script language="JavaScript">
+
 <!--
+
 //Disable right click script III- By Renigade (renigade@mediaone.net) //Disable select-text script (IE4+, NS6+)- By Andy Scott //Visit http://hashem-earn-from-internet.blogspot.com/ 
+
 var message=""; 
+
 function clickIE() {
+
 if (document.all) {
+
 (message);return false;
+
 }
+
 } function clickNS(e) { 
+
 if (document.layers||(document.getElementById&&!document.all)) { 
+
 if (e.which==2||e.which==3) { (message); return false;
+
 } } } if (document.layers) { document.captureEvents(Event.MOUSEDOWN); 
+
 document.onmousedown=clickNS;
+
 } else { document.onmouseup=clickNS;
+
 document.oncontextmenu=clickIE; 
+
 } document.oncontextmenu=new Function("return false")
+
 function disableselect(e) { return false } function reEnable() { return true } 
+
 document.onselectstart=new Function ("return false") //if NS6 if (window.sidebar){ document.onmousedown=disableselect document.onclick=reEnable } //
+
 //-->
+
 </script>
+
   
+
   <script type='text/القران الكريم'> 
+
 function nocontext(e) {var clickedTag = (e==null) ? event.srcElement.tagName : e.target.tagName; if (clickedTag == "IMG") {alert(alertMsg);return false;}} var alertMsg = "ممنوع تحميل الصورة";document.oncontextmenu = nocontext; 
+
   </script>
+
 
 
