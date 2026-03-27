@@ -1,7 +1,7 @@
 {
   "name": "Zaki Dev",
-  "short_name": "ZakiDev",
-  "id": "com.zakidev.app",
+  "short_name": "Zaki Dev",
+  "id": "com.zakidev",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
