@@ -1,10 +1,10 @@
 {
   "name": "Zaki Dev",
   "short_name": "Zaki Dev",
-  "id": "com.zakidev",
+  "id": "com.zakidev.app",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#000000",
   "theme_color": "#000000",
   "icons": [
     {
