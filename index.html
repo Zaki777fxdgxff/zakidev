@@ -7524,4 +7524,32 @@ function nocontext(e) {var clickedTag = (e==null) ? event.srcElement.tagName : e
   </script>
 
 
-
+    <script>
+// Worker.js - في Cloudflare Workers
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    
+    // توجيه الطلب إلى GitHub Pages الأصلي
+    const githubUrl = 'https://zakidev.github.io' + url.pathname + url.search;
+    
+    const response = await fetch(githubUrl, {
+      method: request.method,
+      headers: request.headers,
+      body: request.body
+    });
+    
+    // نسخ الـ Response مع تعديل Headers
+    const newResponse = new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers
+    });
+    
+    // إضافة CORS
+    newResponse.headers.set('Access-Control-Allow-Origin', '*');
+    
+    return newResponse;
+  }
+};
+    </script>
