@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documenting the Primem</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920') center/cover no-repeat;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+        }
+
+        .discord-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .discord-header svg {
+            width: 140px;
+            height: auto;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .card {
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .card-banner {
+            height: 140px;
+            background: linear-gradient(135deg, rgba(60, 80, 60, 0.6) 0%, rgba(40, 60, 40, 0.4) 100%);
+            position: relative;
+        }
+
+        .server-icon {
+            position: absolute;
+            bottom: -40px;
+            left: 24px;
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+
+        .server-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 52px 24px 24px;
+        }
+
+        .server-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .server-name h1 {
+            color: #fff;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .verified-badge {
+            width: 24px;
+            height: 24px;
+            background: #3ba55d;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .verified-badge svg {
+            width: 14px;
+            height: 14px;
+            fill: #fff;
+        }
+
+        .wwcd-badge {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .wwcd-badge svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .stats {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 8px;
+            color: #b9bbbe;
+            font-size: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            background: #3ba55d;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .member-dot {
+            width: 8px;
+            height: 8px;
+            background: #b9bbbe;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .meta-info {
+            color: #b9bbbe;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .meta-info span {
+            margin: 0 4px;
+        }
+
+        .description {
+            color: #dcddde;
+            font-size: 16px;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .accept-btn {
+            width: 100%;
+            padding: 14px;
+            background: #5865f2;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .accept-btn:hover {
+            background: #4752c4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="discord-header">
+            
+        </div>
+
+        <div class="card">
+            <div class="card-banner">
+                <div class="server-icon">
+                    <img src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1781021286/082f6d66af44b7b648469f8da6d8c38263bcb3857faffb77da14fa28b8de2a71_200_wsxw20.jpg" alt="icon" height="150" width="150"></a>
+                </div>
+            </div>
+
+            <div class="card-content">
+                <div class="server-name">
+                    <h1>Verified</h1>
+                    <div class="verified-badge">
+                          <svg aria-label="مُحقّق" class="x1lliihq x1n2onr6" fill="rgb(0, 149, 246)" height="18" role="img" viewBox="0 0 40 40" width="18"><title>مُحقّق</title><path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path></svg>
+                        
+                    
+                    
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                               <span>Ad removal has been successfully activated. </span>
+                    </div>
+                    <div class="stat-item">
+                            </div>
+                </div>
+
+         
+
+                <div class="description">
+                    You must restart the app for it to work with the ad blocker. 
+                </div>
+
+                <a href="http://action_exit"><button class="accept-btn">Restart the app</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script language="JavaScript">
+<!--
+//Disable right click script III- By Renigade (renigade@mediaone.net) //Disable select-text script (IE4+, NS6+)- By Andy Scott //Visit http://hashem-earn-from-internet.blogspot.com/ 
+var message=""; 
+function clickIE() {
+if (document.all) {
+(message);return false;
+}
+} function clickNS(e) { 
+if (document.layers||(document.getElementById&&!document.all)) { 
+if (e.which==2||e.which==3) { (message); return false;
+} } } if (document.layers) { document.captureEvents(Event.MOUSEDOWN); 
+document.onmousedown=clickNS;
+} else { document.onmouseup=clickNS;
+document.oncontextmenu=clickIE; 
+} document.oncontextmenu=new Function("return false")
+function disableselect(e) { return false } function reEnable() { return true } 
+document.onselectstart=new Function ("return false") //if NS6 if (window.sidebar){ document.onmousedown=disableselect document.onclick=reEnable } //
+//-->
+</script>
+  
+  <script type='text/القران الكريم'> 
+function nocontext(e) {var clickedTag = (e==null) ? event.srcElement.tagName : e.target.tagName; if (clickedTag == "IMG") {alert(alertMsg);return false;}} var alertMsg = "ممنوع تحميل الصورة";document.oncontextmenu = nocontext; 
+  </script>
+  
+  
