@@ -11,6 +11,10 @@
     <link rel="stylesheet" href="https://mehany.manpower.gov.eg/site_new/css/bootstrap.rtl.min.css">
     <link rel="stylesheet" href="https://mehany.manpower.gov.eg/site_new/css/owl.carousel.min.css">
     <link rel="stylesheet" href="https://mehany.manpower.gov.eg/site_new/css/line-awesome.css" />
+
+    <!-- Fallback for Line Awesome icons if the local file fails to load -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css"
+          onerror="var l=document.createElement('link');l.rel='stylesheet';l.href='https://cdn.jsdelivr.net/npm/line-awesome@1.3.0/dist/line-awesome/css/line-awesome.min.css';document.head.appendChild(l);">
     <link rel="stylesheet" href="https://mehany.manpower.gov.eg/site_new/css/jquery.fancybox.min.css">
     <link rel="stylesheet" href="https://mehany.manpower.gov.eg/site_new/css/animate.css">
     <link rel="stylesheet" href="https://mehany.manpower.gov.eg/site_new/css/hover-min.css" />
@@ -50,6 +54,10 @@
 </head>
 
 <body>
+    <div class="preloader">
+        <div class="loader"></div>
+    </div>
+
     <div class="container">
     <div class="fixed">
         <div class="fixed-social">
@@ -1433,6 +1441,20 @@
     <script src="/site_new/js/main.js?v=1.4.1"></script>
     <script>
         new WOW().init();
+    </script>
+
+    <!-- Fix: ensure preloader always disappears -->
+    <script>
+        window.addEventListener('load', function () {
+            document.querySelectorAll('.preloader, .loader').forEach(function (el) {
+                el.style.display = 'none';
+            });
+        });
+        // Extra safety: hide it after 5 seconds no matter what
+        setTimeout(function () {
+            var p = document.querySelector('.preloader');
+            if (p) p.style.display = 'none';
+        }, 5000);
     </script>
 
     <script src="https://mehany.manpower.gov.eg/site_new/lozad.js"></script>
