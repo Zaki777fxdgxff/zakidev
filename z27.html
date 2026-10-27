@@ -1,8 +1,242 @@
 <!DOCTYPE html>
+<html lang="en" class="is-loading">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Navbar</title>
+
+    <!-- Full-screen resource loader: shown before any site content. -->
+    <style>
+        html.is-loading,
+        html.is-loading body {
+            width: 100%;
+            height: 100dvh !important;
+            min-height: 100dvh !important;
+            overflow: hidden !important;
+            overscroll-behavior: none !important;
+            scrollbar-width: none !important;
+        }
+
+        html.is-loading::-webkit-scrollbar,
+        html.is-loading body::-webkit-scrollbar {
+            display: none;
+        }
+
+        html.is-loading:not(.is-ready) body > :not(#site-preloader):not(script):not(noscript) {
+            visibility: hidden !important;
+        }
+
+        #site-preloader {
+            --loader-bg: #0a0a0a;
+            --loader-text: #f1f1f1;
+            --loader-muted: #a6a6a6;
+            --loader-accent: #c19977;
+            position: fixed;
+            inset: 0;
+            z-index: 2147483647;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            color: var(--loader-text);
+            font-family: 'Inter', sans-serif;
+            pointer-events: auto;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+            cursor: wait;
+            isolation: isolate;
+        }
+
+        #site-preloader .preloader__panel {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 50.1%;
+            background: var(--loader-bg);
+            transition: transform 720ms cubic-bezier(0.76, 0, 0.24, 1);
+            will-change: transform;
+        }
+
+        #site-preloader .preloader__panel--left {
+            left: 0;
+        }
+
+        #site-preloader .preloader__panel--right {
+            right: 0;
+        }
+
+        #site-preloader .preloader__edge {
+            position: absolute;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: rgba(241, 241, 241, 0.09);
+            overflow: hidden;
+        }
+
+        .preloader__panel--left .preloader__edge {
+            right: 0;
+        }
+
+        .preloader__panel--right .preloader__edge {
+            left: 0;
+        }
+
+        #site-preloader .preloader__edge::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--loader-accent);
+            transform: scaleY(var(--load-progress, 0));
+            transform-origin: bottom;
+            transition: transform 180ms ease-out;
+        }
+
+        #site-preloader .preloader__content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: min(88vw, 360px);
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            transition: opacity 180ms ease-in, transform 180ms ease-in;
+        }
+
+        #site-preloader .preloader__spinner {
+            position: relative;
+            display: grid;
+            place-items: center;
+            width: 112px;
+            height: 112px;
+            margin-bottom: 28px;
+        }
+
+        #site-preloader .preloader__ring {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            animation: preloader-spin 1.15s linear infinite;
+            will-change: transform;
+        }
+
+        #site-preloader .preloader__ring-track {
+            fill: none;
+            stroke: rgba(241, 241, 241, 0.12);
+            stroke-width: 1.5;
+        }
+
+        #site-preloader .preloader__ring-arc {
+            fill: none;
+            stroke: var(--loader-accent);
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-dasharray: 82 245;
+        }
+
+        #site-preloader .preloader__percentage {
+            color: var(--loader-text);
+            font-size: 20px;
+            font-weight: 500;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.03em;
+        }
+
+        #site-preloader .preloader__brand {
+            margin: 0 0 10px;
+            color: var(--loader-text);
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.4;
+            letter-spacing: 0.24em;
+            text-indent: 0.24em;
+            text-transform: uppercase;
+        }
+
+        #site-preloader .preloader__status {
+            margin: 0 0 24px;
+            color: var(--loader-muted);
+            font-size: 11px;
+            font-weight: 500;
+            line-height: 1.5;
+            letter-spacing: 0.16em;
+            text-indent: 0.16em;
+            text-transform: uppercase;
+        }
+
+        #site-preloader .preloader__progress {
+            width: 180px;
+            max-width: 70vw;
+            height: 2px;
+            overflow: hidden;
+            background: rgba(241, 241, 241, 0.12);
+        }
+
+        #site-preloader .preloader__progress-fill {
+            width: 100%;
+            height: 100%;
+            background: var(--loader-accent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 180ms ease-out;
+            will-change: transform;
+        }
+
+        #site-preloader.is-complete .preloader__ring {
+            animation-play-state: paused;
+        }
+
+        #site-preloader.is-complete .preloader__content {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.96);
+        }
+
+        #site-preloader.is-revealing .preloader__panel--left {
+            transform: translateX(-101%);
+        }
+
+        #site-preloader.is-revealing .preloader__panel--right {
+            transform: translateX(101%);
+        }
+
+        @keyframes preloader-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            #site-preloader .preloader__spinner {
+                width: 96px;
+                height: 96px;
+                margin-bottom: 24px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #site-preloader .preloader__ring {
+                animation: none;
+            }
+
+            #site-preloader .preloader__panel,
+            #site-preloader .preloader__content,
+            #site-preloader .preloader__edge::after,
+            #site-preloader .preloader__progress-fill {
+                transition-duration: 1ms !important;
+            }
+        }
+    </style>
+    <noscript>
+        <style>
+            #site-preloader { display: none !important; }
+            html.is-loading,
+            html.is-loading body { height: auto !important; overflow: auto !important; }
+            html.is-loading body > * { visibility: visible !important; }
+        </style>
+    </noscript>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -257,9 +491,302 @@
             }
         }
     </style>
-<base target="_blank">
 </head>
 <body>
+
+    <!-- This overlay has no close control and is removed only after loading completes. -->
+    <div id="site-preloader" role="status" aria-live="polite" aria-label="Loading website">
+        <div class="preloader__panel preloader__panel--left" aria-hidden="true">
+            <span class="preloader__edge"></span>
+        </div>
+        <div class="preloader__panel preloader__panel--right" aria-hidden="true">
+            <span class="preloader__edge"></span>
+        </div>
+
+        <div class="preloader__content">
+            <div class="preloader__spinner" aria-hidden="true">
+                <svg class="preloader__ring" viewBox="0 0 112 112" focusable="false">
+                    <circle class="preloader__ring-track" cx="56" cy="56" r="52"></circle>
+                    <circle class="preloader__ring-arc" cx="56" cy="56" r="52"></circle>
+                </svg>
+                <span class="preloader__percentage" id="preloaderPercentage">0%</span>
+            </div>
+            <p class="preloader__brand">AppGoPluy</p>
+            <p class="preloader__status" id="preloaderStatus">Loading your experience</p>
+            <div class="preloader__progress" id="preloaderProgress" role="progressbar" aria-label="Website loading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="preloader__progress-fill" id="preloaderProgressFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (() => {
+            'use strict';
+
+            const root = document.documentElement;
+            const preloader = document.getElementById('site-preloader');
+            const percentage = document.getElementById('preloaderPercentage');
+            const progress = document.getElementById('preloaderProgress');
+            const progressFill = document.getElementById('preloaderProgressFill');
+            const status = document.getElementById('preloaderStatus');
+
+            if (!preloader) return;
+
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const delay = (milliseconds) => new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+            const minimumDisplayTime = reducedMotion ? 0 : 700;
+            const startedAt = performance.now();
+            const accessibilityState = new Map();
+
+            let targetProgress = 0;
+            let shownProgress = 0;
+            let progressFrame = 0;
+            let finishing = false;
+            let released = false;
+            let lastResourceActivity = performance.now();
+            let resourceObserver;
+            let contentObserver;
+
+            if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+            root.setAttribute('aria-busy', 'true');
+            window.scrollTo(0, 0);
+
+            function renderProgress() {
+                if (released) return;
+
+                const difference = targetProgress - shownProgress;
+                shownProgress = Math.abs(difference) < 0.15
+                    ? targetProgress
+                    : shownProgress + Math.max(0.12, difference * 0.14);
+
+                const rounded = Math.min(100, Math.round(shownProgress));
+                percentage.textContent = rounded + '%';
+                progress.setAttribute('aria-valuenow', String(rounded));
+                progressFill.style.transform = 'scaleX(' + (shownProgress / 100).toFixed(4) + ')';
+                preloader.style.setProperty('--load-progress', (shownProgress / 100).toFixed(4));
+                progressFrame = window.requestAnimationFrame(renderProgress);
+            }
+
+            function setProgress(value) {
+                targetProgress = Math.max(targetProgress, Math.min(100, value));
+            }
+
+            progressFrame = window.requestAnimationFrame(renderProgress);
+            setProgress(6);
+
+            function preventInteraction(event) {
+                if (released) return;
+                event.preventDefault();
+                event.stopImmediatePropagation();
+            }
+
+            function preventScrollKeys(event) {
+                if (!released) preventInteraction(event);
+            }
+
+            function keepPageAtTop() {
+                if (!released && window.scrollY !== 0) window.scrollTo(0, 0);
+            }
+
+            document.addEventListener('wheel', preventInteraction, { capture: true, passive: false });
+            document.addEventListener('touchmove', preventInteraction, { capture: true, passive: false });
+            document.addEventListener('keydown', preventScrollKeys, true);
+            window.addEventListener('scroll', keepPageAtTop, { capture: true, passive: true });
+
+            function isolateSiteContent() {
+                if (!document.body || released) return;
+
+                Array.from(document.body.children).forEach((element) => {
+                    if (element === preloader || element.tagName === 'SCRIPT' || element.tagName === 'NOSCRIPT') return;
+
+                    if (!accessibilityState.has(element)) {
+                        accessibilityState.set(element, {
+                            inert: Boolean(element.inert),
+                            ariaHidden: element.getAttribute('aria-hidden')
+                        });
+                    }
+
+                    element.inert = true;
+                    element.setAttribute('aria-hidden', 'true');
+                });
+            }
+
+            function restoreSiteContent() {
+                accessibilityState.forEach((state, element) => {
+                    element.inert = state.inert;
+                    if (state.ariaHidden === null) element.removeAttribute('aria-hidden');
+                    else element.setAttribute('aria-hidden', state.ariaHidden);
+                });
+                accessibilityState.clear();
+            }
+
+            const domReady = document.readyState === 'loading'
+                ? new Promise((resolve) => document.addEventListener('DOMContentLoaded', resolve, { once: true }))
+                : Promise.resolve();
+
+            const windowLoaded = document.readyState === 'complete'
+                ? Promise.resolve()
+                : new Promise((resolve) => window.addEventListener('load', resolve, { once: true }));
+
+            domReady.then(() => {
+                isolateSiteContent();
+                contentObserver = new MutationObserver(isolateSiteContent);
+                contentObserver.observe(document.body, { childList: true });
+                setProgress(18);
+            });
+
+            if ('PerformanceObserver' in window) {
+                try {
+                    resourceObserver = new PerformanceObserver(() => {
+                        lastResourceActivity = performance.now();
+                        if (targetProgress < 55) setProgress(Math.min(55, 18 + performance.getEntriesByType('resource').length * 1.5));
+                    });
+                    resourceObserver.observe({ type: 'resource', buffered: true });
+                } catch (error) {
+                    resourceObserver = undefined;
+                }
+            }
+
+            function normalizeUrl(value, urls) {
+                if (!value || value.startsWith('data:') || value.startsWith('blob:') || value.startsWith('#')) return;
+                try {
+                    urls.add(new URL(value, document.baseURI).href);
+                } catch (error) {
+                    // Ignore malformed optional asset URLs without blocking the website.
+                }
+            }
+
+            function collectVisualAssets() {
+                const urls = new Set();
+
+                document.querySelectorAll('img').forEach((image) => {
+                    if (preloader.contains(image)) return;
+                    image.loading = 'eager';
+                    normalizeUrl(image.currentSrc, urls);
+                    normalizeUrl(image.getAttribute('src'), urls);
+                    normalizeUrl(image.getAttribute('data-lazyload'), urls);
+                    normalizeUrl(image.getAttribute('data-src'), urls);
+                });
+
+                document.querySelectorAll('body *').forEach((element) => {
+                    if (preloader.contains(element)) return;
+                    const background = window.getComputedStyle(element).backgroundImage;
+                    if (!background || background === 'none') return;
+
+                    const matches = background.matchAll(/url\(\s*(['"]?)(.*?)\1\s*\)/g);
+                    for (const match of matches) normalizeUrl(match[2], urls);
+                });
+
+                return Array.from(urls);
+            }
+
+            async function waitForVisualAssets() {
+                const urls = collectVisualAssets();
+                if (!urls.length) {
+                    setProgress(88);
+                    return;
+                }
+
+                let completed = 0;
+                await Promise.all(urls.map((url) => new Promise((resolve) => {
+                    const image = new Image();
+                    let settled = false;
+                    let assetTimer;
+
+                    const done = () => {
+                        if (settled) return;
+                        settled = true;
+                        window.clearTimeout(assetTimer);
+                        completed += 1;
+                        setProgress(60 + (completed / urls.length) * 28);
+                        resolve();
+                    };
+
+                    image.onload = done;
+                    image.onerror = done;
+                    assetTimer = window.setTimeout(done, 20000);
+                    image.src = url;
+                    if (image.complete) queueMicrotask(done);
+                })));
+            }
+
+            async function waitForQuietNetwork() {
+                const quietPeriod = 700;
+                const maximumQuietWait = 5000;
+                const startedWaiting = performance.now();
+
+                while (
+                    !finishing &&
+                    performance.now() - lastResourceActivity < quietPeriod &&
+                    performance.now() - startedWaiting < maximumQuietWait
+                ) {
+                    await delay(100);
+                }
+            }
+
+            function removeLoadingGate() {
+                if (released) return;
+                released = true;
+
+                window.cancelAnimationFrame(progressFrame);
+                if (resourceObserver) resourceObserver.disconnect();
+                if (contentObserver) contentObserver.disconnect();
+
+                document.removeEventListener('wheel', preventInteraction, true);
+                document.removeEventListener('touchmove', preventInteraction, true);
+                document.removeEventListener('keydown', preventScrollKeys, true);
+                window.removeEventListener('scroll', keepPageAtTop, true);
+
+                restoreSiteContent();
+                root.classList.remove('is-loading', 'is-ready');
+                root.setAttribute('aria-busy', 'false');
+                preloader.remove();
+                window.scrollTo(0, 0);
+            }
+
+            async function finishLoading() {
+                if (finishing || released) return;
+                finishing = true;
+
+                setProgress(100);
+                status.textContent = 'Everything is ready';
+                window.scrollTo(0, 0);
+                await delay(reducedMotion ? 0 : 260);
+
+                root.classList.add('is-ready');
+                preloader.classList.add('is-complete');
+                await delay(reducedMotion ? 10 : 190);
+
+                preloader.classList.add('is-revealing');
+                await delay(reducedMotion ? 10 : 740);
+                removeLoadingGate();
+            }
+
+            (async () => {
+                await windowLoaded;
+                if (finishing) return;
+
+                setProgress(60);
+                status.textContent = 'Preparing every detail';
+                lastResourceActivity = performance.now();
+
+                const fontsReady = document.fonts && document.fonts.ready
+                    ? document.fonts.ready.catch(() => undefined)
+                    : Promise.resolve();
+
+                await Promise.all([waitForVisualAssets(), fontsReady]);
+                if (finishing) return;
+
+                setProgress(94);
+                await waitForQuietNetwork();
+                if (finishing) return;
+
+                const remainingTime = minimumDisplayTime - (performance.now() - startedAt);
+                if (remainingTime > 0) await delay(remainingTime);
+                finishLoading();
+            })().catch(finishLoading);
+        })();
+    </script>
 
     <!-- Desktop Header -->
     <header class="smart-header desktop-header" id="smartHeader">
@@ -425,7 +952,7 @@
 <html lang="en-US">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
             <!-- Google Tag Manager -->
         <script>
@@ -606,37 +1133,6 @@ var woocommerce_params = {"ajax_url":"/benoit/wp-admin/admin-ajax.php","wc_ajax_
 /*# sourceURL=rs-plugin-settings-inline-css */
 </style>
 
-
-<!-- ===== تقليل عرض المحتوى على شاشات الكمبيوتر فقط - بدون حذف أي قسم ===== -->
-<style id="desktop-content-width-fix">
-@media screen and (min-width: 1025px) {
-    :root {
-        --benoit-elementor-container-width: 1000px;
-    }
-    /* تضييق كل الحاويات الرئيسية للمحتوى */
-    .elementor-section-boxed > .elementor-container,
-    .elementor-container,
-    .wgl-container,
-    .container-wrapper,
-    .row,
-    .row-footer {
-        max-width: 1000px !important;
-    }
-    /* تضييق سلايدر الصفحة الرئيسية أيضاً */
-    rs-module-wrap,
-    #rev_slider_1_1_wrapper {
-        max-width: 1000px !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-    }
-    /* الحفاظ على توسيط المحتوى */
-    .elementor-column {
-        margin-left: auto;
-        margin-right: auto;
-    }
-}
-</style>
-
 </head>
 
 <body class="home wp-singular page-template-default page page-id-893 wp-theme-benoit theme-benoit woocommerce-no-js dark-mode elementor-default elementor-kit-13 elementor-page elementor-page-893">
@@ -726,7 +1222,7 @@ var woocommerce_params = {"ajax_url":"/benoit/wp-admin/admin-ajax.php","wc_ajax_
 								data-frame_1="e:power4.inOut;st:1260;sp:1500;sR:1260;"
 								data-frame_999="o:0;st:w;sR:6240;"
 								style="z-index:5;"
-							><img fetchpriority="high" decoding="async" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1782878518/images_-_2026-07-01T070048.647_fefsqf.jpg" alt="image" class="tp-rs-img rs-lazyload" width="347" height="433" data-lazyload="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1782878518/images_-_2026-07-01T070048.647_fefsqf.jpg" data-no-retina> 
+							><img fetchpriority="high" decoding="async" src="//wgl-dsites.net/benoit/wp-content/uploads/2021/03/slider-img-4.jpg" alt="image" class="tp-rs-img rs-lazyload" width="347" height="433" data-lazyload="https://wgl-dsites.net/benoit/wp-content/uploads/2021/03/slider-img-4.jpg" data-no-retina> 
 							</rs-layer><!--
 
 							--><rs-layer
@@ -836,7 +1332,7 @@ var woocommerce_params = {"ajax_url":"/benoit/wp-admin/admin-ajax.php","wc_ajax_
 								data-frame_1="e:power4.inOut;st:700;sp:1500;sR:700;"
 								data-frame_999="o:0;st:w;sR:6800;"
 								style="z-index:13;"
-							><img loading="lazy" decoding="async" src="//wgl-dsites.net/benoit/wp-content/plugins/revslider/public/assets/assets/dummy.png" alt="image" class="tp-rs-img rs-lazyload" width="347" height="433" data-lazyload="//wgl-dsites.net/benoit/wp-content/uploads/2021/03/slider-img-7.jpg" data-no-retina> 
+							><img loading="lazy" decoding="async" src="//wgl-dsites.net/benoit/wp-content/plugins/revslider/public/assets/assets/dummy.png" alt="image" class="tp-rs-img rs-lazyload" width="347" height="433" data-lazyload="//wgl-dsites.net/benoit/wp-content/uploads/2021/03/slider-img-8.jpg" data-no-retina> 
 							</rs-layer><!--
 
 							--><rs-layer
@@ -1787,7 +2283,21 @@ var woocommerce_params = {"ajax_url":"/benoit/wp-admin/admin-ajax.php","wc_ajax_
 		</section>
 							</div>
 		</div></div></div></footer><div id="scroll_up"></div>
-		<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+		<script>
+			// Decode the protected email locally instead of requesting a missing local Cloudflare script.
+			document.querySelectorAll('.__cf_email__').forEach((element) => {
+				const encoded = element.getAttribute('data-cfemail');
+				if (!encoded) return;
+				const key = parseInt(encoded.substring(0, 2), 16);
+				let email = '';
+				for (let index = 2; index < encoded.length; index += 2) {
+					email += String.fromCharCode(parseInt(encoded.substring(index, index + 2), 16) ^ key);
+				}
+				element.textContent = email;
+				const link = element.closest('a');
+				if (link) link.href = 'mailto:' + email;
+			});
+		</script><script>
 			window.RS_MODULES = window.RS_MODULES || {};
 			window.RS_MODULES.modules = window.RS_MODULES.modules || {};
 			window.RS_MODULES.waiting = window.RS_MODULES.waiting || [];
