@@ -1,0 +1,390 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>404 - Not Found | zakidev.shop</title>
+      <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            :root {
+                --bg: #FFFFFF;
+                --bg-card: #FFFFFF;
+                --text: #4E546C;
+                --text-light: #8B8B8B;
+                --text-faint: #B8B8B8;
+                --accent: #5C3D2E;
+                --accent-light: #7A5A4A;
+                --border: rgba(0,0,0,0.06);
+                --shadow: 0 1px 4px rgba(0,0,0,0.06);
+                --shadow-hover: 0 4px 16px rgba(0,0,0,0.08);
+                --font-hand: 'Caveat', cursive;
+                --font-body: 'Inter', -apple-system, sans-serif;
+                --font-mono: 'JetBrains Mono', monospace;
+                --radius: 20px;
+                --primary: #4E546C;
+                --secondary: #5C3D2E;
+                --accent-color: #5C3D2E;
+                --dark: #4E546C;
+                --darker: #3A3F52;
+                --light: #FFFFFF;
+            }
+
+            body {
+                font-family: var(--font-body);
+                background: var(--bg);
+                color: var(--text);
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+                position: relative;
+                cursor: none;
+            }
+
+            .cursor {
+                width: 20px;
+                height: 20px;
+                border: 2px solid var(--primary);
+                border-radius: 50%;
+                position: fixed;
+                pointer-events: none;
+                z-index: 9999;
+                transition: transform 0.1s;
+                mix-blend-mode: difference;
+            }
+
+            .cursor-follower {
+                width: 40px;
+                height: 40px;
+                background: rgba(78, 84, 108, 0.1);
+                border-radius: 50%;
+                position: fixed;
+                pointer-events: none;
+                z-index: 9998;
+                transition: transform 0.3s ease;
+            }
+
+            @media (max-width: 768px) {
+                body { cursor: auto; }
+                .cursor, .cursor-follower { display: none !important; }
+            }
+
+            .bg-animation {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                z-index: 0;
+            }
+
+            .bg-animation::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: 
+                    radial-gradient(circle at 20% 80%, rgba(78, 84, 108, 0.08) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(92, 61, 46, 0.06) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(139, 139, 139, 0.04) 0%, transparent 40%);
+                animation: bgFloat 20s ease-in-out infinite;
+            }
+
+            @keyframes bgFloat {
+                0%, 100% { transform: translate(0, 0) rotate(0deg); }
+                33% { transform: translate(30px, -30px) rotate(120deg); }
+                66% { transform: translate(-20px, 20px) rotate(240deg); }
+            }
+
+            .grid-lines {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: 
+                    linear-gradient(rgba(78, 84, 108, 0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(78, 84, 108, 0.03) 1px, transparent 1px);
+                background-size: 50px 50px;
+                z-index: 1;
+            }
+
+            .container {
+                position: relative;
+                z-index: 10;
+                text-align: center;
+                padding: 40px;
+            }
+
+            .error-code {
+                font-family: var(--font-hand);
+                font-size: 12rem;
+                font-weight: 700;
+                line-height: 1;
+                position: relative;
+                color: var(--text);
+                text-shadow: 
+                    0 0 20px rgba(78, 84, 108, 0.2),
+                    0 0 40px rgba(78, 84, 108, 0.1);
+                animation: glitch 2s infinite;
+            }
+
+            .error-code::before,
+            .error-code::after {
+                content: '404';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+
+            .error-code::before {
+                color: var(--accent);
+                animation: glitch-1 0.3s infinite;
+                clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+                transform: translate(-2px, -2px);
+                opacity: 0.5;
+            }
+
+            .error-code::after {
+                color: var(--text-light);
+                animation: glitch-2 0.3s infinite;
+                clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+                transform: translate(2px, 2px);
+                opacity: 0.5;
+            }
+
+            @keyframes glitch {
+                0%, 90%, 100% { transform: translate(0); }
+                92% { transform: translate(-5px, 0); }
+                94% { transform: translate(5px, 0); }
+                96% { transform: translate(-5px, 0); }
+                98% { transform: translate(5px, 0); }
+            }
+
+            @keyframes glitch-1 {
+                0%, 100% { transform: translate(-2px, -2px); }
+                50% { transform: translate(2px, 2px); }
+            }
+
+            @keyframes glitch-2 {
+                0%, 100% { transform: translate(2px, 2px); }
+                50% { transform: translate(-2px, -2px); }
+            }
+
+            .error-message {
+                font-family: var(--font-hand);
+                font-size: 3rem;
+                color: var(--text);
+                margin: 10px 0 10px;
+                font-weight: 600;
+            }
+
+            .error-description {
+                font-size: 1.1rem;
+                color: var(--text-light);
+                margin-bottom: 40px;
+                max-width: 400px;
+                line-height: 1.7;
+            }
+
+            .home-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 12px;
+                font-family: var(--font-body);
+                font-size: 15px;
+                font-weight: 600;
+                color: var(--bg-card);
+                background: var(--text);
+                padding: 16px 36px;
+                border-radius: 100px;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                border: none;
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .home-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                transition: left 0.5s;
+            }
+
+            .home-btn:hover::before {
+                left: 100%;
+            }
+
+            .home-btn:hover {
+                background: var(--accent);
+                transform: translateY(-3px);
+                box-shadow: var(--shadow-hover);
+            }
+
+            .home-btn svg {
+                width: 20px;
+                height: 20px;
+                transition: transform 0.3s ease;
+            }
+
+            .home-btn:hover svg {
+                transform: translateX(-4px);
+            }
+
+            .floating-element {
+                position: absolute;
+                border: 2px solid rgba(78, 84, 108, 0.08);
+                border-radius: 10px;
+                animation: float 6s ease-in-out infinite;
+            }
+
+            .floating-element:nth-child(1) {
+                width: 60px;
+                height: 60px;
+                top: 20%;
+                left: 10%;
+                animation-delay: 0s;
+            }
+
+            .floating-element:nth-child(2) {
+                width: 40px;
+                height: 40px;
+                top: 60%;
+                right: 15%;
+                animation-delay: 2s;
+            }
+
+            .floating-element:nth-child(3) {
+                width: 80px;
+                height: 80px;
+                bottom: 20%;
+                left: 20%;
+                animation-delay: 4s;
+            }
+
+            @keyframes float {
+                0%, 100% { transform: translateY(0) rotate(0deg); }
+                50% { transform: translateY(-20px) rotate(10deg); }
+            }
+
+            @media screen and (max-width: 768px) {
+                .error-code { font-size: 8rem; }
+                .error-message { font-size: 2.5rem; }
+                .error-description { font-size: 1rem; padding: 0 20px; }
+                .home-btn { padding: 14px 30px; font-size: 14px; }
+            }
+
+            @media screen and (max-width: 480px) {
+                .error-code { font-size: 6rem; }
+                .error-message { font-size: 2rem; }
+                .home-btn { padding: 12px 24px; font-size: 13px; width: 100%; justify-content: center; }
+            }
+        </style>
+    <style type="text/css">* {user-select: auto !important; -webkit-user-select: auto !important;}</style><input type="hidden" id="inject_idm_text_selection"></head>
+    <body>
+        <div class="cursor"></div>
+        <div class="cursor-follower"></div>
+        
+        <div class="bg-animation"></div>
+        <div class="grid-lines"></div>
+        
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        
+        <div class="container">
+            <div class="error-code">404</div>
+            <h1 class="error-message">Page not found</h1>
+            <p class="error-description">The page you are looking for does not exist or has been moved.</p>
+            <a href="https://www.zakidev.shop" class="home-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+                Return to main page
+            </a>
+        </div>
+
+        <script>
+            if (window.innerWidth > 768) {
+                const cursor = document.querySelector('.cursor');
+                const cursorFollower = document.querySelector('.cursor-follower');
+
+                document.addEventListener('mousemove', (e) => {
+                    cursor.style.left = e.clientX + 'px';
+                    cursor.style.top = e.clientY + 'px';
+                    setTimeout(() => {
+                        cursorFollower.style.left = e.clientX + 'px';
+                        cursorFollower.style.top = e.clientY + 'px';
+                    }, 100);
+                });
+
+                document.addEventListener('mousedown', () => {
+                    cursor.style.transform = 'scale(0.8)';
+                    cursorFollower.style.transform = 'scale(0.8)';
+                });
+
+                document.addEventListener('mouseup', () => {
+                    cursor.style.transform = 'scale(1)';
+                    cursorFollower.style.transform = 'scale(1)';
+                });
+
+                const interactiveElements = document.querySelectorAll('a, button, .home-btn');
+                interactiveElements.forEach(el => {
+                    el.addEventListener('mouseenter', () => {
+                        cursor.style.transform = 'scale(2)';
+                        cursorFollower.style.transform = 'scale(2)';
+                    });
+                    el.addEventListener('mouseleave', () => {
+                        cursor.style.transform = 'scale(1)';
+                        cursorFollower.style.transform = 'scale(1)';
+                    });
+                });
+            }
+        </script>
+    <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;b5a39be20ea141d29e4c4468beeac64e&quot;,&quot;r&quot;:1,&quot;spa&quot;:2}" crossorigin="anonymous"></script>
+<style>
+/* منع تحديد النصوص في جميع المتصفحات */
+body {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* النسخة القياسية */
+}
+</style>
+
+<script type="text/javascript">
+// منع القائمة المنسدلة عند الضغط على زر الفأرة الأيمن
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+});
+
+// منع اختصارات لوحة المفاتيح الخاصة بالنسخ (Ctrl+C, Ctrl+X, Ctrl+U)
+document.addEventListener('keydown', function(e) {
+    // منع Ctrl+C (النسخ) و Ctrl+X (القص) و Ctrl+U (عرض السورس كود) و Ctrl+S (الحفظ)
+    if (e.ctrlKey && (e.key === 'c' || e.key === 'x' || e.key === 'u' || e.key === 's' || e.keyCode === 67 || e.keyCode === 88 || e.keyCode === 85 || e.keyCode === 83)) {
+        e.preventDefault();
+        return false;
+    }
+});
+</script>
+
+    </body></html>
