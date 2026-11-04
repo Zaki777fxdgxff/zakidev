@@ -1,17 +1,387 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <title>الصفحة مش موجودة</title>
-    <script>
-        setTimeout(function () {
-            window.location.replace("/");
-        }, 3000);
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لا يوجد شيء هنا</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden; /* يمنع اهتزاز الصفحة نهائياً */
+  }
+
+  body {
+    background: radial-gradient(ellipse at center, #0d1b2e 0%, #070b14 70%);
+    font-family: "Tajawal", "Fira Sans", sans-serif;
+    display: grid;
+    place-items: center;
+  }
+
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 8px;
+  }
+
+  /* الأيقونة أكبر قليلاً: الحجم الأصلي 370 تم تكبير الحاوية مباشرة */
+  .scene { width: 440px; height: 440px; }
+
+  /* =====================================================
+     الأنيميشن الأصلي كاملاً (مع إرجاع توقيتات الغاز المتدرجة)
+     ===================================================== */
+  .container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    flex-direction: column;
+    transform: scale(1.15);
+  }
+
+  .moon {
+    background-color: #39beff;
+    height: 170px;
+    width: 170px;
+    border-radius: 50%;
+    position: absolute;
+    margin: auto;
+    left: 0; right: 0; top: 0; bottom: 0;
+    overflow: hidden;
+    will-change: transform;
+  }
+
+  .crater {
+    background-color: #31b4ff;
+    height: 30px; width: 30px;
+    border-radius: 50%;
+    position: relative;
+  }
+  .crater:before {
+    content: "";
+    position: absolute;
+    height: 25px; width: 25px;
+    border-radius: 50%;
+    box-shadow: -5px 0 0 2px #1ca4f9;
+    top: 2px; left: 7px;
+  }
+  .crater1 { top: 27px; left: 90px; transform: scale(0.9); }
+  .crater2 { bottom: 15px; left: 61px; transform: scale(0.6); }
+  .crater3 { left: 15px; transform: scale(0.75); }
+  .crater4 { left: 107px; top: 32px; transform: scale(1.18); }
+  .crater5 { left: 33px; bottom: 4px; transform: scale(0.65); }
+
+  .shadow {
+    height: 190px; width: 190px;
+    box-shadow: 21px 0 0 5px rgba(0, 0, 0, 0.15);
+    border-radius: 50%;
+    position: relative;
+    bottom: 157.5px; right: 46px;
+  }
+
+  .eye {
+    background-color: #161616;
+    height: 12px; width: 12px;
+    position: relative;
+    border-radius: 50%;
+  }
+  .eye-l { bottom: 255px; left: 59px; }
+  .eye-r { bottom: 267px; left: 101px; }
+
+  .mouth {
+    height: 5px; width: 10px;
+    border: 3px solid #161616;
+    position: relative;
+    bottom: 262px; left: 79px;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+  }
+
+  .blush {
+    background-color: #1ca4f9;
+    height: 7.5px; width: 7.5px;
+    position: relative;
+    border-radius: 50%;
+  }
+  .blush1 { bottom: 273px; left: 50px; }
+  .blush2 { bottom: 281px; left: 115px; }
+
+  .orbit {
+    height: 280px; width: 280px;
+    border-radius: 50%;
+    position: absolute;
+    margin: auto;
+    left: 0; right: 0; top: 0; bottom: 0;
+    animation: spin 10s infinite linear;
+    will-change: transform;
+  }
+  @keyframes spin {
+    100% { transform: rotate(360deg); }
+  }
+
+  .rocket {
+    background-color: #fafcf7;
+    height: 50px; width: 25px;
+    border-radius: 50% 50% 0 0;
+    position: relative;
+    left: -11px; top: 112px;
+    overflow: visible;
+  }
+  .rocket:before {
+    content: "";
+    position: absolute;
+    background-color: #39beff;
+    height: 20px; width: 55px;
+    border-radius: 50% 50% 0 0;
+    z-index: -1;
+    right: -15px; bottom: 0;
+  }
+  .rocket:after {
+    content: "";
+    position: absolute;
+    background-color: #39beff;
+    height: 4px; width: 15px;
+    border-radius: 0 0 2px 2px;
+    bottom: -4px; left: 4.3px;
+  }
+
+  .rocket .fire {
+    position: absolute;
+    bottom: -20px; left: 50%;
+    transform: translateX(-50%);
+    width: 12px; height: 30px;
+    background: radial-gradient(ellipse at center, #ffec85 0%, #ffae34 40%, #ec760c 70%, #cd4606 90%, rgba(0, 0, 0, 0) 100%);
+    border-radius: 50%;
+    animation: flame 0.3s infinite alternate;
+    z-index: -1;
+  }
+  @keyframes flame {
+    0% { transform: translateX(-50%) scaleY(1); opacity: 0.9; }
+    100% { transform: translateX(-50%) scaleY(1.4); opacity: 0.5; }
+  }
+
+  .rocket .gas {
+    position: absolute;
+    bottom: -35px; left: 50%;
+    transform: translateX(-50%);
+    width: 10px; height: 10px;
+    background: rgba(200, 200, 200, 0.6);
+    border-radius: 50%;
+    animation: gas 1.5s infinite ease-out;
+  }
+  /* ===== التوقيتات المتدرجة لكل جزيئات الغاز (كانت مفقودة) ===== */
+  .rocket .gas:nth-child(3) { animation-delay: 0s;    left: 50%; }
+  .rocket .gas:nth-child(4) { animation-delay: 0.2s;  left: 35%; }
+  .rocket .gas:nth-child(5) { animation-delay: 0.4s;  left: 65%; }
+  .rocket .gas:nth-child(6) { animation-delay: 0.6s;  left: 42%; }
+  .rocket .gas:nth-child(7) { animation-delay: 0.8s;  left: 58%; }
+  .rocket .gas:nth-child(8) { animation-delay: 1.0s;  left: 30%; }
+  .rocket .gas:nth-child(9) { animation-delay: 1.2s;  left: 70%; }
+
+  @keyframes gas {
+    0% { transform: translateX(-50%) scale(0.5); opacity: 0.8; }
+    100% { transform: translateX(-50%) translateY(40px) scale(1.8); opacity: 0; }
+  }
+
+  .window {
+    background-color: #151845;
+    height: 10px; width: 10px;
+    border: 2px solid #b8d2ec;
+    border-radius: 50%;
+    position: relative;
+    top: 17px; left: 5px;
+  }
+
+  .curve {
+    width: 100%; height: 100%;
+    position: absolute;
+    animation: rotate 10s linear infinite;
+    fill: transparent;
+    will-change: transform;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .curve text {
+    letter-spacing: 20px;
+    text-transform: uppercase;
+    font: 1.5em "Fira Sans", sans-serif;
+    fill: #95d5ff;
+    filter: drop-shadow(0 2px 8px rgb(21, 117, 207));
+  }
+  /* ========= نهاية الأنيميشن الأصلي ========= */
+
+  .message {
+    color: #e8f4ff;
+    font-size: 1.5rem;
+    font-weight: 500;
+    
+    text-shadow: 0 0 12px rgba(57, 190, 255, 0.45);
+    animation: fadeUp 1s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .home-btn {
+    position: relative;
+    display: inline-block;
+    margin-top: 16px;
+    padding: 14px 48px;
+    font-family: inherit;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #062033;
+    background: linear-gradient(120deg, #39beff, #7ee0ff, #39beff);
+    background-size: 200% auto;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: all 0.35s ease;
+    animation: fadeUp 1s 0.3s ease both;
+  }
+  .home-btn:hover {
+    background-position: left center;
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 12px 30px rgba(57, 190, 255, 0.45), 0 0 0 6px rgba(57, 190, 255, 0.15);
+    color: #04263d;
+  }
+  .home-btn::before {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 60px;
+    background: linear-gradient(120deg, #39beff, transparent, #7ee0ff);
+    z-index: -1;
+    filter: blur(10px);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .home-btn:hover::before { opacity: 0.9; }
+  .home-btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50px;
+    box-shadow: 0 0 0 0 rgba(57, 190, 255, 0.5);
+    opacity: 0;
+    transition: box-shadow 0.4s ease, opacity 0.4s ease;
+  }
+  .home-btn:active::after {
+    box-shadow: 0 0 0 18px rgba(57, 190, 255, 0);
+    opacity: 1;
+  }
+  .home-btn:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 4px 12px rgba(57, 190, 255, 0.3);
+  }
+
+  @media (max-width: 480px) {
+    .scene { width: 320px; height: 320px; }
+    .container { transform: scale(0.85); }
+    .message { font-size: 1.1rem; }
+    .home-btn { padding: 12px 36px; font-size: 1rem; }
+  }
+  /* إخفاء التأثير الأزرق عند النقر */
+a, button, input, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+}
+
+</style>
+<base target="_blank">
 </head>
-<body style="font-family: Arial; text-align: center; padding-top: 100px;">
-    <h1>😅 الصفحة دي مش موجودة</h1>
-    <p>هنرجعك للرئيسية خلال 3 ثواني...</p>
-    <a href="https://www.zakidev.shop">اضغط هنا عشان ترجع دلوقتي</a>
+<body>
+
+<div class="wrapper">
+
+  <div class="scene">
+    <div class="container">
+      <div class="moon">
+        <div class="crater crater1"></div>
+        <div class="crater crater2"></div>
+        <div class="crater crater3"></div>
+        <div class="crater crater4"></div>
+        <div class="crater crater5"></div>
+        <div class="shadow"></div>
+        <div class="eye eye-l"></div>
+        <div class="eye eye-r"></div>
+        <div class="mouth"></div>
+        <div class="blush blush1"></div>
+        <div class="blush blush2"></div>
+      </div>
+
+      <div class="orbit">
+        <div class="rocket">
+          <div class="window"></div>
+          <div class="fire"></div>
+          <div class="gas"></div>
+          <div class="gas"></div>
+          <div class="gas"></div>
+          <div class="gas"></div>
+          <div class="gas"></div>
+          <div class="gas"></div>
+          <div class="gas"></div>
+        </div>
+      </div>
+
+      <div class="curve">
+        <svg viewBox="0 0 500 500">
+          <path id="loading" d="M73.2,148.6c4-6.1,65.5-96.8,178.6-95.6c111.3,1.2,170.8,90.3,175.1,97"></path>
+          <text width="500">
+            <textPath href="#loading" xlink:href="#loading"></textPath>
+          </text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <p class="message"><strong>There is nothing here. Go to the homepage</strong></p>
+
+
+  <!-- غيّر الرابط هنا إلى رابط موقعك -->
+  <a href="https://www.zakidev.shop" class="home-btn">Home Page</a>
+
+</div>
+<style>
+/* منع تحديد النصوص في جميع المتصفحات */
+body {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* النسخة القياسية */
+}
+</style>
+
+<script type="text/javascript">
+// منع القائمة المنسدلة عند الضغط على زر الفأرة الأيمن
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+});
+
+// منع اختصارات لوحة المفاتيح الخاصة بالنسخ (Ctrl+C, Ctrl+X, Ctrl+U)
+document.addEventListener('keydown', function(e) {
+    // منع Ctrl+C (النسخ) و Ctrl+X (القص) و Ctrl+U (عرض السورس كود) و Ctrl+S (الحفظ)
+    if (e.ctrlKey && (e.key === 'c' || e.key === 'x' || e.key === 'u' || e.key === 's' || e.keyCode === 67 || e.keyCode === 88 || e.keyCode === 85 || e.keyCode === 83)) {
+        e.preventDefault();
+        return false;
+    }
+});
+</script>
+
 </body>
 </html>
