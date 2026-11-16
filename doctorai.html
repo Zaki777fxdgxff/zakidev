@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تطبيقي - واجهة عرض المنتجات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style>
+        /* ======== RESET & BASE ======== */
+        * { -webkit-tap-highlight-color: transparent; user-select: none; margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        body { font-family: Arial, sans-serif; overflow-x: hidden; position: relative; }
+        a { text-decoration: none; }
+
+        /* ======== CSS VARIABLES / THEMES ======== */
+        :root {
+            --background-color: #ffffff;
+            --text-color: #000000;
+            --top-bar-bg: #ffffff;
+            --tab-color: #657786;
+            --tab-active-color: #1da1f2;
+            --sidebar-bg: #f5f8fa;
+            --sidebar-hover-bg: #e1e8ed;
+            --content-bg: #f7f9fa;
+            --card-bg: #ffffff;
+            --card-shadow: rgba(0,0,0,0.08);
+            --price-color: #e0245e;
+            --old-price-color: #8899a6;
+            --btn-bg: #1da1f2;
+            --btn-hover: #0d8ecf;
+            --footer-border-color: rgba(0,0,0,0.1);
+            --footer-blur: blur(10px);
+        }
+        :root[data-theme="dark"] {
+            --background-color: #000;
+            --text-color: #ffffff;
+            --top-bar-bg: #000;
+            --sidebar-bg: #000;
+            --sidebar-hover-bg: #111;
+            --content-bg: #0a0a0a;
+            --card-bg: #111;
+            --card-shadow: rgba(255,255,255,0.05);
+            --price-color: #ff6b8a;
+            --old-price-color: #555;
+            --btn-bg: #1da1f2;
+            --btn-hover: #0d8ecf;
+            --footer-border-color: rgba(255,255,255,0.15);
+            --footer-blur: blur(10px);
+        }
+        :root[data-theme="blue"] {
+            --background-color: #15202b;
+            --text-color: #ffffff;
+            --top-bar-bg: #15202b;
+            --sidebar-bg: #1c252e;
+            --sidebar-hover-bg: #2a3b4c;
+            --content-bg: #192734;
+            --card-bg: #1e2d3d;
+            --card-shadow: rgba(0,0,0,0.3);
+            --price-color: #ff6b8a;
+            --old-price-color: #657786;
+            --btn-bg: #1da1f2;
+            --btn-hover: #0d8ecf;
+            --footer-border-color: rgba(255,255,255,0.2);
+            --footer-blur: blur(10px);
+        }
+        body { background-color: var(--background-color); color: var(--text-color); }
+
+        /* ======== PRELOADER ======== */
+        #smart-preloader {
+            position: fixed; inset: 0; z-index: 999999;
+            width: 100%; height: 100vh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: #0a0a0a; font-family: 'Inter', sans-serif;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        #smart-preloader.done { opacity: 0; visibility: hidden; pointer-events: none; }
+        #smart-preloader .spinner {
+            width: 70px; height: 70px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: #c19977; border-radius: 50%;
+            animation: spinLoader 0.9s linear infinite;
+        }
+        #smart-preloader .loader-percentage {
+            margin-top: 20px; color: #fff; font-size: 20px; font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+        #smart-preloader .loader-brand {
+            margin-top: 10px; color: #a6a6a6; font-size: 12px;
+            letter-spacing: 0.2em; text-transform: uppercase;
+        }
+        body.loading { overflow: hidden; }
+        @keyframes spinLoader { to { transform: rotate(360deg); } }
+
+        /* ======== HEADER ======== */
+        .header-wrapper {
+            background-color: var(--background-color);
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        .header-wrapper.hidden { transform: translateY(-100%); }
+        .top-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 20px; color: var(--text-color); background-color: var(--top-bar-bg);
+        }
+        .top-bar .left-section i, .top-bar .right-section i {
+            font-size: 22px; color: var(--text-color); cursor: pointer;
+        }
+        .center-section { flex-grow: 1; text-align: center; }
+        .center-section img { width: 40px; height: 40px; }
+
+        /* ======== TABS ======== */
+        .fixed-container { display: flex; justify-content: center; background-color: var(--top-bar-bg); }
+        .tabs { display: flex; border-bottom: 1px solid var(--tab-color); width: 100%; justify-content: center; }
+        .tab {
+            flex: 1; text-align: center; color: var(--tab-color);
+            padding: 15px 0; cursor: pointer; font-size: 16px; font-weight: bold;
+            position: relative;
+        }
+        .tab.active { color: var(--tab-active-color); border-bottom: 3px solid var(--tab-active-color); }
+        .tab .tab-badge {
+            position: absolute; top: 8px; right: 8px;
+            background: #e0245e; color: #fff; font-size: 10px;
+            padding: 1px 5px; border-radius: 10px;
+        }
+
+        /* ======== SIDEBAR ======== */
+        .sidebar {
+            position: fixed; top: 0; width: 260px; height: 100%;
+            background-color: var(--sidebar-bg); color: var(--text-color);
+            z-index: 1001; overflow-y: auto;
+            transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        [dir="rtl"] .sidebar { right: 0; transform: translateX(100%); }
+        [dir="ltr"] .sidebar { left: 0; transform: translateX(-100%); }
+        .sidebar.active { transform: translateX(0); }
+        .sidebar-overlay {
+            position: fixed; inset: 0; background-color: rgba(0,0,0,0.5);
+            z-index: 999; opacity: 0; transition: opacity 0.55s ease; pointer-events: none;
+        }
+        .sidebar-overlay.active { opacity: 1; pointer-events: all; }
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid rgba(128,128,128,0.2); }
+        .sidebar-header img { height: 55px; width: auto; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .icon-text-item {
+            padding: 12px 15px; border-bottom: 1px solid rgba(128,128,128,0.1);
+            display: flex; align-items: center; cursor: pointer;
+            transition: background-color 0.3s ease; font-size: 1.1em;
+        }
+        .icon-text-item:last-child { border-bottom: none; }
+        .icon-text-item:hover { background-color: var(--sidebar-hover-bg); }
+        .icon-text-item a {
+            display: flex; align-items: center; gap: 15px;
+            width: 100%; color: var(--text-color); font-size: 18px;
+        }
+        .icon-text-item i { font-size: 22px; width: 24px; text-align: center; color: var(--tab-active-color); }
+
+        /* ======== ACCORDION ======== */
+        .accordion-header {
+            padding: 12px 15px; cursor: pointer; display: flex;
+            justify-content: space-between; align-items: center;
+            font-weight: bold; font-size: 1.1em; border-bottom: 1px solid rgba(128,128,128,0.1);
+        }
+        .accordion-header .arrow { transition: transform 0.3s ease; font-size: 1.2em; }
+        .accordion-header.active .arrow { transform: rotate(180deg); }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
+        .accordion-content.open { max-height: 500px; }
+        .language-buttons { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px; }
+        .language-buttons button {
+            flex: 1 1 30%; padding: 8px; border: none; border-radius: 6px;
+            background-color: var(--tab-active-color); color: #fff;
+            font-weight: bold; cursor: pointer; font-size: 13px;
+        }
+
+        /* ======== MAIN CONTENT ======== */
+        .content { display: none; padding: 140px 10px 90px; min-height: 100vh; background-color: var(--content-bg); }
+        .content.active { display: block; }
+
+        /* ======== PRODUCTS PAGE ======== */
+        .products-header { text-align: center; margin-bottom: 20px; }
+        .products-header h2 { font-size: 24px; margin-bottom: 6px; }
+        .products-header p { font-size: 14px; opacity: 0.7; }
+
+        .categories-bar {
+            display: flex; gap: 8px; overflow-x: auto; padding: 0 4px 12px;
+            scrollbar-width: none; -ms-overflow-style: none;
+        }
+        .categories-bar::-webkit-scrollbar { display: none; }
+        .cat-btn {
+            flex: 0 0 auto; padding: 8px 18px; border-radius: 20px;
+            border: 1px solid var(--tab-color); background: transparent;
+            color: var(--text-color); font-size: 14px; font-weight: bold;
+            cursor: pointer; transition: all 0.25s ease; white-space: nowrap;
+        }
+        .cat-btn.active { background: var(--tab-active-color); color: #fff; border-color: var(--tab-active-color); }
+
+        .products-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 14px; padding-bottom: 20px;
+        }
+        .product-card {
+            background: var(--card-bg); border-radius: 14px;
+            box-shadow: 0 2px 8px var(--card-shadow);
+            overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease;
+            cursor: pointer; position: relative;
+        }
+        .product-card:active { transform: scale(0.97); }
+        .product-card .prod-img-wrap {
+            width: 100%; aspect-ratio: 1 / 1; overflow: hidden;
+            background: var(--content-bg); position: relative;
+        }
+        .product-card .prod-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+        .product-card:hover .prod-img-wrap img { transform: scale(1.05); }
+        .product-card .prod-badge {
+            position: absolute; top: 8px; right: 8px;
+            background: #e0245e; color: #fff; font-size: 11px;
+            padding: 3px 8px; border-radius: 10px; font-weight: bold;
+        }
+        .product-card .prod-info { padding: 10px; }
+        .product-card .prod-name { font-size: 14px; font-weight: bold; margin-bottom: 4px; line-height: 1.3; }
+        .product-card .prod-cat { font-size: 11px; opacity: 0.6; margin-bottom: 6px; }
+        .product-card .prod-price-row { display: flex; align-items: center; gap: 8px; }
+        .product-card .prod-price { color: var(--price-color); font-size: 16px; font-weight: bold; }
+        .product-card .prod-old { color: var(--old-price-color); font-size: 12px; text-decoration: line-through; }
+        .product-card .prod-btn {
+            margin-top: 8px; width: 100%; padding: 8px; border: none; border-radius: 8px;
+            background: var(--btn-bg); color: #fff; font-size: 13px; font-weight: bold;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .product-card .prod-btn:active { background: var(--btn-hover); }
+
+        /* ======== PRODUCT MODAL ======== */
+        .product-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+            display: none; justify-content: center; align-items: flex-end;
+            z-index: 2000; opacity: 0; transition: opacity 0.3s ease;
+        }
+        .product-modal.show { display: flex; opacity: 1; }
+        .product-modal-box {
+            background: var(--card-bg); width: 100%; max-width: 480px;
+            border-radius: 20px 20px 0 0; padding: 20px;
+            transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative; max-height: 85vh; overflow-y: auto;
+        }
+        .product-modal.show .product-modal-box { transform: translateY(0); }
+        .product-modal-close {
+            position: absolute; top: 12px; left: 12px;
+            font-size: 28px; cursor: pointer; color: var(--text-color); line-height: 1;
+        }
+        .product-modal-box img {
+            width: 100%; max-height: 260px; object-fit: cover;
+            border-radius: 14px; margin-bottom: 12px;
+        }
+        .product-modal-box h3 { font-size: 20px; margin-bottom: 4px; }
+        .product-modal-box .pm-cat { font-size: 13px; opacity: 0.6; margin-bottom: 10px; }
+        .product-modal-box .pm-desc { font-size: 14px; line-height: 1.6; opacity: 0.85; margin-bottom: 14px; }
+        .pm-price-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+        .pm-price { color: var(--price-color); font-size: 22px; font-weight: bold; }
+        .pm-old-price { color: var(--old-price-color); font-size: 14px; text-decoration: line-through; }
+        .pm-buy-btn {
+            width: 100%; padding: 14px; border: none; border-radius: 12px;
+            background: var(--btn-bg); color: #fff; font-size: 16px; font-weight: bold;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .pm-buy-btn:active { background: var(--btn-hover); }
+
+        /* ======== FOOTER ======== */
+        footer {
+            background-color: var(--top-bar-bg);
+            backdrop-filter: var(--footer-blur); -webkit-backdrop-filter: var(--footer-blur);
+            display: flex; justify-content: space-around; padding: 7px;
+            position: fixed; bottom: 0; width: 100%; z-index: 100;
+            border-top: 1px solid var(--footer-border-color);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+        footer.hidden { transform: translateY(100%); }
+        footer div { position: relative; display: flex; align-items: center; justify-content: center; }
+        footer div img { height: 33px; width: 33px; transition: transform 0.2s ease; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+        footer div img:active { transform: scale(0.9); }
+        .ripple {
+            position: absolute; border-radius: 50%; background: rgba(255,255,255,0.6);
+            transform: scale(0); animation: ripple 0.6s linear; pointer-events: none;
+        }
+        @keyframes ripple { to { transform: scale(2); opacity: 0; } }
+
+        /* ======== MODALS (Support / Privacy) ======== */
+        .modal {
+            display: none; position: fixed; inset: 0;
+            justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.65); z-index: 9999;
+        }
+        .modal-box {
+            background: #fff; border-radius: 12px; padding: 35px 25px;
+            text-align: center; max-width: 340px; width: 85%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        [data-theme="dark"] .modal-box, [data-theme="blue"] .modal-box {
+            background: var(--card-bg); color: var(--text-color);
+        }
+        .modal-box img { width: 80px; height: 80px; margin-bottom: 10px; }
+        .modal-box p { font-size: 15px; line-height: 1.7; margin-bottom: 8px; }
+        .modal-box span { display: block; color: var(--tab-active-color); cursor: pointer; margin: 6px 0; font-weight: bold; }
+
+        /* ======== PRIVACY OVERLAY ======== */
+        #overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff; display: none; justify-content: center;
+            align-items: center; z-index: 10000;
+        }
+        #overlay .popup {
+            background: white; padding: 15px; border-radius: 10px;
+            width: 85%; max-width: 400px; text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        #overlay .popup p { margin: 0; padding-bottom: 10px; font-size: 14px; color: #555; }
+        #overlay .popup a { color: #e60023; text-decoration: none; font-weight: bold; }
+        #acceptBtn {
+            background: #096BEA; color: #fff; border: none; border-radius: 50px;
+            padding: 10px 20px; font-size: 15px; cursor: pointer; font-weight: bold; margin-top: 10px;
+        }
+        body.no-scroll { overflow: hidden; }
+
+        /* ======== ANTI-ADBLOCK ======== */
+        #AntiAdblockcnmu {
+            background: rgba(0,0,0,0.85); position: fixed; margin: auto;
+            right: 0; top: 0; width: 100%; height: 100%; z-index: 999999;
+            display: none; justify-content: center; align-items: center;
+        }
+        #OutBlock {
+            background: var(--card-bg); color: var(--text-color);
+            box-shadow: 0 2px 4px #000; text-align: center;
+            width: 90%; max-width: 400px; padding: 5px; border-radius: 10px;
+            animation: fadeInDown 0.6s;
+        }
+        @keyframes fadeInDown {
+            0% { opacity: 0; transform: translate3d(0,-30px,0); }
+            to { opacity: 1; transform: translateZ(0); }
+        }
+        #HeadBlock { background-color: #446EAC; border-radius: 10px 10px 0 0; padding: 12px 10px; color: #fff; }
+        #BlockContent { padding: 15px; }
+        #Blockclick { display: flex; border-radius: 0 0 10px 10px; overflow: hidden; }
+        #Blockclick a { flex: 1; padding: 12px; color: #fff; text-decoration: none; font-size: 14px; }
+        #Bclik1 { background-color: #555; }
+        #Blockclick a:hover { background-color: #b5120b; }
+
+
+        /* ======== PROFILE PAGE ======== */
+        .profile-card {
+            background: var(--card-bg); border-radius: 16px;
+            box-shadow: 0 2px 10px var(--card-shadow);
+            padding: 20px; max-width: 480px; margin: 0 auto 20px;
+        }
+        .profile-avatar-wrap { position: relative; width: 110px; height: 110px; margin: 10px auto 15px; }
+        #profileAvatarImg {
+            width: 110px; height: 110px; border-radius: 50%;
+            object-fit: cover; border: 4px solid var(--tab-active-color);
+            background: var(--content-bg); display: block;
+        }
+        .avatar-upload-btn {
+            position: absolute; bottom: 0; left: 0;
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--btn-bg); color: #fff; border: none;
+            font-size: 15px; cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        .profile-field { margin-bottom: 14px; text-align: right; }
+        .profile-field label { display: block; font-size: 13px; opacity: 0.7; margin-bottom: 5px; font-weight: bold; }
+        .profile-field input, .profile-field textarea {
+            width: 100%; padding: 11px 14px; border-radius: 10px;
+            border: 1px solid var(--tab-color); background: var(--content-bg);
+            color: var(--text-color); font-size: 15px; font-family: inherit;
+            user-select: text; -webkit-user-select: text;
+        }
+        .verify-row {
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; margin: 16px 0; padding: 12px;
+            background: var(--content-bg); border-radius: 12px;
+        }
+        #verifyBadgeIcon { font-size: 34px; color: #8899a6; transition: all 0.4s ease; }
+        #verifyBadgeIcon.verified { color: var(--tab-active-color); filter: drop-shadow(0 0 8px var(--tab-active-color)); }
+        .verify-btn {
+            background: var(--btn-bg); color: #fff; border: none;
+            padding: 9px 18px; border-radius: 20px; font-size: 13px;
+            font-weight: bold; cursor: pointer;
+        }
+        .profile-actions { display: flex; gap: 10px; margin-top: 18px; }
+        .profile-actions button {
+            flex: 1; padding: 13px; border: none; border-radius: 12px;
+            font-size: 15px; font-weight: bold; cursor: pointer; color: #fff;
+        }
+        #saveProfileBtn { background: var(--btn-bg); }
+        #recoverProfileBtn { background: #657786; }
+        .profile-note { text-align: center; font-size: 12px; opacity: 0.55; margin-top: 12px; line-height: 1.6; }
+
+        /* ======== TWITTER-STYLE PROFILE VIEW ======== */
+        .pv-card { background: var(--card-bg); max-width: 480px; margin: 0 auto 20px; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 10px var(--card-shadow); }
+        .pv-cover {
+            width: 100%; height: 140px; background: var(--tab-active-color);
+            position: relative; cursor: pointer; overflow: hidden;
+        }
+        .pv-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .pv-cover .pv-cover-hint {
+            position: absolute; inset: 0; display: flex; align-items: center;
+            justify-content: center; color: #fff; font-size: 14px; font-weight: bold;
+            background: rgba(0,0,0,0.25); opacity: 0; transition: opacity 0.25s;
+        }
+        .pv-cover:hover .pv-cover-hint { opacity: 1; }
+        .pv-head { padding: 0 16px 16px; position: relative; }
+        .pv-avatar-row { display: flex; justify-content: space-between; align-items: flex-end; margin-top: -42px; margin-bottom: 10px; }
+        .pv-avatar {
+            width: 84px; height: 84px; border-radius: 50%;
+            border: 4px solid var(--card-bg); overflow: hidden;
+            background: var(--content-bg); cursor: pointer; position: relative;
+        }
+        .pv-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .pv-edit-btn {
+            background: transparent; color: var(--text-color);
+            border: 1px solid var(--tab-color); border-radius: 20px;
+            padding: 8px 18px; font-size: 14px; font-weight: bold;
+            cursor: pointer; margin-bottom: 4px;
+        }
+        .pv-edit-btn:active { background: var(--sidebar-hover-bg); }
+        .pv-name-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .pv-name-row h2 { font-size: 20px; }
+        #pvBadgeIcon { font-size: 20px; color: #8899a6; display: none; }
+        #pvBadgeIcon.verified { display: inline-block; color: var(--tab-active-color); filter: drop-shadow(0 0 6px var(--tab-active-color)); }
+        .pv-username { font-size: 14px; opacity: 0.6; direction: ltr; text-align: right; }
+        .pv-bio { font-size: 14px; line-height: 1.7; margin-top: 10px; }
+        .pv-meta { margin-top: 12px; font-size: 13px; opacity: 0.7; display: flex; flex-direction: column; gap: 5px; }
+        .pv-meta span i { width: 18px; color: var(--tab-active-color); }
+        .pv-back-btn {
+            background: none; border: none; color: var(--tab-active-color);
+            font-size: 14px; font-weight: bold; cursor: pointer;
+            padding: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+        }
+        /* ======== RESPONSIVE ======== */
+        @media (min-width: 600px) {
+            .products-grid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+        }
+        footer div img.active-icon { transform: scale(1.15); filter: drop-shadow(0 0 6px var(--tab-active-color)); }
+
+        /* ======== CUSTOM VERIFICATION BADGES (glowing images) ======== */
+        #verifyBadgeIcon, #pvBadgeIcon { object-fit: contain; background: transparent; }
+        #verifyBadgeIcon {
+            width: 46px; height: 46px; border-radius: 50%;
+            animation: badgePulse 2.2s ease-in-out infinite;
+            filter: drop-shadow(0 0 6px var(--tab-active-color));
+        }
+        #pvBadgeIcon {
+            width: 24px; height: 24px; display: none; vertical-align: -4px;
+            animation: badgePulse 2.2s ease-in-out infinite;
+            filter: drop-shadow(0 0 5px var(--tab-active-color));
+        }
+        #verifyBadgeIcon.owner-glow, #pvBadgeIcon.owner-glow {
+            animation: badgePulseGold 1.6s ease-in-out infinite;
+            filter: drop-shadow(0 0 8px #ffd700);
+        }
+        @keyframes badgePulse {
+            0%,100% { filter: drop-shadow(0 0 4px var(--tab-active-color)); transform: scale(1); }
+            50%     { filter: drop-shadow(0 0 14px var(--tab-active-color)); transform: scale(1.12); }
+        }
+        @keyframes badgePulseGold {
+            0%,100% { filter: drop-shadow(0 0 5px #ffd700); transform: scale(1) rotate(-5deg); }
+            50%     { filter: drop-shadow(0 0 18px #ffd700); transform: scale(1.18) rotate(5deg); }
+        }
+        
+        #verifyBadgeIcon, #pvBadgeIcon,
+#verifyBadgeIcon.owner-glow, #pvBadgeIcon.owner-glow {
+    animation: none !important;
+    filter: none !important;
+    transform: none !important;
+}
+    </style>
+</head>
+<body>
+
+<!-- ======= PRELOADER ======= -->
+<div id="smart-preloader">
+    <div class="spinner"></div>
+    <div class="loader-percentage" id="loaderPercentage">0%</div>
+    <div class="loader-brand" id="menu734825">جاري تحميل المحتوى...</div>
+    <div class="loader-brand">Loading content...</div>
+</div>
+
+<!-- ======= HEADER ======= -->
+<div class="header-wrapper" id="header-wrapper">
+    <div class="top-bar">
+        <div class="right-section">
+            <i class="fas fa-bars" id="menu-toggle"></i>
+        </div>
+        <div class="center-section">
+            <img id="logozaki-icon"
+                 data-light="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794756383/1794698298093_mkdqr4.png"
+                 data-dark="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794756383/1794698298093_mkdqr4.png"
+                 data-blue="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794756383/1794698298093_mkdqr4.png"
+                 src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794756383/1794698298093_mkdqr4.png" alt="Logo">
+        </div>
+        <div class="right-section">
+            <a href="go:settings"><i class="fas fa-cog"></i></a>
+        </div>
+    </div>
+    <div class="fixed-container">
+        <div class="tabs">
+            <div class="tab active" data-target="homePage" id="tab-home"><span id="menu31">الرئيسية</span></div>
+            <div class="tab" data-target="morePage" id="tab-more"><span id="menu35">المزيد</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- ======= SIDEBAR ======= -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <img id="logolist-icon"
+             data-light="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794756383/1794698298093_mkdqr4.png"
+             data-dark="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794756383/1794698298093_mkdqr4.png"
+             data-blue="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794756383/1794698298093_mkdqr4.png"
+             src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794756383/1794698298093_mkdqr4.png" alt="Logo">
+    </div>
+    <ul>
+        <li class="icon-text-item"><a href="#" onclick="switchTab('homePage')"><i class="fas fa-home"></i><span id="menu34"><b>الصفحة الرئيسية 🔹</b></span></a></li>
+        <li class="icon-text-item"><a href="go:585868"><i class="fas fa-th"></i><span id="menu35"><b>المزيد من التطبيقات</b></span></a></li>
+        <li class="icon-text-item"><a href="go:05885"><i class="fas fa-crown"></i><span id="menu36"><b>Premium</b></span></a></li>
+        <li class="icon-text-item"><a href="go:058555"><i class="fas fa-coffee"></i><span id="menu37"><b>اشتري لي القهوة</b></span></a></li>
+    </ul>
+
+    <!-- Accordion -->
+    <div class="accordion-item">
+        <div class="accordion-header" id="professionalToolsHeader">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <i class="fas fa-chevron-down arrow"></i>
+                <span id="menu57">الإعدادات والدعم</span>
+            </div>
+        </div>
+        <div class="accordion-content" id="professionalToolsContent">
+            <div class="accordion-content-inner">
+                <li class="icon-text-item"><a href="go:settings"><i class="fas fa-cog"></i><span id="menu54">الإعدادات</span></a></li>
+                <li class="icon-text-item"><a href="http://action_profile"><i class="fas fa-user-circle"></i><span id="menu55">حسابي</span></a></li>
+                <div class="icon-text-item" onclick="toggleTheme()">
+                    <i class="fas fa-moon" style="font-size:22px;"></i>
+                    <span id="menu8855">مظهر التطبيق</span>
+                </div>
+                <div class="icon-text-item" onclick="openAdminPanel()">
+                    <i class="fas fa-user-shield" style="font-size:22px;"></i>
+                    <span>🛠️ لوحة تحكم المالك</span>
+                </div>
+                <div class="language-buttons">
+                    <button onclick="changeLanguage('en')">English</button>
+                    <button onclick="changeLanguage('ar')">العربية</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- ======= MAIN PAGES ======= -->
+
+<!-- الصفحة الرئيسية -->
+<div class="content active" id="homePage">
+    <div style="text-align:center; padding: 40px 20px;">
+        <i class="fas fa-home" style="font-size: 60px; color: var(--tab-active-color); opacity: 0.3;"></i>
+        <h3 style="margin-top: 15px; opacity: 0.6;" id="menu300">لا يوجد شيء هنا حتى الآن، حاول مرة أخرى لاحقًا 😅</h3>
+        <p style="margin-top: 10px; opacity: 0.5; font-size: 14px;">يمكنك زيارة قسم المنتجات من التبويب أعلاه</p>
+    </div>
+</div>
+
+<!-- صفحة المنتجات -->
+<div class="content products-page" id="productsPage">
+    <div class="products-header">
+        <h2 id="menu400">منتجاتنا 🛍️</h2>
+        <p id="menu401">تصفح أحدث المنتجات المميزة بأفضل الأسعار</p>
+    </div>
+    <div class="categories-bar" id="categoriesBar">
+        <button class="cat-btn active" data-cat="all" id="menu402">الكل</button>
+        <button class="cat-btn" data-cat="electronics" id="menu403">إلكترونيات</button>
+        <button class="cat-btn" data-cat="clothes" id="menu404">ملابس</button>
+        <button class="cat-btn" data-cat="accessories" id="menu405">إكسسوارات</button>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+</div>
+
+<!-- صفحة المزيد -->
+<div class="content" id="morePage">
+    <div style="text-align:center; padding: 40px 20px;">
+        <i class="fas fa-th" style="font-size: 60px; color: var(--tab-active-color); opacity: 0.3;"></i>
+        <h3 style="margin-top: 15px; opacity: 0.6;">المزيد من التطبيقات</h3>
+    </div>
+</div>
+
+<!-- ======= PRODUCT MODAL ======= -->
+<div class="product-modal" id="productModal" onclick="if(event.target===this)closeProductModal()">
+    <div class="product-modal-box">
+        <span class="product-modal-close" onclick="closeProductModal()">&times;</span>
+        <img id="pmImage" src="" alt="">
+        <h3 id="pmName"></h3>
+        <p class="pm-cat" id="pmCat"></p>
+        <p class="pm-desc" id="pmDesc"></p>
+        <div class="pm-price-row">
+            <span class="pm-price" id="pmPrice"></span>
+            <span class="pm-old-price" id="pmOldPrice"></span>
+        </div>
+        <button class="pm-buy-btn" onclick="buyProduct()" id="menu406">اطلب الآن 🛒</button>
+    </div>
+</div>
+
+<!-- ======= ADMIN PANEL (لوحة تحكم المالك) ======= -->
+<div class="modal" id="adminModal">
+    <div class="modal-box" style="max-width:420px;">
+        <p style="font-weight:bold;font-size:18px;">🛠️ لوحة تحكم المالك</p>
+        <p style="font-size:12px;opacity:.6;">تحكم في علامات التوثيق لأي مستخدم مسجّل بالبريد أو الهاتف</p>
+        
+        <div class="profile-field" style="text-align:right;">
+            <label>البريد أو الهاتف المحفوظ للشخص</label>
+            <input type="text" id="adminTarget" placeholder="email أو رقم الهاتف" style="user-select:text;-webkit-user-select:text;">
+        </div>
+        <div class="profile-field" style="text-align:right;">
+            <label>نوع التوثيق</label>
+            <select id="adminBadgeType" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);font-size:15px;">
+                <option value="normal">🏅 توثيق عادي</option>
+                <option value="owner">👑 توثيق مالك</option>
+                <option value="none">🚫 بدون توثيق</option>
+            </select>
+        </div>
+        <a onclick="adminApplyBadge()" style="display:block;background:var(--btn-bg);color:#fff;padding:10px;border-radius:8px;cursor:pointer;margin-bottom:6px;font-weight:bold;">✔ تفعيل / تعديل التوثيق</a>
+        <a onclick="adminRemoveBadge()" style="display:block;background:#e0245e;color:#fff;padding:10px;border-radius:8px;cursor:pointer;margin-bottom:6px;font-weight:bold;">🗑️ إزالة التعيين</a>
+        <a onclick="sendMessageToUser()" style="display:block;background:#28a745;color:#fff;padding:10px;border-radius:8px;cursor:pointer;margin-bottom:12px;font-weight:bold;">✉️ إرسال رسالة للمستخدم</a>
+        
+        <div id="adminList" style="text-align:right;font-size:12px;max-height:150px;overflow-y:auto;margin-top:8px;line-height:1.8;background:var(--content-bg);padding:10px;border-radius:10px;"></div>
+        <span onclick="closeAdminPanel()" style="color:#8899a6;margin-top:10px;display:block;">إغلاق</span>
+    </div>
+</div>
+
+<!-- ======= SUPPORT MODAL ======= -->
+<div class="modal" id="customizeModal">
+    <div class="modal-box">
+        <img src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1766911872/20251228_104227_pwiuuk.png" alt="Support">
+        <p id="menu8585" style="font-weight:bold;">هل يعجبك التطبيق؟</p>
+        <p id="menu80555">☕ ما رأيك بشراء القهوة لمطور التطبيق؟ سيكون ذلك رائعًا منك</p>
+        <p id="menu80855">🥹 ما رأيك؟ ستفعل هذا من أجلي</p>
+        <br>
+        <a href="go:058555" style="display:block;background:var(--btn-bg);color:#fff;padding:10px;border-radius:8px;text-decoration:none;margin-bottom:6px;"><span id="menu72825">موافق</span></a>
+        <span id="menu655455" onclick="remindLater(30)">ليس الآن</span>
+        <span id="menu655855" onclick="neverShowAgain()">لا تظهر مرة أخرى</span>
+    </div>
+</div>
+
+<!-- ======= PRIVACY OVERLAY ======= -->
+<div id="overlay">
+    <div class="popup">
+        <p id="menu9999" style="font-weight:bold;color:#000;">سياسة الخصوصية وشروط التطبيق</p>
+        <p style="font-size: 14px; color: #686868; line-height: 1.6;">
+            By clicking "Accept and Continue," you agree to
+            <a href="go:058889" target="_blank">Terms of Service</a>
+            and acknowledge that you have read
+            <a href="go:0558285" target="_blank">Privacy Policy</a>
+            to learn how we collect, use, and share your data.
+        </p>
+        <p id="menu5855" style="font-weight:bold;margin-top:10px;">اختار لغتك المفضلة للتطبيق</p>
+        <div class="language-buttons">
+            <button onclick="changeLanguage('en')">English</button>
+            <button onclick="changeLanguage('ar')">العربية</button>
+        </div>
+        <button id="acceptBtn">Accept and Continue</button>
+    </div>
+</div>
+
+<!-- ======= ANTI-ADBLOCK ======= -->
+<div id="AntiAdblockcnmu">
+    <div id="OutBlock">
+        <div id="HeadBlock"><p id="menu85680" style="margin:0;font-weight:bold;">Ad blocker detected</p></div>
+        <div id="BlockContent">
+            <img style="width:80px;height:80px;margin:10px auto;display:block;" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1768421671/20260114_220634_rnjas6.png" alt="">
+            <p id="menu734825" style="font-weight:bold;padding:0 10px;">The ad blocker must be stopped. If you want to remove ads, you can subscribe for $2.99/month</p>
+        </div>
+        <div id="Blockclick">
+            <a class="block-btn" id="menu854825" href="http://action_exit" target="_blank" style="background:#555;">Restart</a>
+            <a class="block-btn" href="go:94581548" target="_blank" style="background:#e0245e;">Premium</a>
+            <a class="block-btn" href="go:828655" onclick="return showExceptionDialog();" style="background:#1da1f2;">Subscriber</a>
+        </div>
+    </div>
+</div>
+
+<footer id="foot">
+    <div><a href="#" onclick="switchTab('homePage');return false;"><img id="home-icon" data-light="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1767873453/ConvertedWebP0_qyrdwj_setfcj.png" data-dark="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1767873453/ConvertedWebP0_qyrdwj_setfcj.png" data-blue="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1767873453/ConvertedWebP0_qyrdwj_setfcj.png" data-active="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1767873453/ConvertedWebP0_qyrdwj_setfcj.png" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1767873453/ConvertedWebP0_qyrdwj_setfcj.png" alt="Home"></a></div>
+    <div><a href="#" onclick="switchTab('premiumPage');return false;"><img id="grok-icon" data-light="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1766173852/premium_z2flry.png" data-dark="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1766173852/premium_2_i1bam1.png" data-blue="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1766173852/premium_2_i1bam1.png" data-active="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1766173852/premium_2_i1bam1.png" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1766173852/premium_z2flry.png" alt="Premium"></a></div>
+    <div><a href="#" onclick="switchTab('gamesPage');return false;"><img id="games-icon" data-light="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794737189/games_1_tn6kgm.png" data-dark="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794737189/games_2_tknfkt.png" data-blue="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794737189/games_2_tknfkt.png" data-active="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794737189/games_2_tknfkt.png" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794737189/games_1_tn6kgm.png" alt="Games"></a></div>
+    <div><a href="#" onclick="switchTab('productsPage');return false;"><img id="store-icon" data-light="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794821423/20261116_112832_liq9dj.png" data-dark="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794821423/20261116_112841_qg2ldk.png" data-blue="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794737189/store_1_iyyh0v.png" data-active="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794821423/20261116_112916_ki5eku.png" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794821423/20261116_112832_liq9dj.png" alt="Store"></a></div>
+    <div><a href="#" onclick="switchTab('accountPage');return false;"><img id="account-icon" data-light="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1739310353/sCq53dG_5_quhcn3.png" data-dark="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1738530112/ConvertedWebP12_y05y2c.webp" data-blue="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1738530112/ConvertedWebP12_y05y2c.webp" data-active="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794856134/20250724_101826_jhzeqa_fxqnix.png" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1738530112/ConvertedWebP12_y05y2c.webp" alt="Account"></a></div>
+</footer>
+
+<!-- صفحة بريميوم -->
+<div class="content" id="premiumPage">
+    <div style="text-align:center; padding: 40px 20px;">
+        <i class="fas fa-crown" style="font-size: 60px; color: var(--tab-active-color); opacity: 0.3;"></i>
+        <h3 style="margin-top: 15px; opacity: 0.6;">بريميوم</h3>
+        <p style="margin-top: 10px; opacity: 0.5; font-size: 14px;">اشترك للحصول على مميزات حصرية بدون إعلانات 🎁</p>
+        <a href="go:05885" style="display:inline-block;margin-top:20px;background:var(--btn-bg);color:#fff;padding:12px 30px;border-radius:10px;font-weight:bold;text-decoration:none;">اشترك الآن</a>
+    </div>
+</div>
+
+<!-- صفحة الألعاب -->
+<div class="content" id="gamesPage">
+    <div style="text-align:center; padding: 40px 20px;">
+        <i class="fas fa-gamepad" style="font-size: 60px; color: var(--tab-active-color); opacity: 0.3;"></i>
+        <h3 style="margin-top: 15px; opacity: 0.6;">الألعاب</h3>
+        <p style="margin-top: 10px; opacity: 0.5; font-size: 14px;">استمتع بأحدث الألعاب 🎮</p>
+        <a href="go:spaces" style="display:inline-block;margin-top:20px;background:var(--btn-bg);color:#fff;padding:12px 30px;border-radius:10px;font-weight:bold;text-decoration:none;">ابدأ اللعب</a>
+    </div>
+</div>
+
+<!-- صفحة حسابي -->
+<div class="content" id="accountPage">
+
+    <!-- ====== واجهة عرض البروفايل (شكل تويتر) ====== -->
+    <div class="pv-card" id="profileView">
+        <div class="pv-cover" onclick="changeCover()">
+            <img id="pvCoverImg" src="" alt="" style="display:none;">
+            <div class="pv-cover-hint"><i class="fas fa-image"></i> تغيير صورة الغلاف</div>
+        </div>
+        <div class="pv-head">
+            <div class="pv-avatar-row">
+                <div class="pv-avatar" onclick="changeAvatar()"><img id="pvAvatar" src="" alt=""></div>
+                <button class="pv-edit-btn" onclick="showEditProfile()"><i class="fas fa-pen"></i> تعديل الملف الشخصي</button>
+            </div>
+            <div class="pv-name-row">
+                <h2 id="pvName">اسم المستخدم</h2>
+                <img id="pvBadgeIcon" src="" alt="">
+            </div>
+            <div class="pv-username" id="pvUsername">@username</div>
+            <p class="pv-bio" id="pvBio"></p>
+            <div class="pv-meta">
+                <span><i class="fas fa-envelope"></i> <span id="pvEmail">—</span></span>
+                <span><i class="fas fa-phone"></i> <span id="pvPhone">—</span></span>
+                <span><i class="fas fa-calendar"></i> انضم في <span id="pvJoined">—</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== واجهة تعديل الملف الشخصي ====== -->
+    <div id="profileEditForm" style="display:none;">
+        <button class="pv-back-btn" onclick="showProfileView()"><i class="fas fa-arrow-right"></i> رجوع للملف الشخصي</button>
+        <div class="profile-card">
+            <div class="profile-field">
+                <label>صورة الغلاف</label>
+                <button class="verify-btn" style="width:100%;border-radius:10px;" onclick="document.getElementById('coverInput').click()"><i class="fas fa-image"></i> اختيار صورة غلاف</button>
+                <input type="file" id="coverInput" accept="image/*" style="display:none" onchange="handleCoverUpload(event)">
+            </div>
+            <div class="profile-avatar-wrap">
+                <img id="profileAvatarImg" src="" alt="Avatar" style="cursor:pointer;" onclick="document.getElementById('avatarInput').click()">
+                <button class="avatar-upload-btn" onclick="document.getElementById('avatarInput').click()" title="تغيير الصورة"><i class="fas fa-camera"></i></button>
+                <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)">
+            </div>
+
+            <div class="verify-row">
+                <img id="verifyBadgeIcon" src="" alt="badge" style="display:none;">
+                <div style="text-align:center;">
+             
+                </div>
+            </div>
+
+            <div class="profile-field">
+                <label>الاسم الكامل</label>
+                <input type="text" id="pfName" placeholder="اكتب اسمك">
+            </div>
+            <div class="profile-field">
+                <label>اسم المستخدم (بدون @)</label>
+                <input type="text" id="pfUsername" placeholder="username">
+            </div>
+            <div class="profile-field">
+                <label>نبذة تعريفية</label>
+                <textarea id="pfBio" rows="2" placeholder="اكتب نبذة قصيرة عنك..."></textarea>
+            </div>
+            <div class="profile-field">
+                <label>البريد الإلكتروني (للحفظ والاستعادة)</label>
+                <input type="email" id="pfEmail" placeholder="example@email.com">
+            </div>
+            <div class="profile-field">
+                <label>رقم الهاتف (بديل للحفظ والاستعادة)</label>
+                <input type="tel" id="pfPhone" placeholder="05xxxxxxxx">
+            </div>
+
+            <div class="profile-actions">
+                <button id="saveProfileBtn" onclick="saveProfile()">💾 حفظ البيانات</button>
+                <button id="recoverProfileBtn" onclick="recoverProfile()">🔄 استعادة بياناتي</button>
+            </div>
+            <p class="profile-note">يتم حفظ بياناتك في قاعدة البيانات السحابية، ويمكنك استعادتها في أي وقت بإدخال الإيميل أو رقم الهاتف.</p>
+        </div>
+    </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script> 
+// ⚠️ ضع بيانات مشروعك هنا: Firebase Console ← Project settings ← Your apps
+var firebaseConfig = {
+    apiKey: "AIzaSyB1A5flcC2cZYQszjvnzrTDXYH3UIKBl4Q",
+    authDomain: "doctorai-84595.firebaseapp.com",
+    projectId: "doctorai-84595",
+    storageBucket: "doctorai-84595.firebasestorage.app",
+    messagingSenderId: "109454873990",
+    appId: "1:109454873990:web:bb77554ecb159359984807"
+};
+
+window.fbReady = (async function () {
+    var base = "https://www.gstatic.com/firebasejs/10.12.2/";
+    var appMod = await import(base + "firebase-app.js");
+    var fs = await import(base + "firebase-firestore.js");
+    var app = appMod.initializeApp(firebaseConfig);
+    window.fb = {
+        db: fs.getFirestore(app),
+        doc: fs.doc, setDoc: fs.setDoc, getDoc: fs.getDoc, getDocs: fs.getDocs,
+        collection: fs.collection, query: fs.query, where: fs.where,
+        serverTimestamp: fs.serverTimestamp
+    };
+    return window.fb;
+})();
+window.fbReady.catch(function (e) { console.error('Firebase init failed:', e); });
+
+async function getFB() {
+    try { return await window.fbReady; }
+    catch (e) { throw new Error('تعذر الاتصال بـ Firebase: تأكد من الإنترنت ومن firebaseConfig'); }
+}
+
+/* ==================== PRELOADER ==================== */
+(function () {
+    var preloader = document.getElementById('smart-preloader');
+    var percentageEl = document.getElementById('loaderPercentage');
+    var body = document.body;
+    body.classList.add('loading');
+
+    function getAllImages() {
+        var imgs = Array.prototype.slice.call(document.querySelectorAll('img'));
+        document.querySelectorAll('*').forEach(function (el) {
+            var bg = window.getComputedStyle(el).backgroundImage;
+            if (bg && bg !== 'none') {
+                var match = bg.match(/url\(["']?(.*?)["']?\)/);
+                if (match && match[1]) imgs.push({ src: match[1] });
+            }
+        });
+        return imgs;
+    }
+
+    var images = getAllImages();
+    var total = images.length;
+    var loaded = 0;
+    var finished = false;
+
+    function updateProgress() {
+        loaded++;
+        var percent = total === 0 ? 100 : Math.round((loaded / total) * 100);
+        if (percentageEl) percentageEl.textContent = percent + '%';
+        if (loaded >= total) hidePreloader();
+    }
+
+    function hidePreloader() {
+        if (finished) return;
+        finished = true;
+        setTimeout(function () {
+            if (percentageEl) percentageEl.textContent = '100%';
+            preloader.classList.add('done');
+            body.classList.remove('loading');
+            setTimeout(function () { preloader.remove(); }, 700);
+        }, 500);
+    }
+
+    if (total === 0) { hidePreloader(); }
+    else {
+        images.forEach(function (img) {
+            var src = img.src || img.getAttribute('src');
+            if (!src || src.indexOf('data:') === 0) { updateProgress(); return; }
+            var testImg = new Image();
+            testImg.onload = updateProgress;
+            testImg.onerror = updateProgress;
+            testImg.src = src;
+        });
+        setTimeout(hidePreloader, 15000);
+    }
+    window.addEventListener('load', function () {
+        setTimeout(function () { if (loaded >= total) hidePreloader(); }, 300);
+    });
+})();
+
+/* ==================== PRODUCTS DATA ==================== */
+var productsData = [
+    { id: 1, name: "سماعات لاسلكية فاخرة", cat: "electronics", price: 49.99, oldPrice: 79.99, image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80", desc: "سماعات بلوتوث عالية الجودة مع إلغاء الضوضاء وبطارية تدوم 30 ساعة." },
+    { id: 2, name: "ساعة ذكية رياضية", cat: "electronics", price: 89.00, oldPrice: 120.00, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80", desc: "تتبع اللياقة البدنية، قياس ضربات القلب، ومقاومة للماء حتى 50 متر." },
+    { id: 3, name: "تيشيرت قطني 100%", cat: "clothes", price: 15.50, oldPrice: 25.00, image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80", desc: "تيشيرت قطني عالي الجودة، متوفر بألوان متعددة وقصة عصرية." },
+    { id: 4, name: "جاكيت شتوي دافئ", cat: "clothes", price: 65.00, oldPrice: 99.00, image: "https://images.unsplash.com/photo-1551028919-ac76c9028d1e?w=400&q=80", desc: "جاكيت شتوي مقاوم للرياح والماء مع بطانة داخلية ناعمة." },
+    { id: 5, name: "نظارة شمسية فاخرة", cat: "accessories", price: 35.00, oldPrice: 55.00, image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&q=80", desc: "نظارة شمسية بإطار معدني عالي الجودة وعدسات UV400." },
+    { id: 6, name: "محفظة جلد طبيعي", cat: "accessories", price: 28.00, oldPrice: 45.00, image: "https://images.unsplash.com/photo-1627123424574-724758594e93?w=400&q=80", desc: "محفظة يدوية الصنع من الجلد الطبيعي بتصميم أنيق وعملي." },
+    { id: 7, name: "كاميرا رقمية احترافية", cat: "electronics", price: 299.00, oldPrice: 450.00, image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&q=80", desc: "كاميرا بدقة 24 ميجابكسل مع عدسة 18-55 مم وتصوير 4K." },
+    { id: 8, name: "حذاء رياضي عصري", cat: "clothes", price: 55.00, oldPrice: 80.00, image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80", desc: "حذاء رياضي خفيف الوزن بتصميم عصري ومريح للمشي والجري." },
+    { id: 9, name: "حقيبة ظهر أنيقة", cat: "accessories", price: 42.00, oldPrice: 65.00, image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&q=80", desc: "حقيبة ظهر متعددة الاستخدامات بجيوب منظمة ومقاومة للماء." },
+    { id: 10, name: "شاحن لاسلكي سريع", cat: "electronics", price: 22.00, oldPrice: 35.00, image: "https://images.unsplash.com/photo-1586816879360-004f5b0c51e3?w=400&q=80", desc: "شاحن لاسلكي 15 واط متوافق مع جميع الأجهزة التي تدعم Qi." },
+    { id: 11, name: "بنطلون جينز كلاسيكي", cat: "clothes", price: 38.00, oldPrice: 60.00, image: "https://images.unsplash.com/photo-1542272454315-4c01d7abdf4a?w=400&q=80", desc: "جينز كلاسيكي بقصة مريحة وجودة قماش عالية التحمل." },
+    { id: 12, name: "سوار ذكي للياقة", cat: "accessories", price: 32.00, oldPrice: 50.00, image: "https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=400&q=80", desc: "سوار ذكي يتتبع النوم، الخطوات، والسعرات الحرارية." }
+];
+
+var currentProduct = null;
+
+function categoryName(cat) {
+    var map = { electronics: 'إلكترونيات', clothes: 'ملابس', accessories: 'إكسسوارات' };
+    return map[cat] || cat;
+}
+
+function renderProducts(filter) {
+    var grid = document.getElementById('productsGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    var list = productsData;
+    if (filter && filter !== 'all') {
+        list = productsData.filter(function (p) { return p.cat === filter; });
+    }
+    list.forEach(function (p) {
+        var discount = Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
+        var card = document.createElement('div');
+        card.className = 'product-card';
+        card.onclick = function () { openProductModal(p); };
+        card.innerHTML =
+            '<div class="prod-img-wrap">' +
+                '<img src="' + p.image + '" alt="' + p.name + '" loading="lazy">' +
+                '<span class="prod-badge">-' + discount + '%</span>' +
+            '</div>' +
+            '<div class="prod-info">' +
+                '<div class="prod-name">' + p.name + '</div>' +
+                '<div class="prod-cat">' + categoryName(p.cat) + '</div>' +
+                '<div class="prod-price-row">' +
+                    '<span class="prod-price">$' + p.price.toFixed(2) + '</span>' +
+                    '<span class="prod-old">$' + p.oldPrice.toFixed(2) + '</span>' +
+                '</div>' +
+                '<button class="prod-btn" onclick="event.stopPropagation();openProductModal(' + p.id + ');">عرض التفاصيل</button>' +
+            '</div>';
+        grid.appendChild(card);
+    });
+}
+
+function openProductModal(arg) {
+    var p = (typeof arg === 'number') ? productsData.find(function (x) { return x.id === arg; }) : arg;
+    if (!p) return;
+    currentProduct = p;
+    document.getElementById('pmImage').src = p.image;
+    document.getElementById('pmName').textContent = p.name;
+    document.getElementById('pmCat').textContent = categoryName(p.cat);
+    document.getElementById('pmDesc').textContent = p.desc;
+    document.getElementById('pmPrice').textContent = '$' + p.price.toFixed(2);
+    document.getElementById('pmOldPrice').textContent = '$' + p.oldPrice.toFixed(2);
+    var modal = document.getElementById('productModal');
+    modal.style.display = 'flex';
+    setTimeout(function () { modal.classList.add('show'); }, 10);
+}
+
+function closeProductModal() {
+    var modal = document.getElementById('productModal');
+    modal.classList.remove('show');
+    setTimeout(function () { modal.style.display = 'none'; }, 300);
+}
+
+function buyProduct() {
+    if (currentProduct) {
+        alert('تم إضافة "' + currentProduct.name + '" إلى سلة المشتريات! 🛒');
+        closeProductModal();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    renderProducts('all');
+    document.querySelectorAll('.cat-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.cat-btn').forEach(function (b) { b.classList.remove('active'); });
+            this.classList.add('active');
+            renderProducts(this.getAttribute('data-cat'));
+        });
+    });
+});
+
+/* ==================== TABS ==================== */
+var currentPage = 'homePage';
+var footerPages = { homePage: 'home-icon', productsPage: 'store-icon', gamesPage: 'games-icon', premiumPage: 'grok-icon', accountPage: 'account-icon' };
+
+function switchTab(pageId) {
+    currentPage = pageId;
+    document.querySelectorAll('.content').forEach(function (c) { c.classList.remove('active'); });
+    document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
+    var target = document.getElementById(pageId);
+    if (target) target.classList.add('active');
+    var tabBtn = document.querySelector('.tab[data-target="' + pageId + '"]');
+    if (tabBtn) tabBtn.classList.add('active');
+    updateFooterActiveIcons();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateFooterActiveIcons() {
+    var theme = localStorage.getItem('theme') || 'light';
+    Object.keys(footerPages).forEach(function (p) {
+        var img = document.getElementById(footerPages[p]);
+        if (!img) return;
+        if (p === currentPage && img.getAttribute('data-active')) {
+            img.src = img.getAttribute('data-active');
+            img.style.transform = 'scale(1.15)';
+        } else {
+            img.src = img.getAttribute('data-' + theme) || img.getAttribute('data-light');
+            img.style.transform = 'scale(1)';
+        }
+    });
+    applyAccountAvatarIcon();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.tab').forEach(function (tab) {
+        tab.addEventListener('click', function () {
+            switchTab(this.getAttribute('data-target'));
+        });
+    });
+});
+
+/* ==================== SIDEBAR ==================== */
+document.addEventListener('DOMContentLoaded', function () {
+    var sidebar = document.getElementById('sidebar');
+    var menuToggle = document.getElementById('menu-toggle');
+    var sidebarOverlay = document.getElementById('sidebar-overlay');
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+        });
+    }
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', function () {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        });
+    }
+    if (sidebar) {
+        sidebar.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+
+    var accHeader = document.getElementById('professionalToolsHeader');
+    var accContent = document.getElementById('professionalToolsContent');
+    if (accHeader && accContent) {
+        accHeader.addEventListener('click', function () {
+            this.classList.toggle('active');
+            accContent.classList.toggle('open');
+            accContent.style.maxHeight = accContent.classList.contains('open') ? accContent.scrollHeight + 'px' : '0';
+        });
+    }
+});
+
+/* Swipe to open/close sidebar */
+var touchStartX = 0, touchEndX = 0;
+var swipeThreshold = 80;
+document.addEventListener('touchstart', function (e) { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+document.addEventListener('touchend', function (e) { touchEndX = e.changedTouches[0].screenX; handleSwipe(); }, { passive: true });
+function handleSwipe() {
+    var diff = touchStartX - touchEndX;
+    var isRTL = document.documentElement.dir === 'rtl';
+    var sidebar = document.getElementById('sidebar');
+    var overlay = document.getElementById('sidebar-overlay');
+    if (isRTL) {
+        if (diff > swipeThreshold) { sidebar.classList.add('active'); overlay.classList.add('active'); }
+        else if (diff < -swipeThreshold) { sidebar.classList.remove('active'); overlay.classList.remove('active'); }
+    } else {
+        if (diff < -swipeThreshold) { sidebar.classList.add('active'); overlay.classList.add('active'); }
+        else if (diff > swipeThreshold) { sidebar.classList.remove('active'); overlay.classList.remove('active'); }
+    }
+}
+
+/* ==================== HEADER HIDE ON SCROLL ==================== */
+var lastScrollTop = 0;
+window.addEventListener('scroll', function () {
+    var st = window.pageYOffset || document.documentElement.scrollTop;
+    var header = document.getElementById('header-wrapper');
+    var footer = document.getElementById('foot');
+    if (header) {
+        if (st > lastScrollTop && st > 50) header.classList.add('hidden');
+        else header.classList.remove('hidden');
+    }
+    if (footer) {
+        if (st > lastScrollTop && st > 100) footer.classList.add('hidden');
+        else footer.classList.remove('hidden');
+    }
+    lastScrollTop = st <= 0 ? 0 : st;
+});
+
+/* ==================== THEME ==================== */
+var themes = ['light', 'dark', 'blue'];
+var currentThemeIndex = 0;
+var LOGO = 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794756383/1794698298093_mkdqr4.png';
+var HOME_ICON = 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1767873453/ConvertedWebP0_qyrdwj_setfcj.png';
+var themeIcons = {
+    'logozaki-icon': { light: LOGO, dark: LOGO, blue: LOGO },
+    'logolist-icon': { light: LOGO, dark: LOGO, blue: LOGO },
+    'home-icon': { light: HOME_ICON, dark: HOME_ICON, blue: HOME_ICON },
+    'grok-icon': { light: 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1766173852/premium_z2flry.png', dark: 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1766173852/premium_2_i1bam1.png', blue: 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1766173852/premium_2_i1bam1.png' },
+    'games-icon': { light: 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794737189/games_1_tn6kgm.png', dark: 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794737189/games_2_tknfkt.png', blue: 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794737189/games_2_tknfkt.png' },
+    'store-icon': { light: 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794737189/store_zecgpa.png', dark: 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794737189/store_1_iyyh0v.png', blue: 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794737189/store_1_iyyh0v.png' },
+    'account-icon': { light: 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1739310353/sCq53dG_5_quhcn3.png', dark: 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1738530112/ConvertedWebP12_y05y2c.webp', blue: 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1738530112/ConvertedWebP12_y05y2c.webp' }
+};
+
+function applyAccountAvatarIcon() {
+    var acc = document.getElementById('account-icon');
+    var avatar = localStorage.getItem('app_avatar_url');
+    if (acc && avatar) {
+        acc.src = avatar;
+        acc.style.borderRadius = '50%';
+        acc.style.objectFit = 'cover';
+    }
+}
+
+function updateIcons(theme) {
+    Object.keys(themeIcons).forEach(function (id) {
+        var img = document.getElementById(id);
+        if (img && themeIcons[id][theme]) img.src = themeIcons[id][theme];
+    });
+    applyAccountAvatarIcon();
+}
+
+function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    currentThemeIndex = themes.indexOf(theme);
+    updateIcons(theme);
+}
+function toggleTheme() {
+    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+    setTheme(themes[currentThemeIndex]);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    setTheme(localStorage.getItem('theme') || 'light');
+    document.querySelectorAll('footer div').forEach(function (div) {
+        div.addEventListener('click', function (e) {
+            var ripple = document.createElement('span');
+            var rect = this.getBoundingClientRect();
+            var size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+            ripple.classList.add('ripple');
+            this.appendChild(ripple);
+            setTimeout(function () { ripple.remove(); }, 600);
+        });
+    });
+});
+
+/* ==================== LANGUAGE ==================== */
+var translations = {
+    ar: {
+        menu31: "الرئيسية", menu34: "الصفحة الرئيسية 🔹", menu35: "المزيد من التطبيقات",
+        menu36: "Premium", menu37: "اشتري لي القهوة", menu54: "الإعدادات",
+        menu55: "حسابي", menu56: "الدعم", menu57: "الإعدادات والدعم",
+        menu300: "لا يوجد شيء هنا حتى الآن، حاول مرة أخرى لاحقًا 😅",
+        menu400: "منتجاتنا 🛍️", menu401: "تصفح أحدث المنتجات المميزة بأفضل الأسعار",
+        menu402: "الكل", menu403: "إلكترونيات", menu404: "ملابس", menu405: "إكسسوارات",
+        menu406: "اطلب الآن 🛒", menu407: "المنتجات",
+        menu5855: "اختار لغتك المفضلة للتطبيق",
+        menu80555: "☕ ما رأيك بشراء القهوة لمطور التطبيق؟ سيكون ذلك رائعًا منك",
+        menu80855: "🥹 ما رأيك؟ ستفعل هذا من أجلي", menu8585: "هل يعجبك التطبيق؟",
+        menu8855: "مظهر التطبيق", menu9999: "سياسة الخصوصية وشروط التطبيق",
+        menu854825: "إعادة تشغيل التطبيق", menu85680: "تم الكشف عن مانع إعلانات",
+        menu655455: "ليس الآن", menu655855: "لا تظهر مرة أخرى", menu72825: "موافق"
+    },
+    en: {
+        menu31: "Home", menu34: "Home Page 🔹", menu35: "More Apps",
+        menu36: "Premium", menu37: "Buy me coffee", menu54: "Settings",
+        menu55: "My Account", menu56: "Support", menu57: "Settings & Support",
+        menu300: "Nothing here yet, try again later 😅",
+        menu400: "Our Products 🛍️", menu401: "Browse featured products at best prices",
+        menu402: "All", menu403: "Electronics", menu404: "Clothes", menu405: "Accessories",
+        menu406: "Order Now 🛒", menu407: "Products",
+        menu5855: "Choose your preferred language",
+        menu80555: "☕ How about buying coffee for the developer? That would be great",
+        menu80855: "🥹 What do you think? Will you do this for me", menu8585: "Do you like the app?",
+        menu8855: "App Appearance", menu9999: "Privacy Policy & Terms",
+        menu854825: "Restart App", menu85680: "Ad blocker detected",
+        menu655455: "Not now", menu655855: "Never show again", menu72825: "OK"
+    }
+};
+
+function changeLanguage(lang) {
+    var html = document.documentElement;
+    localStorage.setItem('alquran-lang', lang);
+    html.lang = lang;
+    html.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    var t = translations[lang] || translations['ar'];
+    for (var key in t) {
+        var el = document.getElementById(key);
+        if (el) el.textContent = t[key];
+    }
+    var sidebar = document.getElementById('sidebar');
+    var overlay = document.getElementById('sidebar-overlay');
+    if (sidebar && overlay) {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    changeLanguage(localStorage.getItem('alquran-lang') || 'ar');
+});
+
+/* ==================== SUPPORT MODAL ==================== */
+window.addEventListener('DOMContentLoaded', function () {
+    var modal = document.getElementById('customizeModal');
+    if (!modal) return;
+    if (localStorage.getItem('neverShowSupport') === 'true') { modal.style.display = 'none'; return; }
+    var count = parseInt(localStorage.getItem('appOpenCount') || '0');
+    count++;
+    localStorage.setItem('appOpenCount', count);
+    if (count < 15) { modal.style.display = 'none'; return; }
+    var last = localStorage.getItem('supportLastShown');
+    var now = Date.now();
+    var days30 = 30 * 24 * 60 * 60 * 1000;
+    if (!last || (now - parseInt(last)) > days30) {
+        modal.style.display = 'flex';
+        localStorage.setItem('supportLastShown', now);
+    } else {
+        modal.style.display = 'none';
+    }
+});
+function remindLater(days) {
+    var modal = document.getElementById('customizeModal');
+    localStorage.setItem('supportLastShown', Date.now() + days * 24 * 60 * 60 * 1000);
+    if (modal) modal.style.display = 'none';
+}
+function neverShowAgain() {
+    var modal = document.getElementById('customizeModal');
+    localStorage.setItem('neverShowSupport', 'true');
+    if (modal) modal.style.display = 'none';
+}
+
+/* ==================== PRIVACY OVERLAY ==================== */
+document.addEventListener('DOMContentLoaded', function () {
+    var overlay = document.getElementById('overlay');
+    var body = document.body;
+    if (!localStorage.getItem('userAccepted')) {
+        if (overlay) overlay.style.display = 'flex';
+        body.classList.add('no-scroll');
+    } else {
+        if (overlay) overlay.style.display = 'none';
+        body.classList.remove('no-scroll');
+    }
+    var btn = document.getElementById('acceptBtn');
+    if (btn) {
+        btn.addEventListener('click', function () {
+            localStorage.setItem('userAccepted', 'true');
+            if (overlay) overlay.style.display = 'none';
+            body.classList.remove('no-scroll');
+        });
+    }
+});
+
+/* ==================== ANTI-ADBLOCK ==================== */
+window.showExceptionDialog = function () {
+    var code = prompt("Please enter the exception code:");
+    if (code === '05564582525') {
+        localStorage.setItem('adblockExceptionCode', code);
+        alert("The exception has been activated successfully! ✅");
+        window.location.reload();
+    } else if (code !== null) {
+        alert("The exception code is incorrect! ❌");
+    }
+    return false;
+};
+
+(function () {
+    var exceptionCode = localStorage.getItem('adblockExceptionCode');
+    if (exceptionCode === '05564582525') return;
+    function showBlock() {
+        var a = document.getElementById('AntiAdblockcnmu');
+        if (a) { a.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+    }
+    var b = document.createElement('script');
+    b.type = 'text/javascript'; b.async = true;
+    b.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+    b.onerror = function () { showBlock(); window.adblock = true; };
+    var e = document.getElementsByTagName('script')[0];
+    e.parentNode.insertBefore(b, e);
+})();
+
+/* ==================== PROFILE SYSTEM (FIRESTORE + IMGBB) ==================== */
+var VERIFY_CODE = 'STAR2026';
+var OWNER_CODE = 'OWNER2026';
+var ADMIN_CODE = 'ADMIN2026';
+
+var IMGBB_API_KEY = "af3d93f81d6477d7859d22e79094bda2";
+
+var NORMAL_BADGE_URL = 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794862678/Twitter_Verified_Badge.svg_qqheob.png';
+var OWNER_BADGE_URL = 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794862679/Twitter_Verified_Badge_Gold.svg_suieqe.png';
+function badgeSrc(owner) { return owner ? OWNER_BADGE_URL : NORMAL_BADGE_URL; }
+
+var DEFAULT_AVATAR = 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1738530112/ConvertedWebP12_y05y2c.webp';
+var currentAvatar = null;      // رابط الصورة المحفوظة (URL)
+var currentCover = null, tempCover = null;
+var currentJoinedDate = null;
+var currentUserKey = null;
+var globalAvatarFile = null, globalCoverFile = null;
+
+function profileKeyFrom(email, phone) {
+    var e = (email || '').trim().toLowerCase();
+    var p = (phone || '').trim();
+    return e || p || null;
+}
+
+function showEditProfile() {
+    document.getElementById('profileView').style.display = 'none';
+    document.getElementById('profileEditForm').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function showProfileView() {
+    document.getElementById('profileEditForm').style.display = 'none';
+    document.getElementById('profileView').style.display = 'block';
+    renderProfileView();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function changeAvatar() {
+    showEditProfile();
+    document.getElementById('avatarInput').click();
+}
+function changeCover() { showEditProfile(); document.getElementById('coverInput').click(); }
+
+function renderCover(url) {
+    var img = document.getElementById('pvCoverImg');
+    if (url) { img.src = url; img.style.display = 'block'; }
+    else { img.style.display = 'none'; }
+}
+
+function setAvatar(url) {
+    var src = url || DEFAULT_AVATAR;
+    var a = document.getElementById('profileAvatarImg');
+    var b = document.getElementById('pvAvatar');
+    if (a) a.src = src;
+    if (b) b.src = src;
+    if (url && url.indexOf('data:') !== 0) {
+        try { localStorage.setItem('app_avatar_url', url); } catch (e) { }
+    }
+    var acc = document.getElementById('account-icon');
+    if (acc && url) {
+        acc.src = url;
+        acc.style.borderRadius = '50%';
+        acc.style.objectFit = 'cover';
+    }
+}
+
+function setVerified(isVerified, isOwner) {
+    var badge = document.getElementById('verifyBadgeIcon');
+    var txt = document.getElementById('verifyStatusText');   // قد لا يكون موجودًا في الصفحة
+    var pvBadge = document.getElementById('pvBadgeIcon');
+    var on = !!(isVerified || isOwner);
+
+    if (badge) {
+        if (on) { badge.src = badgeSrc(isOwner); badge.style.display = 'block'; }
+        else { badge.style.display = 'none'; }
+        badge.classList.toggle('owner-glow', !!isOwner);
+    }
+    if (txt) {
+        txt.textContent = on ? (isOwner ? 'حساب موثّق 👑 (مالك)' : 'حساب موثّق ✔') : 'حساب غير موثّق';
+        txt.style.color = on ? 'var(--tab-active-color)' : 'var(--text-color)';
+    }
+    if (pvBadge) {
+        if (on) { pvBadge.src = badgeSrc(isOwner); pvBadge.style.display = 'inline-block'; }
+        else { pvBadge.style.display = 'none'; }
+        pvBadge.classList.toggle('owner-glow', !!isOwner);
+    }
+}
+
+function collectProfileForm() {
+    // ملاحظة: لا نرسل verified/owner من هنا حتى لا يتم كتابتها فوق قيم لوحة المالك
+    return {
+        name: document.getElementById('pfName').value.trim(),
+        username: document.getElementById('pfUsername').value.trim().replace(/^@/, ''),
+        bio: document.getElementById('pfBio').value.trim(),
+        email: document.getElementById('pfEmail').value.trim(),
+        phone: document.getElementById('pfPhone').value.trim(),
+        avatar: currentAvatar || null,
+        cover: currentCover || null,
+        joined: currentJoinedDate || new Date().toISOString()
+    };
+}
+
+function renderProfileView() {
+    var name = document.getElementById('pfName').value.trim() || 'اسم المستخدم';
+    var user = document.getElementById('pfUsername').value.trim().replace(/^@/, '') || 'username';
+    var bio = document.getElementById('pfBio').value.trim();
+    var email = document.getElementById('pfEmail').value.trim();
+    var phone = document.getElementById('pfPhone').value.trim();
+    document.getElementById('pvName').textContent = name;
+    document.getElementById('pvUsername').textContent = '@' + user;
+    document.getElementById('pvBio').textContent = bio;
+    document.getElementById('pvBio').style.display = bio ? 'block' : 'none';
+    document.getElementById('pvEmail').textContent = email || '—';
+    document.getElementById('pvPhone').textContent = phone || '—';
+    var d = currentJoinedDate ? new Date(currentJoinedDate) : new Date();
+    document.getElementById('pvJoined').textContent = d.toLocaleDateString('ar', { year: 'numeric', month: 'long' });
+    renderCover(tempCover || currentCover);
+}
+
+function applyProfileToUI(p) {
+    if (!p) return;
+    document.getElementById('pfName').value = p.name || '';
+    document.getElementById('pfUsername').value = p.username || '';
+    document.getElementById('pfBio').value = p.bio || '';
+    document.getElementById('pfEmail').value = p.email || '';
+    document.getElementById('pfPhone').value = p.phone || '';
+    currentJoinedDate = p.joined || null;
+    currentCover = p.cover || null;
+    currentAvatar = p.avatar || null;
+    tempCover = null;
+    setAvatar(currentAvatar);
+    setVerified(!!p.verified || !!p.owner, !!p.owner);
+    renderProfileView();
+}
+
+/* ---------- رفع الصور إلى ImgBB ---------- */
+async function uploadImageToImgBB(file) {
+    var base64 = await new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function () { resolve(reader.result.split(',')[1]); };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+
+    var formData = new FormData();
+    formData.append('key', IMGBB_API_KEY);
+    formData.append('image', base64);
+
+    var response = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
+    var data = await response.json();
+    if (data && data.success) return data.data.display_url;
+    throw new Error('فشل رفع الصورة على ImgBB');
+}
+
+function handleAvatarUpload(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+    globalAvatarFile = file;
+    var reader = new FileReader();
+    reader.onload = function (e) { setAvatar(e.target.result); };  // معاينة فقط
+    reader.readAsDataURL(file);
+}
+
+function handleCoverUpload(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+    globalCoverFile = file;
+    var reader = new FileReader();
+    reader.onload = function (e) { tempCover = e.target.result; renderCover(tempCover); };
+    reader.readAsDataURL(file);
+}
+
+/* ---------- حفظ / استعادة / توثيق ---------- */
+async function saveProfile() {
+    var p = collectProfileForm();
+    var key = profileKeyFrom(p.email, p.phone);
+    if (!key) { alert('⚠️ يجب إدخال البريد الإلكتروني أو رقم الهاتف لحفظ البيانات!'); return; }
+
+    var btn = document.getElementById('saveProfileBtn');
+    try {
+        btn.textContent = '⏳ جاري الحفظ...';
+        var fb = await getFB();
+
+        if (globalAvatarFile) {
+            p.avatar = await uploadImageToImgBB(globalAvatarFile);
+            currentAvatar = p.avatar;
+            globalAvatarFile = null;
+            setAvatar(p.avatar);
+        }
+        if (globalCoverFile) {
+            p.cover = await uploadImageToImgBB(globalCoverFile);
+            currentCover = p.cover;
+            tempCover = null;
+            globalCoverFile = null;
+        }
+
+        await fb.setDoc(fb.doc(fb.db, 'profiles', key), Object.assign({}, p, {
+            updatedAt: fb.serverTimestamp()
+        }), { merge: true });
+
+        currentUserKey = key;
+        currentJoinedDate = p.joined;
+        localStorage.setItem('app_last_profile_key', key);
+        renderProfileView();
+        alert('✅ تم حفظ بياناتك في السحابة بنجاح!');
+    } catch (err) {
+        console.error(err);
+        alert('❌ خطأ في الحفظ: ' + (err.code ? err.code + ' - ' : '') + err.message);
+    } finally {
+        btn.textContent = '💾 حفظ البيانات';
+    }
+}
+
+async function recoverProfile() {
+    var input = prompt('أدخل بريدك الإلكتروني أو رقم هاتفك المسجل:');
+    if (!input) return;
+    var key = profileKeyFrom(input, input);
+    try {
+        var fb = await getFB();
+        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
+        if (snap.exists()) {
+            applyProfileToUI(snap.data());
+            currentUserKey = key;
+            localStorage.setItem('app_last_profile_key', key);
+            alert('✅ تم استعادة بياناتك من السحابة!');
+        } else {
+            alert('❌ لا توجد بيانات محفوظة بهذا الإيميل/الرقم في السيرفر.');
+        }
+    } catch (err) {
+        alert('❌ خطأ: ' + (err.code ? err.code + ' - ' : '') + err.message);
+    }
+}
+
+async function enterVerifyCode() {
+    var code = prompt('أدخل رمز التوثيق:');
+    if (code === null) return;
+    code = code.trim();
+    if (code === OWNER_CODE || code === VERIFY_CODE) {
+        var isOwner = (code === OWNER_CODE);
+        var p = collectProfileForm();
+        var key = profileKeyFrom(p.email, p.phone);
+        if (!key) { alert('⚠️ احفظ بياناتك أولاً قبل طلب التوثيق.'); return; }
+        try {
+            var fb = await getFB();
+            await fb.setDoc(fb.doc(fb.db, 'profiles', key), { verified: true, owner: isOwner }, { merge: true });
+            setVerified(true, isOwner);
+            alert(isOwner ? '👑 تم تفعيل وضع المالك!' : '🎉 تم توثيق حسابك بنجاح!');
+        } catch (err) {
+            alert('❌ خطأ في التوثيق: ' + err.message);
+        }
+    } else {
+        alert('❌ رمز التوثيق غير صحيح!');
+    }
+}
+
+/* ---------- لوحة تحكم المالك ---------- */
+async function openAdminPanel() {
+    var code = prompt('أدخل رمز دخول السيستم:');
+    if (code === null) return;
+    if (code.trim() !== ADMIN_CODE) { alert('❌ رمز خاطئ!'); return; }
+    document.getElementById('adminModal').style.display = 'flex';
+    await renderAdminList();
+}
+
+function closeAdminPanel() { document.getElementById('adminModal').style.display = 'none'; }
+
+async function renderAdminList() {
+    var listDiv = document.getElementById('adminList');
+    listDiv.innerHTML = '<span style="opacity:.6;">⏳ جاري تحميل الموثقين...</span>';
+    try {
+        var fb = await getFB();
+        var q = fb.query(fb.collection(fb.db, 'profiles'), fb.where('verified', '==', true));
+        var snap = await fb.getDocs(q);
+        var html = '<b>المستخدمون الموثقون (' + snap.size + '):</b><br><br>';
+        if (snap.size === 0) html += '<span style="opacity:.6">لا يوجد موثقون بعد</span>';
+        snap.forEach(function (d) {
+            var u = d.data();
+            var typeStr = u.owner ? '👑 مالك' : '🏅 عادي';
+            html += '• <b>' + (u.name || 'بدون اسم') + '</b><br>';
+            html += '  <span style="color:var(--tab-active-color)">' + (u.email || u.phone || '') + '</span><br>';
+            html += '  ' + typeStr + '<br><hr style="border-color:rgba(128,128,128,0.2);margin:5px 0;">';
+        });
+        listDiv.innerHTML = html;
+    } catch (err) {
+        listDiv.innerHTML = '❌ خطأ في التحميل: ' + err.message;
+    }
+}
+
+async function adminApplyBadge() {
+    var input = document.getElementById('adminTarget').value.trim();
+    if (!input) { alert('⚠️ أدخل البريد أو الهاتف'); return; }
+    var key = profileKeyFrom(input, input);
+    var type = document.getElementById('adminBadgeType').value;
+    try {
+        var fb = await getFB();
+        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
+        if (!snap.exists()) {
+            alert('⚠️ لا يوجد مستخدم محفوظ بهذا الحساب. اطلب منه حفظ بياناته أولًا.');
+            return;
+        }
+        await fb.setDoc(fb.doc(fb.db, 'profiles', key), {
+            verified: type !== 'none',
+            owner: type === 'owner',
+            updatedAt: fb.serverTimestamp()
+        }, { merge: true });
+        alert('✅ تم التطبيق على: ' + key);
+        await renderAdminList();
+        if (key === currentUserKey) setVerified(type !== 'none', type === 'owner');
+    } catch (err) {
+        alert('❌ ' + err.message);
+    }
+}
+
+async function adminRemoveBadge() {
+    var input = document.getElementById('adminTarget').value.trim();
+    if (!input) { alert('⚠️ أدخل البريد أو الهاتف'); return; }
+    var key = profileKeyFrom(input, input);
+    try {
+        var fb = await getFB();
+        await fb.setDoc(fb.doc(fb.db, 'profiles', key), {
+            verified: false, owner: false, updatedAt: fb.serverTimestamp()
+        }, { merge: true });
+        alert('🗑️ تمت إزالة التعيين من: ' + key);
+        await renderAdminList();
+        if (key === currentUserKey) setVerified(false, false);
+    } catch (err) {
+        alert('❌ ' + err.message);
+    }
+}
+
+async function sendMessageToUser() {
+    var input = document.getElementById('adminTarget').value.trim();
+    if (!input) { alert('⚠️ أدخل البريد أو الهاتف في الحقل المكتوب فوق أولاً.'); return; }
+    var key = profileKeyFrom(input, input);
+    var subject = prompt('موضوع الرسالة (مثلاً: تنبيه هام، ترقية حساب):');
+    if (!subject) return;
+    var body = prompt('نص الرسالة:');
+    if (!body) return;
+    try {
+        var fb = await getFB();
+        await fb.setDoc(fb.doc(fb.db, 'messages', Date.now().toString()), {
+            to: key, subject: subject, body: body, sentAt: fb.serverTimestamp()
+        });
+        alert('✅ تم إرسال الرسالة وحفظها في السيرفر للمستخدم: ' + key);
+    } catch (err) {
+        alert('❌ فشل إرسال الرسالة: ' + err.message);
+    }
+}
+
+/* تحميل آخر ملف محفوظ تلقائيًا */
+document.addEventListener('DOMContentLoaded', function () {
+    var lastKey = localStorage.getItem('app_last_profile_key');
+    if (lastKey) {
+        currentUserKey = lastKey;
+        (async function () {
+            try {
+                var fb = await getFB();
+                var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', lastKey));
+                if (snap.exists()) applyProfileToUI(snap.data());
+            } catch (e) { console.log('Auto load failed', e); }
+        })();
+    } else {
+        renderProfileView();
+    }
+});
+
+/* ==================== DISABLE RIGHT CLICK / SELECT ==================== */
+document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+document.addEventListener('selectstart', function (e) {
+    var t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+    e.preventDefault();
+});
+
+</script>
+</body>
+</html>
