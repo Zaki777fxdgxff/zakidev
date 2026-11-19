@@ -812,7 +812,7 @@ footer .footer-label {
     <ul>
         <li class="icon-text-item"><a href="#" onclick="switchTab('homePage');return false;"><i class="fas fa-home"></i><span><b>الصفحة الرئيسية</b></span></a></li>
         <li class="icon-text-item"><a href="go:585868"><i class="fas fa-th"></i><span><b>المزيد من التطبيقات</b></span></a></li>
-        <li class="icon-text-item"><a href="go:05885"><i class="fas fa-crown"></i><span><b>Premium</b></span></a></li>
+        <li class="icon-text-item"><a href="#" onclick="switchTab('premiumPage');return false;"><i class="fas fa-crown"></i><span><b>Premium</b></span></a></li>
         <li class="icon-text-item"><a href="go:058555"><i class="fas fa-coffee"></i><span><b>اشتري لي القهوة</b></span></a></li>
         <li class="icon-text-item" id="adminPanelMenuItem" style="display:none;" onclick="openAdminPanel()">
             <a href="#" onclick="return false;" style="color:#f39c12;"><i class="fas fa-user-shield" style="color:#f39c12;"></i><span><b>لوحة التحكم</b></span></a>
@@ -826,9 +826,7 @@ footer .footer-label {
             <div class="accordion-content-inner">
                 <li class="icon-text-item"><a href="#" onclick="switchTab('settingsPage');return false;"><i class="fas fa-cog"></i><span>الإعدادات</span></a></li>
                 <li class="icon-text-item"><a href="#" onclick="switchTab('accountPage');return false;"><i class="fas fa-user-circle"></i><span>حسابي</span></a></li>
-                <div class="icon-text-item" onclick="toggleTheme()"><i class="fas fa-moon" style="font-size:22px;"></i><span>مظهر التطبيق</span></div>
-                <div class="language-buttons"><button onclick="changeLanguage('en')">English</button><button onclick="changeLanguage('ar')">العربية</button></div>
-            </div>
+                    </div>
         </div>
     </div>
 </div>
@@ -1595,7 +1593,7 @@ var TRANSLATIONS = {
         footer_games: 'Games',
         footer_products: 'Store',
         footer_chat: 'Chats',
-        footer_account: 'Account',
+        footer_account: 'You',
         footer_labels_show: 'Show labels',
         footer_labels_hide: 'Hide labels'
     }
