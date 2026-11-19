@@ -1067,9 +1067,9 @@ footer .footer-label {
         <div class="profile-field" style="text-align:right;">
             <label>نوع التوثيق</label>
             <select id="adminBadgeType" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);font-size:15px;">
-                <option value="normal">توثيق عادي (أزرق)</option>
-                <option value="owner">توثيق مالك (ذهبي)</option>
-                <option value="black">توثيق أسود</option>
+                <option value="normal">توثيق (أزرق)</option>
+                <option value="owner">توثيق (ذهبي)</option>
+                <option value="black">توثيق بني المالك</option>
                 <option value="none">بدون توثيق</option>
             </select>
         </div>
@@ -1773,9 +1773,9 @@ function showBadgeTooltip(e, imgEl) {
     var isBlack = src === BLACK_BADGE_URL;
     var lang = localStorage.getItem('lang') || 'ar';
     var text;
-    if (isBlack) text = lang === 'en' ? 'Black Verified Account' : 'حساب موثّق (توثيق أسود)';
-    else if (isOwner) text = lang === 'en' ? 'Owner / Partner Account' : 'حساب مالك التطبيق أو أحد شركائه';
-    else text = lang === 'en' ? 'Verified Account' : 'حساب تم التحقق منه';
+    if (isBlack) text = lang === 'en' ? 'Black Verified Account' : 'This account is verified because it is a government or multilateral organization account.';
+    else if (isOwner) text = lang === 'en' ? 'Owner / Partner Account' : '  Verified account. Follows a moderator. ';
+    else text = lang === 'en' ? 'Verified Account' : 'This account is verified.';
     tooltip.textContent = text;
     tooltip.className = 'badge-tooltip show ' + (isBlack ? 'black' : (isOwner ? 'gold' : 'blue'));
     var rect = imgEl.getBoundingClientRect();
