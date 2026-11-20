@@ -60,7 +60,6 @@
         .tab { flex: 1; text-align: center; color: var(--tab-color); padding: 15px 0; cursor: pointer; font-size: 16px; font-weight: bold; position: relative; }
         .tab.active { color: var(--tab-active-color); border-bottom: 3px solid var(--tab-active-color); }
 
-        /* ✨ Stories: compact like Instagram/Twitter */
         #storiesBar { display: none; padding: 6px 8px; overflow-x: auto; gap: 8px; scrollbar-width: none; }
         #storiesBar::-webkit-scrollbar { display: none; }
         #storiesBar.has-stories { display: flex; }
@@ -69,26 +68,8 @@
         .story-ring.seen { background: var(--tab-color); }
         .story-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--content-bg); background: var(--content-bg); display: block; }
         .story-label { display: none !important; }
-
-/* ✨ اسم المستخدم تحت الستوري */
-.story-username-label {
-    font-size: 10px;
-    color: var(--text-color);
-    opacity: 0.85;
-    text-align: center;
-    margin-top: 3px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 56px;
-    font-weight: 500;
-}
-
-/* ✨ تعديل عرض الستوري ليتسع للاسم */
-.story-item {
-    width: 58px !important;
-    margin-bottom: 4px;
-}
+        .story-username-label { font-size: 10px; color: var(--text-color); opacity: 0.85; text-align: center; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 56px; font-weight: 500; }
+        .story-item { width: 58px !important; margin-bottom: 4px; }
         .story-live-badge { position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%); background: #e0245e; color: #fff; font-size: 8px; padding: 1px 5px; border-radius: 6px; font-weight: bold; white-space: nowrap; }
 
         .sidebar { position: fixed; top: 0; width: 260px; height: 100%; background-color: var(--sidebar-bg); color: var(--text-color); z-index: 1001; overflow-y: auto; transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -355,7 +336,6 @@
         .appeal-notif-item .appeal-actions { display: flex; gap: 6px; margin-top: 6px; }
         .appeal-notif-item .appeal-actions button { flex: 1; padding: 6px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
 
-        /* ✨ Professional Swipe Indicator with Animation */
         .swipe-indicator { 
             position: fixed; 
             bottom: 80px; 
@@ -379,7 +359,6 @@
         .swipe-indicator.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         .swipe-indicator i { font-size: 16px; }
 
-        /* ✨ Swipe page transition effect */
         .content {
             transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
         }
@@ -388,7 +367,6 @@
         .content.swiping-in-left { transform: translateX(-30%); opacity: 0; }
         .content.swiping-in-right { transform: translateX(30%); opacity: 0; }
 
-        /* Swipe hint arrows on edges */
         .swipe-edge-hint {
             position: fixed;
             top: 50%;
@@ -511,256 +489,41 @@
             to { transform: translateY(0); }
         }
 
-        /* Product category fade animation */
-        .product-card {
-            transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.2s ease;
-        }
-        .product-card.fade-out {
-            opacity: 0;
-            transform: scale(0.9);
-        }
-        .product-card.fade-in {
-            animation: fadeInProduct 0.4s ease;
-        }
-        @keyframes fadeInProduct {
-            from { opacity: 0; transform: scale(0.85); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        /* ✨ خط فاصل بين الستوري والمنشورات */
-.stories-divider {
-    height: 1px;
-    background: linear-gradient(90deg, 
-        transparent 0%, 
-        var(--border-color) 15%, 
-        var(--border-color) 85%, 
-        transparent 100%);
-    margin: 12px auto 16px;
-    max-width: 560px;
-    position: relative;
-}
+        .product-card { transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.2s ease; }
+        .product-card.fade-out { opacity: 0; transform: scale(0.9); }
+        .product-card.fade-in { animation: fadeInProduct 0.4s ease; }
+        @keyframes fadeInProduct { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
 
-.stories-divider::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 40px;
-    height: 3px;
-    background: var(--tab-active-color);
-    border-radius: 2px;
-    opacity: 0.4;
-}
-footer {
-    background-color: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(14px) saturate(180%);
-    -webkit-backdrop-filter: blur(14px) saturate(180%);
-    display: flex;
-    justify-content: space-around;
-    padding: 7px;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    z-index: 100;
-    border-top: 1px solid var(--footer-border-color);
-    box-shadow: none;
-    transition: transform 0.3s ease-in-out, background-color 0.3s ease;
-}
+        .stories-divider { height: 1px; background: linear-gradient(90deg, transparent 0%, var(--border-color) 15%, var(--border-color) 85%, transparent 100%); margin: 12px auto 16px; max-width: 560px; position: relative; }
+        .stories-divider::after { content: ''; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 40px; height: 3px; background: var(--tab-active-color); border-radius: 2px; opacity: 0.4; }
 
-/* خط فاصل رفيع فوق الفوتر — يظهر في كل الألوان */
-footer::before {
-    content: '';
-    position: absolute;
-    top: -1px;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(
-        90deg,
-        transparent 0%,
-        var(--footer-border-color) 10%,
-        var(--footer-border-color) 90%,
-        transparent 100%
-    );
-    pointer-events: none;
-    z-index: 1;
-}
+        footer { background-color: var(--footer-bg, rgba(255,255,255,0.7)); backdrop-filter: var(--footer-blur, blur(14px) saturate(180%)); -webkit-backdrop-filter: var(--footer-blur, blur(14px) saturate(180%)); display: flex; justify-content: space-around; padding: 7px; position: fixed; bottom: 0; width: 100%; z-index: 100; border-top: 1px solid var(--footer-border-color); box-shadow: none; transition: transform 0.3s ease-in-out, background-color 0.3s ease; }
+        footer::before { content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent 0%, var(--footer-border-color) 10%, var(--footer-border-color) 90%, transparent 100%); pointer-events: none; z-index: 1; }
+        footer.hidden { transform: translateY(100%); }
+        footer div { position: relative; display: flex; align-items: center; justify-content: center; }
+        footer div a { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding-top: 6px; }
+        footer div img { height: 33px; width: 33px; transition: transform 0.2s ease; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+        footer div img:active { transform: scale(0.9); }
 
-footer.hidden {
-    transform: translateY(100%);
-}
-:root {
-    /* ... القيم الحالية ... */
-    --footer-border-color: rgba(0, 0, 0, 0.12);
-    --footer-blur: blur(14px) saturate(180%);
-}
-:root[data-theme="dark"] {
-    /* ... القيم الحالية ... */
-    --footer-border-color: rgba(255, 255, 255, 0.15);
-    --footer-blur: blur(14px) saturate(180%);
-}
-:root[data-theme="blue"] {
-    /* ... القيم الحالية ... */
-    --footer-border-color: rgba(255, 255, 255, 0.2);
-    --footer-blur: blur(14px) saturate(180%);
-}
+        footer div a::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scaleX(0); width: 30px; height: 3px; border-radius: 0 0 1px 1px; background: var(--tab-active-color, #1da1f2); transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s; opacity: 0; pointer-events: none; }
+        footer div a.footer-active::before { transform: translateX(-50%) scaleX(1); opacity: 1; }
+        footer div a.footer-active img { transform: scale(1.08); filter: drop-shadow(0 0 4px rgba(29,161,242,0.5)); }
 
-/* الوضع الفاتح — أبيض شفاف */
-:root:not([data-theme]),
-:root[data-theme="light"] {
-    --footer-bg: rgba(255, 255, 255, 0.7);
-}
+        footer .footer-label { display: none; font-size: 11px; font-weight: 800; letter-spacing: 0.2px; color: var(--text-color); line-height: 1.2; white-space: nowrap; opacity: 0.9; text-shadow: 0 0 1px currentColor; transition: opacity 0.2s; }
+        body.footer-with-labels footer .footer-label { display: block; }
+        body.footer-with-labels footer div img { height: 26px; width: 26px; }
+        body:not(.footer-with-labels) footer div img { height: 33px; width: 33px; }
+        footer div a.footer-active .footer-label { opacity: 1; color: var(--tab-active-color); font-weight: 900; text-shadow: 0 0 2px rgba(29,161,242,0.3); }
+        footer .footer-label { text-shadow: 0 1px 2px rgba(0,0,0,0.15); font-weight: 900; }
 
-/* الوضع الداكن — أسود شفاف */
-:root[data-theme="dark"] {
-    --footer-bg: rgba(10, 10, 10, 0.7);
-}
+        #footerLabelsToggle { position: fixed; bottom: 78px; left: 12px; z-index: 101; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--footer-border-color); background: var(--footer-bg, rgba(255,255,255,0.8)); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: var(--text-color); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.2s, background 0.2s; }
+        #footerLabelsToggle:active { transform: scale(0.92); }
+        [dir="rtl"] #footerLabelsToggle { left: 12px; right: auto; }
+        [dir="ltr"] #footerLabelsToggle { right: 12px; left: auto; }
 
-/* الوضع الأزرق — أزرق داكن شفاف */
-:root[data-theme="blue"] {
-    --footer-bg: rgba(21, 32, 43, 0.7);
-}
-footer {
-    background-color: var(--footer-bg, rgba(255, 255, 255, 0.7));
-    backdrop-filter: var(--footer-blur, blur(14px) saturate(180%));
-    -webkit-backdrop-filter: var(--footer-blur, blur(14px) saturate(180%));
-    /* باقي الخصائص كما هي */
-}
-
-/* ==================== FOOTER (شفاف + خط فاصل + نصوص + مؤشر نشط) ==================== */
-footer {
-    background-color: var(--footer-bg, rgba(255,255,255,0.7));
-    backdrop-filter: var(--footer-blur, blur(14px) saturate(180%));
-    -webkit-backdrop-filter: var(--footer-blur, blur(14px) saturate(180%));
-    display: flex;
-    justify-content: space-around;
-    padding: 7px;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    z-index: 100;
-    border-top: 1px solid var(--footer-border-color);
-    box-shadow: none;
-    transition: transform 0.3s ease-in-out, background-color 0.3s ease;
-}
-footer::before {
-    content: '';
-    position: absolute;
-    top: -1px; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, var(--footer-border-color) 10%, var(--footer-border-color) 90%, transparent 100%);
-    pointer-events: none;
-    z-index: 1;
-}
-footer.hidden { transform: translateY(100%); }
-footer div { position: relative; display: flex; align-items: center; justify-content: center; }
-footer div a {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    padding-top: 6px;
-}
-footer div img {
-    height: 33px; width: 33px;
-    transition: transform 0.2s ease;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-}
-footer div img:active { transform: scale(0.9); }
-
-/* ✨ خط أزرق فوق الأيقونة النشطة */
-footer div a::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 50%;
-    transform: translateX(-50%) scaleX(0);
-    width: 30px; height: 3px;
-    border-radius: 0 0 1px 1px;
-    background: var(--tab-active-color, #1da1f2);
-    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s;
-    opacity: 0;
-    pointer-events: none;
-}
-footer div a.footer-active::before {
-    transform: translateX(-50%) scaleX(1);
-    opacity: 1;
-}
-footer div a.footer-active img {
-    transform: scale(1.08);
-    filter: drop-shadow(0 0 4px rgba(29,161,242,0.5));
-}
-
-footer .footer-label {
-    display: none;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.2px;
-    color: var(--text-color);
-    line-height: 1.2;
-    white-space: nowrap;
-    opacity: 0.9;
-    text-shadow: 0 0 1px currentColor;
-    transition: opacity 0.2s;
-}
-body.footer-with-labels footer .footer-label { display: block; }
-body.footer-with-labels footer div img { height: 26px; width: 26px; }
-body:not(.footer-with-labels) footer div img { height: 33px; width: 33px; }
-footer div a.footer-active .footer-label {
-    opacity: 1;
-    color: var(--tab-active-color);
-    font-weight: 900;
-    text-shadow: 0 0 2px rgba(29,161,242,0.3);
-}
-footer .footer-label {
-    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
-}
-footer .footer-label {
-    font-weight: 900;  /* أقصى سماكة */
-}
-
-/* ✨ زر التبديل العائم */
-#footerLabelsToggle {
-    position: fixed;
-    bottom: 78px;
-    left: 12px;
-    z-index: 101;
-    width: 42px; height: 42px;
-    border-radius: 50%;
-    border: 1px solid var(--footer-border-color);
-    background: var(--footer-bg, rgba(255,255,255,0.8));
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: var(--text-color);
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    transition: transform 0.2s, background 0.2s;
-}
-#footerLabelsToggle:active { transform: scale(0.92); }
-[dir="rtl"] #footerLabelsToggle { left: 12px; right: auto; }
-[dir="ltr"] #footerLabelsToggle { right: 12px; left: auto; }
-
-/* ✨ متغيّرات الفوتر لكل ثيم */
-:root {
-    --footer-bg: rgba(255, 255, 255, 0.7);
-    --footer-border-color: rgba(0, 0, 0, 0.12);
-    --footer-blur: blur(14px) saturate(180%);
-}
-:root[data-theme="dark"] {
-    --footer-bg: rgba(10, 10, 10, 0.7);
-    --footer-border-color: rgba(255, 255, 255, 0.15);
-    --footer-blur: blur(14px) saturate(180%);
-}
-:root[data-theme="blue"] {
-    --footer-bg: rgba(21, 32, 43, 0.7);
-    --footer-border-color: rgba(255, 255, 255, 0.2);
-    --footer-blur: blur(14px) saturate(180%);
-}
+        :root { --footer-bg: rgba(255, 255, 255, 0.7); --footer-border-color: rgba(0, 0, 0, 0.12); --footer-blur: blur(14px) saturate(180%); }
+        :root[data-theme="dark"] { --footer-bg: rgba(10, 10, 10, 0.7); --footer-border-color: rgba(255, 255, 255, 0.15); --footer-blur: blur(14px) saturate(180%); }
+        :root[data-theme="blue"] { --footer-bg: rgba(21, 32, 43, 0.7); --footer-border-color: rgba(255, 255, 255, 0.2); --footer-blur: blur(14px) saturate(180%); }
     </style>
 </head>
 <body>
@@ -826,7 +589,7 @@ footer .footer-label {
             <div class="accordion-content-inner">
                 <li class="icon-text-item"><a href="#" onclick="switchTab('settingsPage');return false;"><i class="fas fa-cog"></i><span>الإعدادات</span></a></li>
                 <li class="icon-text-item"><a href="#" onclick="switchTab('accountPage');return false;"><i class="fas fa-user-circle"></i><span>حسابي</span></a></li>
-                    </div>
+            </div>
         </div>
     </div>
 </div>
@@ -853,7 +616,6 @@ footer .footer-label {
         </a>
     </div>
 </div>
-
 
 <div class="content products-page" id="productsPage" style="padding-top:130px;">
     <div class="categories-bar" id="categoriesBar">
@@ -892,12 +654,8 @@ footer .footer-label {
 <div class="content" id="morePage">
     <div class="products-header"></div>
     
-    <!-- ✨ STICKY STORIES -->
     <div id="moreStoriesWrapper">
         <div id="storiesBar"></div>
-        <div style="text-align:center;margin-top:6px;">
-     
-        </div>
     </div>
     
     <div class="posts-container" id="publicPostsContainer">
@@ -983,15 +741,11 @@ footer .footer-label {
             <a href="go:verified" style="display:block;background:var(--btn-bg);color:#fff;padding:12px;border-radius:10px;text-decoration:none;text-align:center;font-weight:bold;">
                 <i class="fas fa-check-circle"></i> طلب التوثيق
             </a>
-</div>
-       
-            <a onclick="toggleFooterLabels()" style="display:block;background:var(--btn-bg);color:#fff;padding:12px;border-radius:10px;text-decoration:none;text-align:center;font-weight:bold;">
+            <a onclick="toggleFooterLabels()" style="display:block;background:var(--btn-bg);color:#fff;padding:12px;border-radius:10px;text-decoration:none;text-align:center;font-weight:bold;margin-top:10px;">
                 <i class="fas fa-font"></i> | اظهار نصوص القائمة السفلية |
             </a>
-            
         </div>
         <div class="profile-field">
-            
             <a href="go:058889" target="_blank" style="display:block;color:var(--tab-active-color);font-weight:bold;padding:8px;">سياسة الخصوصية</a>
             <a href="go:0558285" target="_blank" style="display:block;color:var(--tab-active-color);font-weight:bold;padding:8px;">شروط الخدمة</a>
         </div>
@@ -1012,7 +766,6 @@ footer .footer-label {
     </div>
 </div>
 
-<!-- ✨ Post Action Sheet -->
 <div id="postActionSheet" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9998;justify-content:flex-end;align-items:flex-end;" onclick="if(event.target===this)closePostActionSheet()">
     <div style="background:var(--card-bg);width:100%;max-width:480px;margin:0 auto;border-radius:20px 20px 0 0;padding:20px;animation:slideUp 0.3s ease;">
         <div style="width:40px;height:4px;background:var(--tab-color);border-radius:2px;margin:0 auto 16px;opacity:0.4;"></div>
@@ -1144,6 +897,25 @@ footer .footer-label {
     </div>
 </div>
 
+<!-- ✨ نافذة التعليقات السفلية -->
+<div id="commentsSheet" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;justify-content:flex-end;align-items:flex-end;" onclick="if(event.target===this)closeCommentsSheet()">
+    <div style="background:var(--card-bg);width:100%;max-width:480px;margin:0 auto;border-radius:20px 20px 0 0;padding:15px;display:flex;flex-direction:column;max-height:80vh;animation:slideUp 0.3s ease;">
+        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-color);padding-bottom:10px;margin-bottom:10px;">
+            <p style="font-weight:bold;font-size:16px;margin:0;color:var(--text-color);">التعليقات</p>
+            <i class="fas fa-times" style="font-size:20px;cursor:pointer;color:var(--text-color);" onclick="closeCommentsSheet()"></i>
+        </div>
+        <div id="commentsList" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-bottom:10px;">
+            <p style="text-align:center;opacity:0.6;padding:20px;">جاري التحميل...</p>
+        </div>
+        <div style="display:flex;gap:8px;border-top:1px solid var(--border-color);padding-top:10px;">
+            <input type="text" id="commentInput" placeholder="أضف تعليقاً..." style="flex:1;padding:12px;border-radius:20px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);font-size:14px;">
+            <button onclick="submitComment()" style="width:45px;height:45px;border-radius:50%;border:none;background:var(--tab-active-color);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
 <div id="overlay">
     <div class="popup">
         <p style="font-weight:bold;color:#000;">سياسة الخصوصية وشروط التطبيق</p>
@@ -1169,7 +941,6 @@ footer .footer-label {
     </div>
 </div>
 
-<!-- ==================== الفوتر المعدّل ==================== -->
 <footer id="foot">
     <div><a href="#" onclick="switchTab('homePage');return false;">
         <img id="home-icon" data-light="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1795045617/Cloudinary_Archive_2026-11-19_01_44_1_Originals_zac4fi.webp" data-dark="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1795045609/ConvertedWebP6_xrafh5_3_e2zil9.webp" data-blue="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1795045609/ConvertedWebP6_xrafh5_3_e2zil9.webp" data-active="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1795045695/ConvertedWebP0_qyrdwj_setfcj_2_fvtsba.png" src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1795045617/Cloudinary_Archive_2026-11-19_01_44_1_Originals_zac4fi.webp" alt="Home">
@@ -1205,9 +976,6 @@ footer .footer-label {
         </a>
     </div>
 </footer>
-
-<!-- ✨ زر تبديل نصوص القائمة السفلية -->
-
 
 <div class="content" id="premiumPage">
     <div style="text-align:center;padding:40px 20px;">
@@ -1296,7 +1064,11 @@ footer .footer-label {
                     <button class="pv-edit-btn" onclick="showEditProfile()"><i class="fas fa-pen"></i> تعديل</button>
                 </div>
             </div>
-            <div class="pv-name-row"><h2 id="pvName">اسم المستخدم</h2><img id="pvBadgeIcon" src="" alt="" onclick="showBadgeTooltip(event, this)"></div>
+            <div class="pv-name-row">
+                <h2 id="pvName">اسم المستخدم</h2>
+                <img id="pvBadgeIcon" src="" alt="" onclick="showBadgeTooltip(event, this)">
+                <img id="pvCustomIcon" src="" alt="" style="display:none;width:20px;height:20px;object-fit:contain;">
+            </div>
             <div id="pvUsername">@username</div>
             <p class="pv-bio" id="pvBio"></p>
             <div class="pv-meta">
@@ -1369,7 +1141,11 @@ footer .footer-label {
                 <div class="pv-avatar"><img id="pubAvatar" src="" alt=""></div>
                 <div id="pubActionsRow" class="pv-actions-row"></div>
             </div>
-            <div class="pv-name-row"><h2 id="pubName">—</h2><img id="pubBadgeIcon" src="" alt="" style="display:none;width:20px;height:20px;cursor:pointer;" onclick="showBadgeTooltip(event, this)"></div>
+            <div class="pv-name-row">
+                <h2 id="pubName">—</h2>
+                <img id="pubBadgeIcon" src="" alt="" style="display:none;width:20px;height:20px;cursor:pointer;" onclick="showBadgeTooltip(event, this)">
+                <img id="pubCustomIcon" src="" alt="" style="display:none;width:20px;height:20px;object-fit:contain;">
+            </div>
             <div id="pubUsername">@—</div>
             <div id="pubPublicContent">
                 <p class="pv-bio" id="pubBio"></p>
@@ -1415,10 +1191,10 @@ footer .footer-label {
         </div>
     </div>
 </div>
-
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
 
 <script>
 /* ==================== FIREBASE CONFIG ==================== */
@@ -1499,14 +1275,14 @@ function profileKeyFrom(email) {
     return e || null;
 }
 function isAdminType(type) {
-    // الآن فقط التوثيق الأسود هو من يمتلك صلاحيات لوحة التحكم
+    // فقط التوثيق الأسود يمتلك صلاحيات لوحة التحكم
     return type === 'black';
 }
 
 /* ==================== I18N SYSTEM ==================== */
 var TRANSLATIONS = {
     ar: {
-        home: 'الرئيسية', more: ' المجتمع ', products: 'المنتجات', games: 'الألعاب',
+        home: 'الرئيسية', more: 'المجتمع', products: 'المنتجات', games: 'الألعاب',
         premium: 'بريميوم', account: 'حسابي', chat: 'الدردشات',
         more_apps: 'المزيد من التطبيقات', buy_coffee: 'اشتري لي القهوة',
         admin_panel: 'لوحة التحكم', settings_support: 'الإعدادات والدعم',
@@ -1547,7 +1323,7 @@ var TRANSLATIONS = {
         footer_games: 'الألعاب',
         footer_products: 'المتجر',
         footer_chat: 'الدردشات',
-        footer_account: 'انت',
+        footer_account: 'حسابي',
         footer_labels_show: 'إظهار النصوص',
         footer_labels_hide: 'إخفاء النصوص'
     },
@@ -1588,13 +1364,12 @@ var TRANSLATIONS = {
         what_to_publish: 'What do you want to publish?', post: 'Post', story: 'Story',
         post_desc: 'Share photos with caption', story_desc: 'Photo or live stream disappears after 24h',
         no_products: 'No products in this category',
-        no_products: 'No products in this category',
         footer_home: 'Home',
         footer_premium: 'Premium',
         footer_games: 'Games',
         footer_products: 'Store',
         footer_chat: 'Chats',
-        footer_account: 'You',
+        footer_account: 'Account',
         footer_labels_show: 'Show labels',
         footer_labels_hide: 'Hide labels'
     }
@@ -1667,7 +1442,6 @@ function applyTranslations() {
     var chatSettingsHeader = document.querySelector('#chatSettingsPage .products-header h2');
     if (chatSettingsHeader) chatSettingsHeader.innerHTML = '<i class="fas fa-cog"></i> ' + t('chat_settings');
 
-    // Bottom Sheet
     var sheetTitle = document.querySelector('#postActionSheet p[style*="font-weight:bold"]');
     if (sheetTitle) sheetTitle.textContent = t('what_to_publish');
     var sheetBtns = document.querySelectorAll('#postActionSheet button');
@@ -1685,7 +1459,6 @@ function applyTranslations() {
     }
     if (sheetBtns[2]) sheetBtns[2].textContent = t('cancel');
 
-    // Re-render
     if (currentPage === 'morePage') loadPublicPosts();
     if (currentPage === 'chatPage') loadChatList();
     if (currentPage === 'chatRoomPage' && currentChatPartner) openChatWith(currentChatPartner);
@@ -1693,6 +1466,8 @@ function applyTranslations() {
     renderChatBgPicker();
     renderPinnedChats();
     filterProducts(currentProductCategory);
+
+    updateFooterLabels();
 }
 
 function changeLanguage(lang) {
@@ -1772,9 +1547,9 @@ function showBadgeTooltip(e, imgEl) {
     var isBlack = src === BLACK_BADGE_URL;
     var lang = localStorage.getItem('lang') || 'ar';
     var text;
-    if (isBlack) text = lang === 'en' ? 'This account is verified because it is a government.' : 'تم التحقق من هذا الحساب لأنه حساب حكومي.';
-    else if (isOwner) text = lang === 'en' ? 'This account is verified multilateral organization account. ' : '  هذا الحساب هو حساب منظمة متعددة الأطراف تم التحقق منه. ';
-    else text = lang === 'en' ? 'This account is verified' : 'هذا الحساب موثق.';
+    if (isBlack) text = lang === 'en' ? 'Black Verified Account' : 'حساب موثّق (توثيق أسود)';
+    else if (isOwner) text = lang === 'en' ? 'Owner / Partner Account' : 'حساب مالك التطبيق أو أحد شركائه';
+    else text = lang === 'en' ? 'Verified Account' : 'حساب تم التحقق منه';
     tooltip.textContent = text;
     tooltip.className = 'badge-tooltip show ' + (isBlack ? 'black' : (isOwner ? 'gold' : 'blue'));
     var rect = imgEl.getBoundingClientRect();
@@ -1814,7 +1589,7 @@ function closeImageViewer() {
 function nextImage() { viewerIndex = (viewerIndex + 1) % viewerImages.length; updateViewer(); }
 function prevImage() { viewerIndex = (viewerIndex - 1 + viewerImages.length) % viewerImages.length; updateViewer(); }
 
-/* ==================== SWIPE NAVIGATION (PROFESSIONAL) ==================== */
+/* ==================== SWIPE NAVIGATION ==================== */
 var swipePages = ['homePage', 'morePage', 'productsPage', 'gamesPage', 'premiumPage', 'chatPage', 'accountPage'];
 var swipeStartX = 0, swipeStartY = 0, swipeTracking = false;
 var swipeThreshold = 80;
@@ -1829,6 +1604,7 @@ function isSwipeIgnored(target) {
     if (target.closest('#imageViewer') || target.closest('#storyViewer')) return true;
     if (target.closest('.categories-bar') || target.closest('#storiesBar')) return true;
     if (target.closest('#postActionSheet')) return true;
+    if (target.closest('#commentsSheet')) return true;
     return false;
 }
 
@@ -1844,7 +1620,6 @@ function showSwipeIndicator(text) {
 function applySwipeTransform(diffX) {
     var active = document.querySelector('.content.active');
     if (!active) return;
-    // حركة احترافية أثناء السحب
     var translate = diffX * 0.3;
     var opacity = 1 - Math.abs(diffX) / 800;
     active.style.transition = 'none';
@@ -1926,7 +1701,6 @@ function switchTab(pageId) {
     document.querySelectorAll('.content').forEach(function(el){ el.classList.remove('active'); });
     var target = document.getElementById(pageId);
     if (target) {
-        // إعادة تعيين أي transform من السحب
         target.style.transition = 'none';
         target.style.transform = '';
         target.style.opacity = '';
@@ -1988,9 +1762,8 @@ function filterProducts(category) {
         if (shouldShow) {
             card.classList.remove('hidden', 'fade-out');
             card.style.display = '';
-            // إعادة تشغيل الأنيميشن
             card.classList.remove('fade-in');
-            void card.offsetWidth; // force reflow
+            void card.offsetWidth;
             card.classList.add('fade-in');
             visibleCount++;
         } else {
@@ -1999,7 +1772,6 @@ function filterProducts(category) {
         }
     });
     
-    // إضافة رسالة فارغة إذا لم توجد منتجات
     var grid = document.getElementById('productsGrid');
     var emptyMsg = document.getElementById('productsEmptyMsg');
     if (visibleCount === 0) {
@@ -2016,7 +1788,6 @@ function filterProducts(category) {
         emptyMsg.style.display = 'none';
     }
     
-    // تحديث الفئة النشطة
     document.querySelectorAll('#categoriesBar .cat-btn').forEach(function(btn){
         btn.classList.toggle('active', btn.getAttribute('data-cat') === category);
     });
@@ -2390,6 +2161,16 @@ function applyProfileToUI(data) {
     }
     currentJoinedDate = data.joined || null;
 
+    var customIconEl = document.getElementById('pvCustomIcon');
+    if (customIconEl) {
+        if (bt === 'black' && data.customIcon) {
+            customIconEl.src = data.customIcon;
+            customIconEl.style.display = 'inline-block';
+        } else {
+            customIconEl.style.display = 'none';
+        }
+    }
+
     if (data.suspended) {
         var banner = document.getElementById('suspendedBanner');
         if (!banner) {
@@ -2535,6 +2316,7 @@ async function handleCoverUpload(event) {
         alert('تم تحديث صورة الغلاف');
     } catch (e) { alert('فشل رفع الغلاف: ' + e.message); }
 }
+
 
 /* ==================== POSTS ==================== */
 async function loadMyPosts() {
@@ -2685,16 +2467,24 @@ async function loadPublicPosts() {
                     '<button class="post-action-btn' + (isDisliked ? ' disliked' : '') + '" onclick="toggleDislike(\'' + p.id + '\', this)">' +
                         '<i class="fas fa-thumbs-down"></i><span class="count">' + dislikes.length + '</span>' +
                     '</button>' +
+                    '<button class="post-action-btn" onclick="openCommentsSheet(\'' + p.id + '\')">' +
+                        '<i class="fas fa-comment"></i><span class="count">تعليق</span>' +
+                    '</button>' +
                     '<button class="post-action-btn" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)">' +
                         '<i class="fas fa-eye"></i><span class="count" id="views-' + p.id + '">' + views + '</span>' +
                     '</button>' +
                 '</div>';
 
+            var customIconHtml = '';
+            if (authorBt === 'black' && author.customIcon) {
+                customIconHtml = ' <img src="' + author.customIcon + '" style="width:16px;height:16px;object-fit:contain;vertical-align:-2px;margin-right:2px;">';
+            }
+
             card.innerHTML =
                 '<div class="post-header" onclick="openPublicProfile(\'' + (authorKey || '') + '\')">' +
                 '<img class="post-header-avatar" src="' + (author.avatar || DEFAULT_AVATAR) + '" alt="">' +
                 '<div class="post-header-info">' +
-                '<div class="post-header-name">' + escapeHtml(author.name || 'مستخدم') + ' ' + badgeHtml + '</div>' +
+                '<div class="post-header-name">' + escapeHtml(author.name || 'مستخدم') + ' ' + badgeHtml + customIconHtml + '</div>' +
                 '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
                 '</div></div>' +
                 (p.data.caption ? '<div class="post-caption">' + escapeHtml(p.data.caption) + '</div>' : '') +
@@ -2944,11 +2734,20 @@ async function openPublicProfile(targetKey) {
         }
 
         var badgeEl = document.getElementById('pubBadgeIcon');
+        var customIconEl = document.getElementById('pubCustomIcon');
+        
         if (bt !== 'none') {
             badgeEl.src = badgeSrc(bt);
             badgeEl.style.display = 'inline-block';
+            if (bt === 'black' && d.customIcon && customIconEl) {
+                customIconEl.src = d.customIcon;
+                customIconEl.style.display = 'inline-block';
+            } else if (customIconEl) {
+                customIconEl.style.display = 'none';
+            }
         } else {
             badgeEl.style.display = 'none';
+            if (customIconEl) customIconEl.style.display = 'none';
         }
 
         var actionsRow = document.getElementById('pubActionsRow');
@@ -3039,6 +2838,105 @@ async function updateFollowButtonState(targetKey, btnEl) {
             }
         }
     } catch (e) {}
+}
+
+/* ==================== COMMENTS ==================== */
+var currentPostIdForComments = null;
+
+function openCommentsSheet(postId) {
+    if (!currentUserKey) { alert(t('login_first')); return; }
+    currentPostIdForComments = postId;
+    document.getElementById('commentsSheet').style.display = 'flex';
+    loadComments(postId);
+}
+
+function closeCommentsSheet() {
+    document.getElementById('commentsSheet').style.display = 'none';
+    currentPostIdForComments = null;
+    document.getElementById('commentInput').value = '';
+}
+
+async function loadComments(postId) {
+    var list = document.getElementById('commentsList');
+    list.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;"><i class="fas fa-spinner fa-spin"></i></p>';
+    
+    try {
+        var fb = await getFB();
+        
+        var postSnap = await fb.getDoc(fb.doc(fb.db, 'posts', postId));
+        var postAuthor = postSnap.exists() ? postSnap.data().author : null;
+
+        var q = fb.query(fb.collection(fb.db, 'comments'), fb.where('postId', '==', postId));
+        var snap = await fb.getDocs(q);
+        
+        if (snap.empty) {
+            list.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;">لا توجد تعليقات بعد. كن أول من يعلق!</p>';
+            return;
+        }
+
+        var comments = [];
+        snap.forEach(function(ds) { comments.push({ id: ds.id, data: ds.data() }); });
+        comments.sort(function(a, b) { return new Date(a.data.createdAt || 0) - new Date(b.data.createdAt || 0); });
+
+        list.innerHTML = '';
+        for (var i = 0; i < comments.length; i++) {
+            var c = comments[i];
+            
+            var userSnap = await fb.getDoc(fb.doc(fb.db, 'profiles', c.data.userId));
+            var userData = userSnap.exists() ? userSnap.data() : { name: 'مستخدم', avatar: null };
+
+            var div = document.createElement('div');
+            div.style.cssText = 'display:flex;gap:10px;align-items:flex-start;padding:8px;background:var(--content-bg);border-radius:10px;';
+            
+            var canDelete = (c.data.userId === currentUserKey) || isAdminType(currentBadgeType) || (currentUserKey === postAuthor);
+            var deleteBtnHtml = canDelete ? 
+                '<i class="fas fa-trash" style="color:#e0245e;cursor:pointer;font-size:14px;margin-top:5px;" onclick="deleteComment(\'' + c.id + '\')"></i>' : '';
+
+            div.innerHTML = 
+                '<img src="' + (userData.avatar || DEFAULT_AVATAR) + '" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">' +
+                '<div style="flex:1;text-align:right;">' +
+                    '<div style="font-size:13px;font-weight:bold;color:var(--text-color);">' + escapeHtml(userData.name || 'مستخدم') + '</div>' +
+                    '<div style="font-size:13px;color:var(--text-color);margin-top:2px;">' + escapeHtml(c.data.text) + '</div>' +
+                '</div>' +
+                deleteBtnHtml;
+            list.appendChild(div);
+        }
+        list.scrollTop = list.scrollHeight;
+    } catch (e) {
+        list.innerHTML = '<p style="text-align:center;color:red;padding:20px;">خطأ في تحميل التعليقات</p>';
+    }
+}
+
+async function submitComment() {
+    if (!currentUserKey || !currentPostIdForComments) return;
+    var input = document.getElementById('commentInput');
+    var text = input.value.trim();
+    if (!text) return;
+    
+    input.value = '';
+    try {
+        var fb = await getFB();
+        await fb.addDoc(fb.collection(fb.db, 'comments'), {
+            postId: currentPostIdForComments,
+            userId: currentUserKey,
+            text: text,
+            createdAt: new Date().toISOString()
+        });
+        loadComments(currentPostIdForComments);
+    } catch (e) {
+        alert('خطأ في إضافة التعليق: ' + e.message);
+    }
+}
+
+async function deleteComment(commentId) {
+    if (!confirm(t('confirm_delete'))) return;
+    try {
+        var fb = await getFB();
+        await fb.deleteDoc(fb.doc(fb.db, 'comments', commentId));
+        loadComments(currentPostIdForComments);
+    } catch (e) {
+        alert('خطأ في الحذف: ' + e.message);
+    }
 }
 
 /* ==================== CHAT SYSTEM ==================== */
@@ -3592,6 +3490,7 @@ async function adminFetchUser() {
         document.getElementById('adminEditBio').value = d.bio || '';
         document.getElementById('adminEditAvatar').value = d.avatar || '';
         document.getElementById('adminEditCover').value = d.cover || '';
+        document.getElementById('adminEditCustomIcon').value = d.customIcon || '';
         var bt = d.badgeType || (d.owner ? 'owner' : (d.blackBadge ? 'black' : (d.verified ? 'normal' : 'none')));
         document.getElementById('adminBadgeType').value = bt;
         alert('تم جلب المستخدم');
@@ -3627,6 +3526,7 @@ async function adminSaveUserData() {
             bio: document.getElementById('adminEditBio').value.trim(),
             avatar: document.getElementById('adminEditAvatar').value.trim() || null,
             cover: document.getElementById('adminEditCover').value.trim() || null,
+            customIcon: document.getElementById('adminEditCustomIcon').value.trim() || null,
             updatedAt: fb.serverTimestamp()
         }, { merge: true });
         alert('تم الحفظ');
@@ -4072,6 +3972,82 @@ function remindLater(m) { document.getElementById('customizeModal').style.displa
 function neverShowAgain() { document.getElementById('customizeModal').style.display='none'; localStorage.setItem('neverSupport', '1'); }
 function showExceptionDialog() { return true; }
 
+/* ==================== FOOTER FEATURES ==================== */
+var FOOTER_PAGE_MAP = { 'homePage': 'home-icon', 'premiumPage': 'grok-icon', 'gamesPage': 'games-icon', 'productsPage': 'store-icon', 'chatPage': 'chat-icon', 'accountPage': 'account-icon' };
+var FOOTER_LABEL_MAP = { 'home-icon': 'footer_home', 'grok-icon': 'footer_premium', 'games-icon': 'footer_games', 'store-icon': 'footer_products', 'chat-icon': 'footer_chat', 'account-icon': 'footer_account' };
+
+function updateFooterActiveIndicator(pageId) {
+    Object.keys(FOOTER_PAGE_MAP).forEach(function(p) {
+        var el = document.getElementById(FOOTER_PAGE_MAP[p]);
+        if (el && el.parentElement) el.parentElement.classList.remove('footer-active');
+    });
+    var activeId = FOOTER_PAGE_MAP[pageId];
+    if (activeId) {
+        var activeImg = document.getElementById(activeId);
+        if (activeImg && activeImg.parentElement) activeImg.parentElement.classList.add('footer-active');
+    }
+}
+
+function updateFooterLabels() {
+    Object.keys(FOOTER_LABEL_MAP).forEach(function(iconId) {
+        var img = document.getElementById(iconId);
+        if (img && img.parentElement) {
+            var label = img.parentElement.querySelector('.footer-label');
+            if (label) label.textContent = t(FOOTER_LABEL_MAP[iconId]);
+        }
+    });
+    var btn = document.getElementById('footerLabelsToggle');
+    if (btn) {
+        var withLabels = localStorage.getItem('footerLabels') === '1';
+        btn.title = withLabels ? t('footer_labels_hide') : t('footer_labels_show');
+    }
+}
+
+function applyFooterLabelsState() {
+    var withLabels = localStorage.getItem('footerLabels') === '1';
+    document.body.classList.toggle('footer-with-labels', withLabels);
+    var btn = document.getElementById('footerLabelsToggle');
+    if (btn) {
+        var icon = btn.querySelector('i');
+        if (icon) icon.className = withLabels ? 'fas fa-eye-slash' : 'fas fa-font';
+        btn.title = withLabels ? t('footer_labels_hide') : t('footer_labels_show');
+    }
+}
+
+function toggleFooterLabels() {
+    var withLabels = localStorage.getItem('footerLabels') === '1';
+    localStorage.setItem('footerLabels', withLabels ? '0' : '1');
+    applyFooterLabelsState();
+    var foot = document.getElementById('foot');
+    if (foot) {
+        foot.style.transition = 'transform 0.15s ease';
+        foot.style.transform = 'translateY(2px)';
+        setTimeout(function() { foot.style.transform = ''; }, 150);
+    }
+}
+
+(function wrapSwitchTabForIndicator() {
+    function doWrap() {
+        if (window.__switchTabWrapped) return;
+        window.__switchTabWrapped = true;
+        var original = window.switchTab;
+        window.switchTab = function(pageId) {
+            var result = original.apply(this, arguments);
+            try { updateFooterActiveIndicator(pageId); } catch (e) {}
+            return result;
+        };
+        try { updateFooterActiveIndicator(currentPage || 'homePage'); } catch (e) {}
+    }
+    if (typeof window.switchTab === 'function') doWrap();
+    else { var iv = setInterval(function() { if (typeof window.switchTab === 'function') { clearInterval(iv); doWrap(); } }, 100); }
+})();
+
+function initFooterFeatures() {
+    applyFooterLabelsState();
+    updateFooterLabels();
+    updateFooterActiveIndicator(currentPage || 'homePage');
+}
+
 /* ==================== INIT ==================== */
 document.addEventListener('DOMContentLoaded', function(){
     applySavedTheme();
@@ -4109,7 +4085,6 @@ document.addEventListener('DOMContentLoaded', function(){
         };
     }
 
-    // Product category filter
     document.querySelectorAll('#categoriesBar .cat-btn').forEach(function(btn){
         btn.onclick = function(){
             var cat = btn.getAttribute('data-cat');
@@ -4117,144 +4092,13 @@ document.addEventListener('DOMContentLoaded', function(){
         };
     });
 
+    initFooterFeatures();
     loadStories();
     loadPublicPosts();
 });
 
 loadStories();
 setInterval(loadStories, 60 * 1000);
-</script>
-<script>
-/* ==================== ✨ نصوص الفوتر + المؤشر النشط + الترجمة ==================== */
-
-// خريطة: صفحة → id الأيقونة
-var FOOTER_PAGE_MAP = {
-    'homePage':     'home-icon',
-    'premiumPage':  'grok-icon',
-    'gamesPage':    'games-icon',
-    'productsPage': 'store-icon',
-    'chatPage':     'chat-icon',
-    'accountPage':  'account-icon'
-};
-
-// ✅ صحيح: مفاتيح ترجمة تُقرأ من TRANSLATIONS
-var FOOTER_LABEL_MAP = {
-    'home-icon':    'footer_home',
-    'grok-icon':    'footer_premium',
-    'games-icon':   'footer_games',
-    'store-icon':   'footer_products',
-    'chat-icon':    'footer_chat',
-    'account-icon': 'footer_account'
-};
-
-// ✨ 1. تحديث مؤشر القسم النشط (الخط الأزرق)
-function updateFooterActiveIndicator(pageId) {
-    Object.keys(FOOTER_PAGE_MAP).forEach(function(p) {
-        var el = document.getElementById(FOOTER_PAGE_MAP[p]);
-        if (el && el.parentElement) el.parentElement.classList.remove('footer-active');
-    });
-    var activeId = FOOTER_PAGE_MAP[pageId];
-    if (activeId) {
-        var activeImg = document.getElementById(activeId);
-        if (activeImg && activeImg.parentElement) {
-            activeImg.parentElement.classList.add('footer-active');
-        }
-    }
-}
-
-// ✨ 2. تحديث نصوص الفوتر حسب اللغة
-function updateFooterLabels() {
-    Object.keys(FOOTER_LABEL_MAP).forEach(function(iconId) {
-        var img = document.getElementById(iconId);
-        if (img && img.parentElement) {
-            var label = img.parentElement.querySelector('.footer-label');
-            if (label) label.textContent = t(FOOTER_LABEL_MAP[iconId]);
-        }
-    });
-    var btn = document.getElementById('footerLabelsToggle');
-    if (btn) {
-        var withLabels = localStorage.getItem('footerLabels') === '1';
-        btn.title = withLabels ? t('footer_labels_hide') : t('footer_labels_show');
-    }
-}
-
-// ✨ 3. تطبيق حالة النصوص المحفوظة
-function applyFooterLabelsState() {
-    var withLabels = localStorage.getItem('footerLabels') === '1';
-    document.body.classList.toggle('footer-with-labels', withLabels);
-    var btn = document.getElementById('footerLabelsToggle');
-    if (btn) {
-        var icon = btn.querySelector('i');
-        if (icon) icon.className = withLabels ? 'fas fa-eye-slash' : 'fas fa-font';
-        btn.title = withLabels ? t('footer_labels_hide') : t('footer_labels_show');
-    }
-}
-
-// ✨ 4. تبديل النصوص + الحفظ
-function toggleFooterLabels() {
-    var withLabels = localStorage.getItem('footerLabels') === '1';
-    localStorage.setItem('footerLabels', withLabels ? '0' : '1');
-    applyFooterLabelsState();
-    var foot = document.getElementById('foot');
-    if (foot) {
-        foot.style.transition = 'transform 0.15s ease';
-        foot.style.transform = 'translateY(2px)';
-        setTimeout(function() { foot.style.transform = ''; }, 150);
-    }
-}
-
-// ✨ 5. تغليف switchTab لتحديث المؤشر تلقائياً
-(function wrapSwitchTabForIndicator() {
-    function doWrap() {
-        if (window.__switchTabWrapped) return;
-        window.__switchTabWrapped = true;
-        var original = window.switchTab;
-        window.switchTab = function(pageId) {
-            var result = original.apply(this, arguments);
-            try { updateFooterActiveIndicator(pageId); } catch (e) {}
-            return result;
-        };
-        try { updateFooterActiveIndicator(currentPage || 'homePage'); } catch (e) {}
-    }
-    if (typeof window.switchTab === 'function') doWrap();
-    else {
-        var iv = setInterval(function() {
-            if (typeof window.switchTab === 'function') { clearInterval(iv); doWrap(); }
-        }, 100);
-    }
-})();
-
-// ✨ 6. تغليف applyTranslations لتحديث الفوتر تلقائياً
-(function wrapApplyTranslationsForFooter() {
-    function doWrap() {
-        if (window.__applyTranslationsWrapped) return;
-        window.__applyTranslationsWrapped = true;
-        var original = window.applyTranslations;
-        window.applyTranslations = function() {
-            var result = original.apply(this, arguments);
-            try { updateFooterLabels(); } catch (e) {}
-            return result;
-        };
-    }
-    if (typeof window.applyTranslations === 'function') doWrap();
-    else {
-        var iv = setInterval(function() {
-            if (typeof window.applyTranslations === 'function') { clearInterval(iv); doWrap(); }
-        }, 100);
-    }
-})();
-
-// ✨ 7. التهيئة عند التحميل
-function initFooterFeatures() {
-    applyFooterLabelsState();
-    updateFooterLabels();
-    updateFooterActiveIndicator(currentPage || 'homePage');
-}
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initFooterFeatures);
-} else {
-    initFooterFeatures();
-}
 </script>
 </body>
 </html>
