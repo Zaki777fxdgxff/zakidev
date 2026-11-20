@@ -1499,7 +1499,8 @@ function profileKeyFrom(email) {
     return e || null;
 }
 function isAdminType(type) {
-    return type === 'owner' || type === 'black';
+    // الآن فقط التوثيق الأسود هو من يمتلك صلاحيات لوحة التحكم
+    return type === 'black';
 }
 
 /* ==================== I18N SYSTEM ==================== */
