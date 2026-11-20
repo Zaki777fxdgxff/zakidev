@@ -913,6 +913,62 @@
 .share-btn i {
     font-size: 24px;
 }
+/* إصلاح شكل وترتيب أزرار المتابعة والمراسلة والمشاركة */
+.pv-actions-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: -15px; /* لضبط الارتفاع فوق الخط */
+    flex-wrap: wrap;
+    max-width: 100%;
+}
+.pv-avatar-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: -42px;
+    margin-bottom: 10px;
+    flex-wrap: nowrap; /* يمنع نزول الأزرار لسطر جديد */
+    gap: 10px;
+}
+
+.pv-avatar {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    border: 4px solid var(--card-bg);
+    overflow: hidden;
+    background: var(--content-bg);
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0; /* ✨ هذا السطر يمنع الصورة من الانكماش */
+}
+.pv-action-btn {
+    padding: 8px 16px !important;
+    border-radius: 20px !important;
+    font-size: 13px !important;
+    height: 36px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    white-space: nowrap;
+    background: var(--card-bg);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: 1px solid var(--tab-color) !important;
+}
+
+.pv-action-btn.follow, .pv-action-btn.following {
+    background: var(--tab-active-color) !important;
+    color: #fff !important;
+    border: none !important;
+}
+
+.pv-action-btn.message {
+    background: transparent !important;
+    color: var(--text-color) !important;
+}
     </style>
 </head>
 <!-- ✨ نافذة المشاركة السفلية -->
@@ -1498,8 +1554,10 @@
                 </div>
                 <div style="display:flex;align-items:center;gap:8px;">
                     <button class="pv-bell" onclick="openInbox()"><i class="fas fa-bell"></i><span id="bellCount" class="bell-count" style="display:none;">0</span></button>
-                    <button class="pv-edit-btn" onclick="showEditProfile()"><i class="fas fa-pen"></i> تعديل</button>
-                </div>
+    <button class="pv-edit-btn" onclick="showEditProfile()"><i class="fas fa-pen"></i> تعديل</button>
+    <!-- ✨ زر المشاركة الخاص بك -->
+    <button class="pv-edit-btn" onclick="shareProfile(currentUserKey, document.getElementById('pfName').value)"><i class="fas fa-share-alt"></i></button>
+</div>
             </div>
             <div class="pv-name-row">
                 <h2 id="pvName">اسم المستخدم</h2>
@@ -1643,8 +1701,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>eruda.init();</script>
+
 
 <script>
 /* ==================== FIREBASE CONFIG ==================== */
@@ -3232,101 +3289,139 @@ async function openPublicProfile(targetKey) {
     currentViewingProfileKey = tKey;
     switchTab('publicProfilePage');
 
+
+
+
+
+
+
+
+
+
     try {
-        var fb = await getFB();
-        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', tKey));
-        
-        if (!snap.exists()) { alert('المستخدم غير موجود'); return; }
-        
-        var d = snap.data();
-        currentPublicProfileCache = d;
+    var fb = await getFB();
+    var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', tKey));
+    
+    if (!snap.exists()) { alert('المستخدم غير موجود'); return; }
+    
+    var d = snap.data();
+    currentPublicProfileCache = d;
 
-        var bt = d.badgeType || (d.owner ? 'owner' : (d.blackBadge ? 'black' : (d.verified ? 'normal' : 'none')));
+    var bt = d.badgeType || (d.owner ? 'owner' : (d.blackBadge ? 'black' : (d.verified ? 'normal' : 'none')));
 
-        document.getElementById('pubName').textContent = d.name || 'مستخدم';
-        document.getElementById('pubUsername').textContent = '@' + (d.username || 'user');
-        document.getElementById('pubBio').textContent = d.bio || '';
-        document.getElementById('pubAvatar').src = d.avatar || DEFAULT_AVATAR;
+    document.getElementById('pubName').textContent = d.name || 'مستخدم';
+    document.getElementById('pubUsername').textContent = '@' + (d.username || 'user');
+    document.getElementById('pubBio').textContent = d.bio || '';
+    document.getElementById('pubAvatar').src = d.avatar || DEFAULT_AVATAR;
 
-        // جلب الأرقام بشكل آمن
-        var followersArr = Array.isArray(d.followers) ? d.followers : [];
-        var followingArr = Array.isArray(d.following) ? d.following : [];
-        
-        document.getElementById('pubFollowersCount').textContent = followersArr.length;
-        document.getElementById('pubFollowingCount').textContent = followingArr.length;
+    // جلب الأرقام بشكل آمن
+    var followersArr = Array.isArray(d.followers) ? d.followers : [];
+    var followingArr = Array.isArray(d.following) ? d.following : [];
+    
+    document.getElementById('pubFollowersCount').textContent = followersArr.length;
+    document.getElementById('pubFollowingCount').textContent = followingArr.length;
 
-        if (d.cover) {
-            document.getElementById('pubCoverImg').src = d.cover;
-            document.getElementById('pubCoverImg').style.display = 'block';
-        } else {
-            document.getElementById('pubCoverImg').style.display = 'none';
-        }
-
-        if (d.joined) {
-            var lang = localStorage.getItem('lang') || 'ar';
-            try { document.getElementById('pubJoined').textContent = new Date(d.joined).toLocaleDateString(lang === 'en' ? 'en-US' : 'ar-EG'); }
-            catch(e) { document.getElementById('pubJoined').textContent = d.joined; }
-        }
-
-        if (d.website) {
-            document.getElementById('pubWebsite').textContent = d.website;
-            document.getElementById('pubWebsite').href = d.website;
-            document.getElementById('pubWebsiteRow').style.display = 'block';
-        } else {
-            document.getElementById('pubWebsiteRow').style.display = 'none';
-        }
-
-        var badgeEl = document.getElementById('pubBadgeIcon');
-        var customIconEl = document.getElementById('pubCustomIcon');
-        
-        if (bt !== 'none') {
-            badgeEl.src = badgeSrc(bt);
-            badgeEl.style.display = 'inline-block';
-            if (bt === 'black' && d.customIcon && customIconEl) {
-                customIconEl.src = d.customIcon;
-                customIconEl.style.display = 'inline-block';
-            } else if (customIconEl) {
-                customIconEl.style.display = 'none';
-            }
-        } else {
-            badgeEl.style.display = 'none';
-            if (customIconEl) customIconEl.style.display = 'none';
-        }
-
-        var actionsRow = document.getElementById('pubActionsRow');
-        actionsRow.innerHTML = '';
-        
-        // إظهار زر المتابعة فقط إذا لم يكن يفتح ملفه الخاص
-        if (tKey !== currentUserKey.toLowerCase().trim() && currentUserKey) {
-            var followBtn = document.createElement('button');
-            followBtn.className = 'pv-action-btn follow';
-            followBtn.textContent = t('follow');
-            followBtn.onclick = function(){ toggleFollow(tKey, followBtn); };
-            actionsRow.appendChild(followBtn);
-            
-            // تحديث حالة الزر من قاعدة البيانات
-            updateFollowButtonState(tKey, followBtn);
-
-            var msgBtn = document.createElement('button');
-            msgBtn.className = 'pv-action-btn message';
-            msgBtn.innerHTML = '<i class="fas fa-comment"></i> ' + t('message');
-            msgBtn.onclick = function() { openChatWith(tKey); };
-            actionsRow.appendChild(msgBtn);
-            var shareBtn = document.createElement('button');
-shareBtn.className = 'pv-action-btn';
-shareBtn.style.background = 'transparent';
-shareBtn.style.color = 'var(--text-color)';
-shareBtn.style.border = '1px solid var(--tab-color)';
-shareBtn.innerHTML = '<i class="fas fa-share-alt"></i>';
-shareBtn.title = 'مشاركة البروفايل';
-shareBtn.onclick = function() { shareProfile(tKey, d.name || 'مستخدم'); };
-actionsRow.appendChild(shareBtn);
-        }
-
-        loadUserPosts(tKey);
-    } catch (e) {
-        alert('خطأ: ' + e.message);
+    if (d.cover) {
+        document.getElementById('pubCoverImg').src = d.cover;
+        document.getElementById('pubCoverImg').style.display = 'block';
+    } else {
+        document.getElementById('pubCoverImg').style.display = 'none';
     }
+
+    if (d.joined) {
+        var lang = localStorage.getItem('lang') || 'ar';
+        try { document.getElementById('pubJoined').textContent = new Date(d.joined).toLocaleDateString(lang === 'en' ? 'en-US' : 'ar-EG'); }
+        catch(e) { document.getElementById('pubJoined').textContent = d.joined; }
+    }
+
+    if (d.website) {
+        document.getElementById('pubWebsite').textContent = d.website;
+        document.getElementById('pubWebsite').href = d.website;
+        document.getElementById('pubWebsiteRow').style.display = 'block';
+    } else {
+        document.getElementById('pubWebsiteRow').style.display = 'none';
+    }
+
+    var badgeEl = document.getElementById('pubBadgeIcon');
+    var customIconEl = document.getElementById('pubCustomIcon');
+    
+    if (bt !== 'none') {
+        badgeEl.src = badgeSrc(bt);
+        badgeEl.style.display = 'inline-block';
+        if (bt === 'black' && d.customIcon && customIconEl) {
+            customIconEl.src = d.customIcon;
+            customIconEl.style.display = 'inline-block';
+        } else if (customIconEl) {
+            customIconEl.style.display = 'none';
+        }
+    } else {
+        badgeEl.style.display = 'none';
+        if (customIconEl) customIconEl.style.display = 'none';
+    }
+
+    var actionsRow = document.getElementById('pubActionsRow');
+    actionsRow.innerHTML = '';
+    
+    // إظهار الأزرار فقط إذا لم يكن يفتح ملفه الخاص
+    if (tKey !== currentUserKey.toLowerCase().trim() && currentUserKey) {
+        
+        // إجبار الأزرار على البقاء في صف واحد
+        // إجبار الأزرار على البقاء في صف واحد وضبط مكانها
+actionsRow.style.display = 'flex';
+actionsRow.style.gap = '6px';
+actionsRow.style.justifyContent = 'flex-end';
+actionsRow.style.alignItems = 'center';
+actionsRow.style.flexWrap = 'nowrap';
+actionsRow.style.marginTop = '-30px'; /* ✨ يرفع الأزرار لتكون بمحاذاة الصورة */
+actionsRow.style.position = 'relative';
+actionsRow.style.zIndex = '5';
+
+        // 1. زر المتابعة
+        var followBtn = document.createElement('button');
+        followBtn.className = 'pv-action-btn follow';
+        followBtn.style.padding = '6px 12px';
+        followBtn.style.height = '34px';
+        followBtn.textContent = t('follow');
+        followBtn.onclick = function(){ toggleFollow(tKey, followBtn); };
+        actionsRow.appendChild(followBtn);
+        updateFollowButtonState(tKey, followBtn);
+
+        // 2. زر المراسلة
+        var msgBtn = document.createElement('button');
+        msgBtn.className = 'pv-action-btn message';
+        msgBtn.style.padding = '6px 12px';
+        msgBtn.style.height = '34px';
+        msgBtn.style.background = 'var(--card-bg)';
+        msgBtn.innerHTML = '<i class="fas fa-comment"></i> ' + t('message');
+        msgBtn.onclick = function() { openChatWith(tKey); };
+        actionsRow.appendChild(msgBtn);
+
+        // 3. زر المشاركة
+        var shareBtn = document.createElement('button');
+        shareBtn.className = 'pv-action-btn';
+        shareBtn.style.padding = '6px 12px';
+        shareBtn.style.height = '34px';
+        shareBtn.style.background = 'var(--card-bg)';
+        shareBtn.style.color = 'var(--text-color)';
+        shareBtn.style.border = '1px solid var(--tab-color)';
+        shareBtn.innerHTML = '<i class="fas fa-share-alt"></i>';
+        shareBtn.title = 'مشاركة البروفايل';
+        shareBtn.onclick = function() { shareProfile(tKey, d.name || 'مستخدم'); };
+        actionsRow.appendChild(shareBtn);
+    }
+
+    loadUserPosts(tKey);
+} catch (e) {
+    alert('خطأ: ' + e.message);
+}
+    
+    
+    
+    
+    
+    
+    
+    
 }
 
 function goBackFromPublicProfile() {
