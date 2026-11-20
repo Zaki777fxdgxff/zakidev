@@ -778,9 +778,167 @@
     .story-avatar { width: 53px !important; height: 53px !important; }
     .story-item { width: 68px !important; }
 }
+
+
+
+
+
+
+
+/* ==================== SEARCH & SHARE STYLES ==================== */
+.search-container {
+    max-width: 560px;
+    margin: 0 auto 15px;
+    padding: 0 10px;
+}
+.search-box {
+    display: flex;
+    align-items: center;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 8px 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.search-box i {
+    color: var(--tab-color);
+    font-size: 16px;
+    margin-left: 10px;
+}
+.search-box input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    font-size: 15px;
+    outline: none;
+    font-family: inherit;
+}
+.search-results {
+    background: var(--card-bg);
+    border-radius: 12px;
+    margin-top: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: none;
+    border: 1px solid var(--border-color);
+}
+.search-results.active {
+    display: block;
+}
+.search-user-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.search-user-item:hover {
+    background: var(--content-bg);
+}
+.search-user-item img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.search-user-info {
+    flex: 1;
+    text-align: right;
+}
+.search-user-name {
+    font-weight: bold;
+    font-size: 14px;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.search-user-username {
+    font-size: 12px;
+    color: var(--tab-color);
+    direction: ltr;
+    text-align: right;
+}
+
+/* Share Bottom Sheet */
+.share-sheet {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    justify-content: center;
+    align-items: flex-end;
+}
+.share-sheet.active {
+    display: flex;
+}
+.share-sheet-content {
+    background: var(--card-bg);
+    width: 100%;
+    max-width: 480px;
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    animation: slideUp 0.3s ease;
+}
+.share-options {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+.share-btn {
+    flex: 1;
+    min-width: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 15px;
+    background: var(--content-bg);
+    border-radius: 12px;
+    border: none;
+    color: var(--text-color);
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.share-btn:hover {
+    background: var(--sidebar-hover-bg);
+}
+.share-btn i {
+    font-size: 24px;
+}
     </style>
 </head>
+<!-- ✨ نافذة المشاركة السفلية -->
+<div id="shareSheet" class="share-sheet" onclick="if(event.target===this) closeShareSheet()">
+    <div class="share-sheet-content">
+        <div style="width:40px;height:4px;background:var(--tab-color);border-radius:2px;margin:0 auto 16px;opacity:0.4;"></div>
+        <p style="font-weight:bold;text-align:center;margin-bottom:15px;" id="shareTitle">مشاركة</p>
+        <div class="share-options">
+            <button class="share-btn" onclick="copyShareLink()">
+                <i class="fas fa-link" style="color:#1da1f2;"></i>
+                نسخ الرابط
+            </button>
+            <button class="share-btn" onclick="shareViaWhatsApp()">
+                <i class="fab fa-whatsapp" style="color:#25D366;"></i>
+                واتساب
+            </button>
+            <button class="share-btn" onclick="shareViaSystem()">
+                <i class="fas fa-share-alt" style="color:#f39c12;"></i>
+                تطبيقات أخرى
+            </button>
+        </div>
+        <button onclick="closeShareSheet()" style="width:100%;margin-top:15px;padding:12px;background:var(--content-bg);border:none;border-radius:10px;font-weight:bold;color:var(--text-color);cursor:pointer;">إلغاء</button>
+    </div>
+</div>
 <body>
+	
 <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
 
 <div id="smart-preloader">
@@ -905,8 +1063,18 @@
         </div>
     </div>
 </div>
-<div class="content" id="morePage">
+	<div class="content" id="morePage">
+    <!-- ✨ صندوق البحث الجديد -->
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="globalSearchInput" placeholder="ابحث عن مستخدم..." oninput="searchUsers(this.value)">
+        </div>
+        <div id="searchResults" class="search-results"></div>
+    </div>
+
     <div class="products-header"></div>
+    
     
     <div id="moreStoriesWrapper">
         <div id="storiesBar"></div>
@@ -929,6 +1097,8 @@
         </div>
     </div>
 </div>
+
+
 
 <div class="content" id="chatPage">
     <div class="products-header"><h2>الدردشات</h2><p>تواصل مع من تتابعهم</p></div>
@@ -1163,6 +1333,7 @@
     </div>
 </div>
 
+    	
 <!-- ✨ نافذة التعليقات السفلية -->
 <div id="commentsSheet" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;justify-content:flex-end;align-items:flex-end;" onclick="if(event.target===this)closeCommentsSheet()">
     <div style="background:var(--card-bg);width:100%;max-width:480px;margin:0 auto;border-radius:20px 20px 0 0;padding:15px;display:flex;flex-direction:column;max-height:80vh;animation:slideUp 0.3s ease;">
@@ -2758,9 +2929,12 @@ var actionsHtml =
         '<button class="post-action-btn comment-btn" data-post-id="' + p.id + '" onclick="openCommentsSheet(\'' + p.id + '\')">' +
             '<i class="fas fa-comment"></i><span class="count" id="comments-count-' + p.id + '">' + commentsCount + '</span>' +
         '</button>' +
-        '<button class="post-action-btn" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)">' +
-            '<i class="fas fa-eye"></i><span class="count" id="views-' + p.id + '">' + views + '</span>' +
-        '</button>' +
+        '<button class="post-action-btn" onclick="sharePost(\'' + p.id + '\', \'' + escapeHtml(p.data.caption || '').replace(/'/g, "\\'") + '\')">' +
+    '<i class="fas fa-share"></i><span class="count">مشاركة</span>' +
+'</button>' +
+'<button class="post-action-btn" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)">' +
+    '<i class="fas fa-eye"></i><span class="count" id="views-' + p.id + '">' + views + '</span>' +
+'</button>' +
     '</div>';
 
             var customIconHtml = '';
@@ -3138,6 +3312,15 @@ async function openPublicProfile(targetKey) {
             msgBtn.innerHTML = '<i class="fas fa-comment"></i> ' + t('message');
             msgBtn.onclick = function() { openChatWith(tKey); };
             actionsRow.appendChild(msgBtn);
+            var shareBtn = document.createElement('button');
+shareBtn.className = 'pv-action-btn';
+shareBtn.style.background = 'transparent';
+shareBtn.style.color = 'var(--text-color)';
+shareBtn.style.border = '1px solid var(--tab-color)';
+shareBtn.innerHTML = '<i class="fas fa-share-alt"></i>';
+shareBtn.title = 'مشاركة البروفايل';
+shareBtn.onclick = function() { shareProfile(tKey, d.name || 'مستخدم'); };
+actionsRow.appendChild(shareBtn);
         }
 
         loadUserPosts(tKey);
@@ -4671,7 +4854,174 @@ document.addEventListener('DOMContentLoaded', function(){
 
 loadStories();
 setInterval(loadStories, 60 * 1000);
+/* ==================== SEARCH SYSTEM ==================== */
+async function searchUsers(query) {
+    var resultsDiv = document.getElementById('searchResults');
+    if (!query || query.trim().length < 1) {
+        resultsDiv.classList.remove('active');
+        return;
+    }
 
+    try {
+        var fb = await getFB();
+        var snap = await fb.getDocs(fb.collection(fb.db, 'profiles'));
+        
+        var results = [];
+        var qLower = query.toLowerCase().trim();
+
+        snap.forEach(function(ds) {
+            var d = ds.data();
+            var name = (d.name || '').toLowerCase();
+            var username = (d.username || '').toLowerCase();
+            var email = ds.id.toLowerCase();
+
+            if (name.includes(qLower) || username.includes(qLower) || email.includes(qLower)) {
+                results.push({ key: ds.id, data: d });
+            }
+        });
+
+        resultsDiv.innerHTML = '';
+        if (results.length === 0) {
+            resultsDiv.innerHTML = '<p style="text-align:center;padding:15px;opacity:0.6;font-size:14px;">لا توجد نتائج</p>';
+        } else {
+            results.forEach(function(user) {
+                var div = document.createElement('div');
+                div.className = 'search-user-item';
+                
+                var bt = user.data.badgeType || (user.data.owner ? 'owner' : (user.data.blackBadge ? 'black' : (user.data.verified ? 'normal' : 'none')));
+                var badgeHtml = (bt && bt !== 'none') ? '<img src="' + badgeSrc(bt) + '" style="width:16px;height:16px;display:inline-block;">' : '';
+
+                div.innerHTML = 
+                    '<img src="' + (user.data.avatar || DEFAULT_AVATAR) + '">' +
+                    '<div class="search-user-info">' +
+                        '<div class="search-user-name">' + escapeHtml(user.data.name || 'مستخدم') + ' ' + badgeHtml + '</div>' +
+                        '<div class="search-user-username">@' + escapeHtml(user.data.username || 'user') + '</div>' +
+                    '</div>';
+
+                div.onclick = function() {
+                    document.getElementById('globalSearchInput').value = '';
+                    resultsDiv.classList.remove('active');
+                    openPublicProfile(user.key);
+                };
+                resultsDiv.appendChild(div);
+            });
+        }
+        resultsDiv.classList.add('active');
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+// إغلاق البحث عند النقر خارجه
+document.addEventListener('click', function(e) {
+    var searchBox = document.querySelector('.search-box');
+    var resultsDiv = document.getElementById('searchResults');
+    if (searchBox && !searchBox.contains(e.target) && resultsDiv) {
+        resultsDiv.classList.remove('active');
+    }
+});
+
+
+/* ==================== SHARE SYSTEM ==================== */
+var currentShareUrl = '';
+var currentShareTitle = '';
+
+function openShareSheet(url, title) {
+    currentShareUrl = url;
+    currentShareTitle = title || 'مشاركة';
+    document.getElementById('shareTitle').textContent = currentShareTitle;
+    document.getElementById('shareSheet').classList.add('active');
+}
+
+function closeShareSheet() {
+    document.getElementById('shareSheet').classList.remove('active');
+}
+
+function copyShareLink() {
+    navigator.clipboard.writeText(currentShareUrl).then(function() {
+        toast('تم نسخ الرابط بنجاح');
+        closeShareSheet();
+    }).catch(function() {
+        // طريقة بديلة للنسخ
+        var temp = document.createElement('input');
+        temp.value = currentShareUrl;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+        toast('تم نسخ الرابط بنجاح');
+        closeShareSheet();
+    });
+}
+
+function shareViaWhatsApp() {
+    window.open('https://wa.me/?text=' + encodeURIComponent(currentShareTitle + '\n' + currentShareUrl), '_blank');
+    closeShareSheet();
+}
+
+function shareViaSystem() {
+    if (navigator.share) {
+        navigator.share({
+            title: currentShareTitle,
+            url: currentShareUrl
+        }).then(function() {
+            closeShareSheet();
+        }).catch(function() {});
+    } else {
+        copyShareLink();
+    }
+}
+
+// مشاركة منشور
+function sharePost(postId, caption) {
+    var url = window.location.origin + window.location.pathname + '?post=' + postId;
+    openShareSheet(url, caption || 'شاهد هذا المنشور');
+}
+
+// مشاركة بروفايل
+function shareProfile(profileKey, name) {
+    var url = window.location.origin + window.location.pathname + '?profile=' + profileKey;
+    openShareSheet(url, 'بروفايل: ' + name);
+}
+
+
+/* ==================== DEEP LINKING (فتح الروابط) ==================== */
+// هذه الدالة تعمل بمجرد فتح الموقع لفحص الرابط
+window.addEventListener('load', function() {
+    setTimeout(async function() {
+        var params = new URLSearchParams(window.location.search);
+        
+        // إذا كان الرابط يحتوي على ?profile=
+        var profileKey = params.get('profile');
+        if (profileKey) {
+            if (currentUserKey) {
+                openPublicProfile(profileKey);
+            } else {
+                // إذا لم يكن مسجل دخول، ننتظر قليلاً حتى يتم التحقق من الحساب
+                setTimeout(function() {
+                    if (currentUserKey) openPublicProfile(profileKey);
+                    else alert('يرجى تسجيل الدخول لعرض هذا البروفايل.');
+                }, 2000);
+            }
+        }
+        
+        // إذا كان الرابط يحتوي على ?post=
+        var postId = params.get('post');
+        if (postId) {
+            switchTab('morePage');
+            setTimeout(function() {
+                var postEl = document.querySelector('.post-card button[onclick*="openCommentsSheet(\'' + postId + '\')"]');
+                if (postEl) {
+                    postEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    postEl.parentElement.parentElement.style.background = 'rgba(29,161,242,0.1)';
+                    setTimeout(function() {
+                        postEl.parentElement.parentElement.style.background = '';
+                    }, 3000);
+                }
+            }, 2500); // ننتظر تحميل المنشورات
+        }
+    }, 1000); // انتظار بسيط حتى يتم تحميل Firebase
+});
 </script>
 </body>
 </html>
