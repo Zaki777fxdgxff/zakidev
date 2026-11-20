@@ -1296,11 +1296,7 @@ footer .footer-label {
                     <button class="pv-edit-btn" onclick="showEditProfile()"><i class="fas fa-pen"></i> تعديل</button>
                 </div>
             </div>
-            <div class="pv-name-row">
-    <h2 id="pvName">اسم المستخدم</h2>
-    <img id="pvBadgeIcon" src="" alt="" onclick="showBadgeTooltip(event, this)">
-    <img id="pvCustomIcon" src="" alt="" style="display:none; width:20px; height:20px; object-fit:contain;">
-</div>
+            <div class="pv-name-row"><h2 id="pvName">اسم المستخدم</h2><img id="pvBadgeIcon" src="" alt="" onclick="showBadgeTooltip(event, this)"></div>
             <div id="pvUsername">@username</div>
             <p class="pv-bio" id="pvBio"></p>
             <div class="pv-meta">
@@ -1373,11 +1369,7 @@ footer .footer-label {
                 <div class="pv-avatar"><img id="pubAvatar" src="" alt=""></div>
                 <div id="pubActionsRow" class="pv-actions-row"></div>
             </div>
-            <div class="pv-name-row">
-    <h2 id="pubName">—</h2>
-    <img id="pubBadgeIcon" src="" alt="" style="display:none;width:20px;height:20px;cursor:pointer;" onclick="showBadgeTooltip(event, this)">
-    <img id="pubCustomIcon" src="" alt="" style="display:none; width:20px; height:20px; object-fit:contain;">
-</div>
+            <div class="pv-name-row"><h2 id="pubName">—</h2><img id="pubBadgeIcon" src="" alt="" style="display:none;width:20px;height:20px;cursor:pointer;" onclick="showBadgeTooltip(event, this)"></div>
             <div id="pubUsername">@—</div>
             <div id="pubPublicContent">
                 <p class="pv-bio" id="pubBio"></p>
@@ -3624,8 +3616,6 @@ async function adminListAllUsers() {
             list.appendChild(div);
         });
     } catch (e) { alert(e.message); }
-    document.getElementById('adminEditCustomIcon').value = d.customIcon || '';
-    customIcon: document.getElementById('adminEditCustomIcon').value.trim() || null,
 }
 async function adminSaveUserData() {
     if (!isAdminType(currentBadgeType) || !adminTargetKey) return;
@@ -4264,24 +4254,6 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initFooterFeatures);
 } else {
     initFooterFeatures();
-}
-var customIconEl = document.getElementById('pvCustomIcon');
-if (customIconEl) {
-    if (bt === 'black' && data.customIcon) {
-        customIconEl.src = data.customIcon;
-        customIconEl.style.display = 'inline-block';
-    } else {
-        customIconEl.style.display = 'none';
-    }
-}
-var pubCustomIconEl = document.getElementById('pubCustomIcon');
-if (pubCustomIconEl) {
-    if (bt === 'black' && d.customIcon) {
-        pubCustomIconEl.src = d.customIcon;
-        pubCustomIconEl.style.display = 'inline-block';
-    } else {
-        pubCustomIconEl.style.display = 'none';
-    }
 }
 </script>
 </body>
