@@ -524,6 +524,260 @@
         :root { --footer-bg: rgba(255, 255, 255, 0.7); --footer-border-color: rgba(0, 0, 0, 0.12); --footer-blur: blur(14px) saturate(180%); }
         :root[data-theme="dark"] { --footer-bg: rgba(10, 10, 10, 0.7); --footer-border-color: rgba(255, 255, 255, 0.15); --footer-blur: blur(14px) saturate(180%); }
         :root[data-theme="blue"] { --footer-bg: rgba(21, 32, 43, 0.7); --footer-border-color: rgba(255, 255, 255, 0.2); --footer-blur: blur(14px) saturate(180%); }
+        /* ============================================
+   THEME-AWARE TWITTER-STYLE FEED
+   (يغيّر الشكل فقط — لا يمس أي وظيفة)
+   ============================================ */
+
+/* متغيرات محلية تتغير مع الثيمات الثلاثة */
+:root {
+    --tw-bg: var(--card-bg);
+    --tw-border: var(--border-color);
+    --tw-text: var(--text-color);
+    --tw-muted: var(--tab-color);
+    --tw-hover: rgba(128,128,128,0.06);
+    --tw-blue: #1d9bf0;
+    --tw-like: #f91880;
+    --tw-dislike: #f39c12;
+    --tw-retweet: #00ba7c;
+    --tw-avatar-bg: var(--content-bg);
+}
+:root[data-theme="dark"] {
+    --tw-hover: rgba(255,255,255,0.04);
+    --tw-border: rgba(255,255,255,0.08);
+}
+:root[data-theme="blue"] {
+    --tw-hover: rgba(255,255,255,0.05);
+    --tw-border: rgba(255,255,255,0.1);
+}
+
+/* ============ 1. بطاقة المنشور ============ */
+.post-card {
+    background: var(--tw-bg) !important;
+    border-bottom: 1px solid var(--tw-border) !important;
+    border-radius: 0 !important;
+    margin: 0 auto !important;
+    box-shadow: none !important;
+    padding: 14px 16px 4px !important;
+    max-width: 600px;
+    transition: background 0.15s;
+}
+.post-card:hover { background: var(--tw-hover) !important; }
+
+.post-header {
+    gap: 12px !important;
+    padding: 0 !important;
+    margin-bottom: 6px !important;
+}
+.post-header-avatar {
+    width: 46px !important;
+    height: 46px !important;
+    border: none !important;
+    background: var(--tw-avatar-bg) !important;
+}
+.post-header-info { text-align: right; }
+.post-header-name {
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    color: var(--tw-text) !important;
+    line-height: 1.35;
+    display: flex !important;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+.post-header-username {
+    font-size: 14px !important;
+    color: var(--tw-muted) !important;
+    font-weight: 400 !important;
+    opacity: 1 !important;
+    direction: ltr;
+}
+.post-header-badge {
+    width: 17px !important;
+    height: 17px !important;
+    vertical-align: -3px;
+}
+
+.post-date {
+    padding: 0 !important;
+    font-size: 13px !important;
+    color: var(--tw-muted) !important;
+    opacity: 1 !important;
+    margin-top: 2px;
+    justify-content: flex-end;
+    gap: 4px !important;
+}
+
+.post-caption {
+    padding: 0 !important;
+    font-size: 15px !important;
+    line-height: 1.5 !important;
+    color: var(--tw-text) !important;
+    margin: 6px 0 10px !important;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ============ 2. شبكة 5 صور بأسلوب تويتر ============ */
+.post-image-wrap {
+    border-radius: 16px !important;
+    overflow: hidden;
+    border: 1px solid var(--tw-border) !important;
+    margin: 4px 0 12px !important;
+    background: var(--tw-avatar-bg) !important;
+    max-height: 510px;
+}
+.post-image-wrap img {
+    max-height: 510px !important;
+    object-fit: cover !important;
+    display: block;
+}
+
+/* شبكة الصور المتعددة — نفس بنية JavaScript (grid 2×2) */
+.post-card .post-image-wrap + div,
+.post-card div[style*="grid-template-columns:1fr 1fr"] {
+    border-radius: 16px !important;
+    overflow: hidden;
+    border: 1px solid var(--tw-border) !important;
+    margin: 4px 0 12px !important;
+}
+.post-card div[style*="grid-template-columns:1fr 1fr"] > div {
+    min-height: 0;
+    position: relative;
+}
+
+/* ============ 3. أزرار التفاعل (لايك / دسلايك / تعليق / عين) ============ */
+.post-actions {
+    padding: 4px 0 10px !important;
+    border-top: none !important;
+    justify-content: space-between !important;
+    gap: 4px;
+}
+.post-action-btn {
+    flex: 1;
+    justify-content: center;
+    color: var(--tw-muted) !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+    padding: 8px 10px !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    transition: background 0.15s, color 0.15s;
+}
+.post-action-btn i { font-size: 16px !important; }
+.post-action-btn:hover {
+    background: rgba(29,155,240,0.1) !important;
+    color: var(--tw-blue) !important;
+}
+.post-action-btn.liked {
+    color: var(--tw-like) !important;
+}
+.post-action-btn.liked:hover {
+    background: rgba(249,24,128,0.1) !important;
+}
+.post-action-btn.disliked {
+    color: var(--tw-dislike) !important;
+}
+.post-action-btn.disliked:hover {
+    background: rgba(243,156,18,0.1) !important;
+}
+.post-action-btn .count {
+    font-size: 13px !important;
+    font-weight: 600;
+    min-width: 14px;
+}
+
+/* زر الحذف */
+.post-delete-btn {
+    background: transparent !important;
+    color: var(--tw-muted) !important;
+    border: none !important;
+    top: 10px !important;
+    left: 10px !important;
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 50% !important;
+    transition: background 0.15s, color 0.15s;
+}
+.post-delete-btn:hover {
+    background: rgba(249,24,128,0.1) !important;
+    color: var(--tw-like) !important;
+}
+
+/* ============ 4. شريط الستوري بأسلوب تويتر ============ */
+#moreStoriesWrapper {
+    background: var(--card-bg) !important;
+    border-bottom: 1px solid var(--tw-border) !important;
+    border-radius: 0 !important;
+    margin: 0 auto 0 !important;
+    padding: 10px 0 !important;
+    max-width: 600px;
+    position: sticky;
+    top: 118px;
+    z-index: 50;
+}
+#storiesBar {
+    gap: 14px !important;
+    padding: 2px 14px !important;
+}
+.story-item {
+    width: 72px !important;
+    margin-bottom: 4px !important;
+}
+.story-ring {
+    width: 64px !important;
+    height: 64px !important;
+    padding: 2.5px !important;
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%) !important;
+    transition: transform 0.15s;
+}
+.story-item:active .story-ring { transform: scale(0.94); }
+.story-ring.seen {
+    background: var(--tw-border) !important;
+}
+.story-avatar {
+    width: 57px !important;
+    height: 57px !important;
+    border: 3px solid var(--card-bg) !important;
+    background: var(--card-bg) !important;
+}
+.story-username-label {
+    font-size: 11px !important;
+    color: var(--tw-text) !important;
+    max-width: 72px !important;
+    margin-top: 4px !important;
+    opacity: 0.9 !important;
+}
+.story-live-badge {
+    background: #f91880 !important;
+    bottom: 0 !important;
+    font-size: 8px !important;
+    padding: 1px 6px !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* ============ 5. الفاصل بين القسمين ============ */
+.posts-container {
+    max-width: 600px !important;
+    margin: 0 auto !important;
+}
+
+/* ============ 6. شريط التبويبات (لك / متابعون) — اختياري ============ */
+/* إذا أردت إضافة التبويبات لاحقاً يدوياً في HTML، هذا الـ CSS جاهز */
+
+/* ============ 7. الجوال ============ */
+@media (max-width: 600px) {
+    .post-card { padding: 12px 12px 2px !important; }
+    .post-header-avatar { width: 42px !important; height: 42px !important; }
+    .post-header-name { font-size: 14px !important; }
+    .post-header-username { font-size: 13px !important; }
+    .post-caption { font-size: 14.5px !important; }
+    .post-action-btn i { font-size: 15px !important; }
+    .story-ring { width: 60px !important; height: 60px !important; }
+    .story-avatar { width: 53px !important; height: 53px !important; }
+    .story-item { width: 68px !important; }
+}
     </style>
 </head>
 <body>
@@ -663,6 +917,18 @@
     </div>
 </div>
         
+<!-- ✨ نافذة قائمة المتابعين / المتابَعين -->
+<div class="modal" id="followListModal">
+    <div class="modal-box" style="max-width:420px;text-align:right;max-height:80vh;display:flex;flex-direction:column;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <p style="font-weight:bold;font-size:18px;margin:0;" id="followListTitle">المتابعون</p>
+            <i class="fas fa-times" style="font-size:22px;cursor:pointer;opacity:.7;" onclick="closeFollowList()"></i>
+        </div>
+        <div id="followListContent" style="flex:1;overflow-y:auto;">
+            <p style="text-align:center;opacity:0.6;padding:20px;"><i class="fas fa-spinner fa-spin"></i></p>
+        </div>
+    </div>
+</div>
 
 <div class="content" id="chatPage">
     <div class="products-header"><h2>الدردشات</h2><p>تواصل مع من تتابعهم</p></div>
@@ -1077,8 +1343,8 @@
                 <span id="pvWebsiteRow" style="display:none;"><i class="fas fa-link"></i> <a id="pvWebsite" class="pv-website-link" href="#" target="_blank" rel="noopener noreferrer"></a></span>
             </div>
             <div class="pv-follow-stats">
-                <span onclick="openFollowersList()"><b id="pvFollowersCount">0</b> متابع</span>
-                <span onclick="openFollowingList()"><b id="pvFollowingCount">0</b> يتابع</span>
+                <span id="pubFollowersSpan" onclick="openFollowersList(currentViewingProfileKey)" style="cursor:pointer;"><b id="pubFollowersCount"></b>(قائمة المتابعين)</span>
+<span id="pubFollowingSpan" onclick="openFollowingList(currentViewingProfileKey)" style="cursor:pointer;"><b id="pubFollowingCount"></b>(قائمة المتابعات)</span>
             </div>
         </div>
     </div>
@@ -1154,9 +1420,21 @@
                     <span id="pubWebsiteRow" style="display:none;"><i class="fas fa-link"></i> <a id="pubWebsite" class="pv-website-link" href="#" target="_blank" rel="noopener noreferrer"></a></span>
                 </div>
                 <div class="pv-follow-stats">
-                    <span id="pubFollowersSpan"><b id="pubFollowersCount">0</b> متابع</span>
-                    <span id="pubFollowingSpan"><b id="pubFollowingCount">0</b> يتابع</span>
+                    <span id="pubFollowersSpan" onclick="openFollowersList(currentViewingProfileKey)" style="cursor:pointer;"><b id="pubFollowersCount"></b>(قائمة المتابعين)</span>
+                    <span id="pubFollowingSpan" onclick="openFollowingList(currentViewingProfileKey)" style="cursor:pointer;"><b id="pubFollowingCount"></b> (قائمة المتابعات)</span>
                 </div>
+            </div>
+            <div id="pubPrivateContent" style="display:none;" class="pv-private-notice">
+                <i class="fas fa-lock"></i>
+                <p>هذا الحساب خاص. تابع المستخدم لعرض المحتوى.</p>
+            </div>
+        </div>
+    </div>
+    <div id="pubPostsSection" style="max-width:560px;margin:0 auto;">
+        <div id="pubPostsGrid" class="my-posts-grid" style="max-width:560px;margin:20px auto;"></div>
+    </div>
+</div>
+                
             </div>
         </div>
     </div>
@@ -1194,7 +1472,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>eruda.init();</script>
 
 <script>
 /* ==================== FIREBASE CONFIG ==================== */
@@ -2229,9 +2508,10 @@ function renderProfileView() {
                 var followers = Array.isArray(d.followers) ? d.followers : [];
                 var following = Array.isArray(d.following) ? d.following : [];
                 var fc = document.getElementById('pvFollowersCount');
-                var gc = document.getElementById('pvFollowingCount');
-                if (fc) fc.textContent = followers.length;
-                if (gc) gc.textContent = following.length;
+var gc = document.getElementById('pvFollowingCount');
+if (fc) fc.textContent = followers.length;
+if (gc) gc.textContent = following.length;
+console.log('My profile counts — followers:', followers.length, 'following:', following.length);
             }
         } catch(e){}
     })();
@@ -2459,21 +2739,29 @@ async function loadPublicPosts() {
             var isLiked = currentUserKey && likes.indexOf(currentUserKey) > -1;
             var isDisliked = currentUserKey && dislikes.indexOf(currentUserKey) > -1;
 
-            var actionsHtml =
-                '<div class="post-actions">' +
-                    '<button class="post-action-btn' + (isLiked ? ' liked' : '') + '" onclick="toggleLike(\'' + p.id + '\', this)">' +
-                        '<i class="fas fa-heart"></i><span class="count">' + likes.length + '</span>' +
-                    '</button>' +
-                    '<button class="post-action-btn' + (isDisliked ? ' disliked' : '') + '" onclick="toggleDislike(\'' + p.id + '\', this)">' +
-                        '<i class="fas fa-thumbs-down"></i><span class="count">' + dislikes.length + '</span>' +
-                    '</button>' +
-                    '<button class="post-action-btn" onclick="openCommentsSheet(\'' + p.id + '\')">' +
-                        '<i class="fas fa-comment"></i><span class="count">تعليق</span>' +
-                    '</button>' +
-                    '<button class="post-action-btn" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)">' +
-                        '<i class="fas fa-eye"></i><span class="count" id="views-' + p.id + '">' + views + '</span>' +
-                    '</button>' +
-                '</div>';
+            // ✨ جلب عدد التعليقات لهذا المنشور
+var commentsCount = 0;
+try {
+    var cQ = fb.query(fb.collection(fb.db, 'comments'), fb.where('postId', '==', p.id));
+    var cSnap = await fb.getDocs(cQ);
+    commentsCount = cSnap.size;
+} catch (e) { commentsCount = 0; }
+
+var actionsHtml =
+    '<div class="post-actions">' +
+        '<button class="post-action-btn' + (isLiked ? ' liked' : '') + '" onclick="toggleLike(\'' + p.id + '\', this)">' +
+            '<i class="fas fa-heart"></i><span class="count">' + likes.length + '</span>' +
+        '</button>' +
+        '<button class="post-action-btn' + (isDisliked ? ' disliked' : '') + '" onclick="toggleDislike(\'' + p.id + '\', this)">' +
+            '<i class="fas fa-thumbs-down"></i><span class="count">' + dislikes.length + '</span>' +
+        '</button>' +
+        '<button class="post-action-btn comment-btn" data-post-id="' + p.id + '" onclick="openCommentsSheet(\'' + p.id + '\')">' +
+            '<i class="fas fa-comment"></i><span class="count" id="comments-count-' + p.id + '">' + commentsCount + '</span>' +
+        '</button>' +
+        '<button class="post-action-btn" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)">' +
+            '<i class="fas fa-eye"></i><span class="count" id="views-' + p.id + '">' + views + '</span>' +
+        '</button>' +
+    '</div>';
 
             var customIconHtml = '';
             if (authorBt === 'black' && author.customIcon) {
@@ -2691,15 +2979,91 @@ async function publishPost() {
 }
 
 /* ==================== PUBLIC PROFILE ==================== */
+async function toggleFollow(targetKey, btnEl) {
+    if (!currentUserKey) { alert(t('login_first')); return; }
+    
+    // توحيد الحروف لمنع أي أخطاء
+    var myKey = currentUserKey.toLowerCase().trim();
+    var tKey = targetKey.toLowerCase().trim();
+    
+    if (tKey === myKey) { alert('لا يمكنك متابعة نفسك'); return; }
+
+    try {
+        var fb = await getFB();
+        var myRef = fb.doc(fb.db, 'profiles', myKey);
+        var targetRef = fb.doc(fb.db, 'profiles', tKey);
+
+        var mySnap = await fb.getDoc(myRef);
+        var targetSnap = await fb.getDoc(targetRef);
+        
+        if (!targetSnap.exists()) { alert('المستخدم غير موجود'); return; }
+
+        var myData = mySnap.exists() ? mySnap.data() : {};
+        var targetData = targetSnap.data();
+        
+        var myFollowing = Array.isArray(myData.following) ? myData.following : [];
+        var targetFollowers = Array.isArray(targetData.followers) ? targetData.followers : [];
+
+        // تنظيف المصفوفات من أي مسافات أو حروف كبيرة
+        myFollowing = myFollowing.map(function(k){ return String(k).toLowerCase().trim(); });
+        targetFollowers = targetFollowers.map(function(k){ return String(k).toLowerCase().trim(); });
+
+        var isFollowing = myFollowing.indexOf(tKey) > -1;
+        
+        if (isFollowing) {
+            // إلغاء المتابعة
+            myFollowing = myFollowing.filter(function(k){ return k !== tKey; });
+            targetFollowers = targetFollowers.filter(function(k){ return k !== myKey; });
+            if (btnEl) {
+                btnEl.textContent = t('follow');
+                btnEl.className = 'pv-action-btn follow';
+            }
+        } else {
+            // إضافة متابعة
+            if (myFollowing.indexOf(tKey) === -1) myFollowing.push(tKey);
+            if (targetFollowers.indexOf(myKey) === -1) targetFollowers.push(myKey);
+            if (btnEl) {
+                btnEl.textContent = t('unfollow');
+                btnEl.className = 'pv-action-btn following';
+            }
+        }
+
+        // الحفظ في قاعدة البيانات
+        await Promise.all([
+            fb.setDoc(myRef, { following: myFollowing, updatedAt: fb.serverTimestamp() }, { merge: true }),
+            fb.setDoc(targetRef, { followers: targetFollowers, updatedAt: fb.serverTimestamp() }, { merge: true })
+        ]);
+
+        // تحديث الأرقام في الشاشة فوراً
+        var fc = document.getElementById('pubFollowersCount');
+        if (fc) fc.textContent = targetFollowers.length;
+        
+        var gc = document.getElementById('pvFollowingCount');
+        if (gc) gc.textContent = myFollowing.length;
+
+        if (currentPublicProfileCache) currentPublicProfileCache.followers = targetFollowers;
+
+    } catch (e) {
+        alert('خطأ في المتابعة: ' + e.message);
+    }
+}
+function goBackFromPublicProfile() {
+    switchTab('morePage');
+}
+
+/* ==================== PUBLIC PROFILE ==================== */
 async function openPublicProfile(targetKey) {
     if (!targetKey) return;
-    currentViewingProfileKey = targetKey;
+    var tKey = String(targetKey).toLowerCase().trim();
+    currentViewingProfileKey = tKey;
     switchTab('publicProfilePage');
 
     try {
         var fb = await getFB();
-        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', targetKey));
+        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', tKey));
+        
         if (!snap.exists()) { alert('المستخدم غير موجود'); return; }
+        
         var d = snap.data();
         currentPublicProfileCache = d;
 
@@ -2709,8 +3073,13 @@ async function openPublicProfile(targetKey) {
         document.getElementById('pubUsername').textContent = '@' + (d.username || 'user');
         document.getElementById('pubBio').textContent = d.bio || '';
         document.getElementById('pubAvatar').src = d.avatar || DEFAULT_AVATAR;
-        document.getElementById('pubFollowersCount').textContent = (d.followers || []).length;
-        document.getElementById('pubFollowingCount').textContent = (d.following || []).length;
+
+        // جلب الأرقام بشكل آمن
+        var followersArr = Array.isArray(d.followers) ? d.followers : [];
+        var followingArr = Array.isArray(d.following) ? d.following : [];
+        
+        document.getElementById('pubFollowersCount').textContent = followersArr.length;
+        document.getElementById('pubFollowingCount').textContent = followingArr.length;
 
         if (d.cover) {
             document.getElementById('pubCoverImg').src = d.cover;
@@ -2752,27 +3121,31 @@ async function openPublicProfile(targetKey) {
 
         var actionsRow = document.getElementById('pubActionsRow');
         actionsRow.innerHTML = '';
-        if (targetKey !== currentUserKey && currentUserKey) {
+        
+        // إظهار زر المتابعة فقط إذا لم يكن يفتح ملفه الخاص
+        if (tKey !== currentUserKey.toLowerCase().trim() && currentUserKey) {
             var followBtn = document.createElement('button');
             followBtn.className = 'pv-action-btn follow';
             followBtn.textContent = t('follow');
-            followBtn.onclick = function(){ toggleFollow(targetKey, followBtn); };
+            followBtn.onclick = function(){ toggleFollow(tKey, followBtn); };
             actionsRow.appendChild(followBtn);
-            updateFollowButtonState(targetKey, followBtn);
+            
+            // تحديث حالة الزر من قاعدة البيانات
+            updateFollowButtonState(tKey, followBtn);
 
             var msgBtn = document.createElement('button');
             msgBtn.className = 'pv-action-btn message';
             msgBtn.innerHTML = '<i class="fas fa-comment"></i> ' + t('message');
-            msgBtn.onclick = function() { openChatWith(targetKey); };
+            msgBtn.onclick = function() { openChatWith(tKey); };
             actionsRow.appendChild(msgBtn);
         }
 
-        loadUserPosts(targetKey);
+        loadUserPosts(tKey);
     } catch (e) {
-        console.error(e);
         alert('خطأ: ' + e.message);
     }
 }
+
 function goBackFromPublicProfile() {
     switchTab('morePage');
 }
@@ -2780,33 +3153,47 @@ function goBackFromPublicProfile() {
 /* ==================== FOLLOW SYSTEM ==================== */
 async function toggleFollow(targetKey, btnEl) {
     if (!currentUserKey) { alert(t('login_first')); return; }
-    if (targetKey === currentUserKey) { alert('لا يمكنك متابعة نفسك'); return; }
+    
+    var myKey = currentUserKey.toLowerCase().trim();
+    var tKey = targetKey.toLowerCase().trim();
+    
+    if (tKey === myKey) { alert('لا يمكنك متابعة نفسك'); return; }
 
     try {
         var fb = await getFB();
-        var myRef = fb.doc(fb.db, 'profiles', currentUserKey);
-        var targetRef = fb.doc(fb.db, 'profiles', targetKey);
+        var myRef = fb.doc(fb.db, 'profiles', myKey);
+        var targetRef = fb.doc(fb.db, 'profiles', tKey);
 
         var mySnap = await fb.getDoc(myRef);
         var targetSnap = await fb.getDoc(targetRef);
+        
         if (!targetSnap.exists()) { alert('المستخدم غير موجود'); return; }
 
         var myData = mySnap.exists() ? mySnap.data() : {};
         var targetData = targetSnap.data();
-        var myFollowing = Array.isArray(myData.following) ? myData.following.slice() : [];
-        var targetFollowers = Array.isArray(targetData.followers) ? targetData.followers.slice() : [];
+        
+        var myFollowing = Array.isArray(myData.following) ? myData.following : [];
+        var targetFollowers = Array.isArray(targetData.followers) ? targetData.followers : [];
 
-        var isFollowing = myFollowing.indexOf(targetKey) > -1;
+        myFollowing = myFollowing.map(function(k){ return String(k).toLowerCase().trim(); });
+        targetFollowers = targetFollowers.map(function(k){ return String(k).toLowerCase().trim(); });
+
+        var isFollowing = myFollowing.indexOf(tKey) > -1;
+        
         if (isFollowing) {
-            myFollowing = myFollowing.filter(function(k){ return k !== targetKey; });
-            targetFollowers = targetFollowers.filter(function(k){ return k !== currentUserKey; });
-            btnEl.textContent = t('follow');
-            btnEl.className = 'pv-action-btn follow';
+            myFollowing = myFollowing.filter(function(k){ return k !== tKey; });
+            targetFollowers = targetFollowers.filter(function(k){ return k !== myKey; });
+            if (btnEl) {
+                btnEl.textContent = t('follow');
+                btnEl.className = 'pv-action-btn follow';
+            }
         } else {
-            if (myFollowing.indexOf(targetKey) === -1) myFollowing.push(targetKey);
-            if (targetFollowers.indexOf(currentUserKey) === -1) targetFollowers.push(currentUserKey);
-            btnEl.textContent = t('unfollow');
-            btnEl.className = 'pv-action-btn following';
+            if (myFollowing.indexOf(tKey) === -1) myFollowing.push(tKey);
+            if (targetFollowers.indexOf(myKey) === -1) targetFollowers.push(myKey);
+            if (btnEl) {
+                btnEl.textContent = t('unfollow');
+                btnEl.className = 'pv-action-btn following';
+            }
         }
 
         await Promise.all([
@@ -2814,22 +3201,37 @@ async function toggleFollow(targetKey, btnEl) {
             fb.setDoc(targetRef, { followers: targetFollowers, updatedAt: fb.serverTimestamp() }, { merge: true })
         ]);
 
+        // تحديث الأرقام في الشاشة فوراً
         var fc = document.getElementById('pubFollowersCount');
         if (fc) fc.textContent = targetFollowers.length;
+        
+        // تحديث الرقم في ملفي الشخصي أيضاً
+        var gc = document.getElementById('pvFollowingCount');
+        if (gc) gc.textContent = myFollowing.length;
+        
+        // تحديث الرقم في ملفي الشخصي (المتابعين)
+        var myFollowersCount = document.getElementById('pvFollowersCount');
+        if (myFollowersCount && myData.followers) {
+            // لا حاجة لتحديثه هنا لأنه خاص بالطرف الآخر، لكننا نحدّث "يتابع" فقط
+        }
+
         if (currentPublicProfileCache) currentPublicProfileCache.followers = targetFollowers;
+
     } catch (e) {
-        console.error(e);
-        alert('خطأ: ' + e.message);
+        alert('خطأ في المتابعة: ' + e.message);
     }
 }
+
 async function updateFollowButtonState(targetKey, btnEl) {
     if (!currentUserKey) return;
     try {
         var fb = await getFB();
-        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', currentUserKey));
+        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', currentUserKey.toLowerCase().trim()));
         if (snap.exists()) {
-            var myFollowing = snap.data().following || [];
-            if (myFollowing.indexOf(targetKey) > -1) {
+            var myFollowing = Array.isArray(snap.data().following) ? snap.data().following : [];
+            myFollowing = myFollowing.map(function(k){ return String(k).toLowerCase().trim(); });
+            
+            if (myFollowing.indexOf(targetKey.toLowerCase().trim()) > -1) {
                 btnEl.textContent = t('unfollow');
                 btnEl.className = 'pv-action-btn following';
             } else {
@@ -2839,6 +3241,9 @@ async function updateFollowButtonState(targetKey, btnEl) {
         }
     } catch (e) {}
 }
+	
+	
+	
 
 /* ==================== COMMENTS ==================== */
 var currentPostIdForComments = null;
@@ -2907,35 +3312,73 @@ async function loadComments(postId) {
     }
 }
 
-async function submitComment() {
-    if (!currentUserKey || !currentPostIdForComments) return;
-    var input = document.getElementById('commentInput');
-    var text = input.value.trim();
-    if (!text) return;
+async function loadComments(postId) {
+    var list = document.getElementById('commentsList');
+    list.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;"><i class="fas fa-spinner fa-spin"></i></p>';
     
-    input.value = '';
     try {
         var fb = await getFB();
-        await fb.addDoc(fb.collection(fb.db, 'comments'), {
-            postId: currentPostIdForComments,
-            userId: currentUserKey,
-            text: text,
-            createdAt: new Date().toISOString()
-        });
-        loadComments(currentPostIdForComments);
-    } catch (e) {
-        alert('خطأ في إضافة التعليق: ' + e.message);
-    }
-}
+        
+        var postSnap = await fb.getDoc(fb.doc(fb.db, 'posts', postId));
+        var postAuthor = postSnap.exists() ? postSnap.data().author : null;
 
-async function deleteComment(commentId) {
-    if (!confirm(t('confirm_delete'))) return;
-    try {
-        var fb = await getFB();
-        await fb.deleteDoc(fb.doc(fb.db, 'comments', commentId));
-        loadComments(currentPostIdForComments);
+        var q = fb.query(fb.collection(fb.db, 'comments'), fb.where('postId', '==', postId));
+        var snap = await fb.getDocs(q);
+        
+        if (snap.empty) {
+            list.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;">لا توجد تعليقات بعد. كن أول من يعلق!</p>';
+            return;
+        }
+
+        var comments = [];
+        snap.forEach(function(ds) { comments.push({ id: ds.id, data: ds.data() }); });
+        comments.sort(function(a, b) { return new Date(a.data.createdAt || 0) - new Date(b.data.createdAt || 0); });
+
+        list.innerHTML = '';
+        for (var i = 0; i < comments.length; i++) {
+            var c = comments[i];
+            
+            var userSnap = await fb.getDoc(fb.doc(fb.db, 'profiles', c.data.userId));
+            var userData = userSnap.exists() ? userSnap.data() : { name: 'مستخدم', avatar: null };
+
+            // ✨ جلب نوع التوثيق
+            var userBt = userData.badgeType || (userData.owner ? 'owner' : (userData.blackBadge ? 'black' : (userData.verified ? 'normal' : 'none')));
+
+            // ✨ بناء علامة التوثيق (إن وجدت)
+            var badgeHtml = '';
+            if (userBt && userBt !== 'none') {
+                badgeHtml = ' <img src="' + badgeSrc(userBt) + '" style="width:15px;height:15px;vertical-align:-3px;display:inline-block;margin-right:2px;">';
+            }
+
+            // ✨ أيقونة مخصصة للتوثيق الأسود (إن وجدت)
+            var customIconHtml = '';
+            if (userBt === 'black' && userData.customIcon) {
+                customIconHtml = ' <img src="' + userData.customIcon + '" style="width:14px;height:14px;object-fit:contain;vertical-align:-2px;margin-right:2px;">';
+            }
+
+            var canDelete = (c.data.userId === currentUserKey) || isAdminType(currentBadgeType) || (currentUserKey === postAuthor);
+            var deleteBtnHtml = canDelete ? 
+                '<i class="fas fa-trash" style="color:#e0245e;cursor:pointer;font-size:14px;margin-top:5px;" onclick="deleteComment(\'' + c.id + '\')"></i>' : '';
+
+            var div = document.createElement('div');
+            div.style.cssText = 'display:flex;gap:10px;align-items:flex-start;padding:8px;background:var(--content-bg);border-radius:10px;';
+            
+            div.innerHTML = 
+                '<img src="' + (userData.avatar || DEFAULT_AVATAR) + '" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;">' +
+                '<div style="flex:1;text-align:right;min-width:0;">' +
+                    '<div style="font-size:13px;font-weight:bold;color:var(--text-color);display:flex;align-items:center;gap:2px;flex-wrap:wrap;">' +
+                        '<span>' + escapeHtml(userData.name || 'مستخدم') + '</span>' +
+                        badgeHtml +
+                        customIconHtml +
+                    '</div>' +
+                    '<div style="font-size:13px;color:var(--text-color);margin-top:2px;word-break:break-word;">' + escapeHtml(c.data.text) + '</div>' +
+                '</div>' +
+                deleteBtnHtml;
+            list.appendChild(div);
+        }
+        list.scrollTop = list.scrollHeight;
     } catch (e) {
-        alert('خطأ في الحذف: ' + e.message);
+        list.innerHTML = '<p style="text-align:center;color:red;padding:20px;">خطأ في تحميل التعليقات</p>';
     }
 }
 
@@ -3966,8 +4409,137 @@ async function publishStory() {
 }
 
 /* ==================== STUBS ==================== */
-function openFollowersList() { alert('قائمة المتابعين'); }
-function openFollowingList() { alert('قائمة المتابعة'); }
+/* ============================================
+   FOLLOWERS / FOLLOWING LISTS
+   ============================================ */
+
+var _followListTargetKey = null;
+
+// فتح قائمة المتابعين
+async function openFollowersList(targetKey) {
+    var key = targetKey || currentViewingProfileKey || currentUserKey;
+    if (!key) { alert('لا يوجد مستخدم'); return; }
+    _followListTargetKey = key;
+    document.getElementById('followListTitle').textContent = 'المتابعون';
+    document.getElementById('followListModal').style.display = 'flex';
+    
+    var content = document.getElementById('followListContent');
+    content.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;"><i class="fas fa-spinner fa-spin"></i></p>';
+    
+    try {
+        var fb = await getFB();
+        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
+        if (!snap.exists()) {
+            content.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;">المستخدم غير موجود</p>';
+            return;
+        }
+        var followers = snap.data().followers || [];
+        
+        if (followers.length === 0) {
+            content.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;">لا يوجد متابعون بعد</p>';
+            return;
+        }
+        
+        await renderFollowList(followers, content);
+    } catch (e) {
+        content.innerHTML = '<p style="text-align:center;color:red;padding:20px;">خطأ: ' + e.message + '</p>';
+    }
+}
+
+// فتح قائمة المتابَعين
+async function openFollowingList(targetKey) {
+    var key = targetKey || currentViewingProfileKey || currentUserKey;
+    if (!key) { alert('لا يوجد مستخدم'); return; }
+    _followListTargetKey = key;
+    document.getElementById('followListTitle').textContent = 'يتابع';
+    document.getElementById('followListModal').style.display = 'flex';
+    
+    var content = document.getElementById('followListContent');
+    content.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;"><i class="fas fa-spinner fa-spin"></i></p>';
+    
+    try {
+        var fb = await getFB();
+        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
+        if (!snap.exists()) {
+            content.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;">المستخدم غير موجود</p>';
+            return;
+        }
+        var following = snap.data().following || [];
+        
+        if (following.length === 0) {
+            content.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;">لا يتابع أحداً بعد</p>';
+            return;
+        }
+        
+        await renderFollowList(following, content);
+    } catch (e) {
+        content.innerHTML = '<p style="text-align:center;color:red;padding:20px;">خطأ: ' + e.message + '</p>';
+    }
+}
+
+// رسم قائمة المستخدمين
+async function renderFollowList(keys, container) {
+    var fb = await getFB();
+    container.innerHTML = '';
+    
+    // جلب بيانات كل المستخدمين بالتوازي
+    var profiles = await Promise.all(keys.map(async function(k) {
+        try {
+            var s = await fb.getDoc(fb.doc(fb.db, 'profiles', k));
+            if (s.exists()) return { key: k, data: s.data() };
+        } catch (e) {}
+        return { key: k, data: { name: 'مستخدم', username: 'user', avatar: null } };
+    }));
+    
+    profiles.forEach(function(p) {
+        var d = p.data;
+        var bt = d.badgeType || (d.owner ? 'owner' : (d.blackBadge ? 'black' : (d.verified ? 'normal' : 'none')));
+        
+        var badgeHtml = '';
+        if (bt && bt !== 'none') {
+            badgeHtml = ' <img src="' + badgeSrc(bt) + '" style="width:15px;height:15px;vertical-align:-3px;display:inline-block;margin-right:2px;">';
+        }
+        var customIconHtml = '';
+        if (bt === 'black' && d.customIcon) {
+            customIconHtml = ' <img src="' + d.customIcon + '" style="width:14px;height:14px;object-fit:contain;vertical-align:-2px;margin-right:2px;">';
+        }
+        
+        var item = document.createElement('div');
+        item.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px;background:var(--content-bg);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:background 0.15s;';
+        item.onmouseenter = function() { item.style.background = 'var(--sidebar-hover-bg)'; };
+        item.onmouseleave = function() { item.style.background = 'var(--content-bg)'; };
+        
+        item.innerHTML = 
+            '<img src="' + (d.avatar || DEFAULT_AVATAR) + '" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;">' +
+            '<div style="flex:1;text-align:right;min-width:0;">' +
+                '<div style="font-size:14px;font-weight:bold;color:var(--text-color);display:flex;align-items:center;gap:2px;flex-wrap:wrap;">' +
+                    '<span>' + escapeHtml(d.name || 'مستخدم') + '</span>' +
+                    badgeHtml +
+                    customIconHtml +
+                '</div>' +
+                '<div style="font-size:12px;color:var(--tab-color);direction:ltr;text-align:right;">@' + escapeHtml(d.username || 'user') + '</div>' +
+            '</div>' +
+            '<i class="fas fa-chevron-left" style="color:var(--tab-color);font-size:14px;"></i>';
+        
+        item.onclick = function() {
+            closeFollowList();
+            // إذا كان نفس المستخدم، افتح الملف الشخصي، وإلا افتح البروفايل العام
+            if (p.key === currentUserKey) {
+                switchTab('accountPage');
+                showProfileView();
+            } else {
+                openPublicProfile(p.key);
+            }
+        };
+        
+        container.appendChild(item);
+    });
+}
+
+function closeFollowList() {
+    document.getElementById('followListModal').style.display = 'none';
+    _followListTargetKey = null;
+}
 function remindLater(m) { document.getElementById('customizeModal').style.display='none'; }
 function neverShowAgain() { document.getElementById('customizeModal').style.display='none'; localStorage.setItem('neverSupport', '1'); }
 function showExceptionDialog() { return true; }
@@ -4099,6 +4671,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 loadStories();
 setInterval(loadStories, 60 * 1000);
+
 </script>
 </body>
 </html>
