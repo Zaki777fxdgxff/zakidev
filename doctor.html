@@ -1102,14 +1102,6 @@
     <button onclick="closeStoryViewer()" style="position:absolute;top:20px;right:20px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.15);color:#fff;border:none;font-size:22px;cursor:pointer;z-index:10;"><i class="fas fa-times"></i></button>
     <div id="storyProgressContainer"></div>
     <div id="storyAuthorName"></div>
-    <!-- ✨ زر حذف الستوري (يظهر للمالك والمشرف فقط) -->
-<button id="deleteStoryBtn" onclick="deleteCurrentStory()" style="display:none; position:absolute; top:20px; left:20px; width:44px; height:44px; border-radius:50%; background:rgba(224,36,94,0.8); color:#fff; border:none; font-size:20px; cursor:pointer; z-index:20;"><i class="fas fa-trash"></i></button>
-
-<!-- ✨ حقل كتابة النص أسفل الستوري (مثل واتساب) -->
-<div id="storyCaptionContainer" style="position:absolute; bottom:30px; width:90%; max-width:500px; display:none; z-index:10;">
-    <input type="text" id="storyViewerCaptionInput" placeholder="أضف تعليقاً..." style="width:100%; padding:12px 20px; border-radius:30px; border:none; background:rgba(0,0,0,0.6); color:#fff; font-size:15px; outline:none; backdrop-filter:blur(5px);">
-</div>
-
     <div id="storyContent" style="width:90%;max-width:600px;aspect-ratio:9/16;max-height:80vh;display:flex;align-items:center;justify-content:center;position:relative;"></div>
     <button onclick="prevStory()" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.15);color:#fff;border:none;font-size:20px;cursor:pointer;"><i class="fas fa-chevron-left"></i></button>
     <button onclick="nextStory()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.15);color:#fff;border:none;font-size:20px;cursor:pointer;"><i class="fas fa-chevron-right"></i></button>
@@ -1210,10 +1202,6 @@
         </div>
     </div>
 </div>
-	
-	
-	
-	
 	<div class="content" id="morePage">
     <!-- ✨ صندوق البحث الجديد -->
     <div class="search-container">
@@ -1225,6 +1213,7 @@
     </div>
 
     <div class="products-header"></div>
+    
     
     <div id="moreStoriesWrapper">
         <div id="storiesBar"></div>
@@ -1248,10 +1237,10 @@
     </div>
 </div>
 
-<!-- ✨ صفحة المحادثات (هنا المكان الصحيح لكل شيء) -->
-<div class="content" id="chatPage">
 
-    
+
+<div class="content" id="chatPage">
+    <div class="products-header"><h2>الدردشات</h2><p>تواصل مع من تتابعهم</p></div>
     <div style="display:flex;justify-content:space-between;align-items:center;max-width:480px;margin:0 auto 10px;padding:0 6px;">
         <button onclick="openChatSettings()" style="background:var(--card-bg);border:1px solid var(--tab-color);color:var(--text-color);padding:8px 14px;border-radius:20px;font-weight:bold;font-size:13px;cursor:pointer;">
             <i class="fas fa-cog"></i> إعدادات الشات
@@ -1260,19 +1249,8 @@
             <i class="fas fa-home"></i> الرئيسية
         </button>
     </div>
-
-    <!-- ✨ تبويبات الرسائل والإشعارات -->
-    <div style="display:flex;justify-content:center;max-width:480px;margin:0 auto 15px;border-bottom:1px solid var(--border-color);">
-        <div id="tabChats" onclick="switchChatTab('chats')" style="flex:1;text-align:center;padding:12px 0;font-weight:bold;cursor:pointer;border-bottom:3px solid var(--tab-active-color);color:var(--tab-active-color);transition:0.3s;">الرسائل</div>
-        <div id="tabNotifications" onclick="switchChatTab('notifs')" style="flex:1;text-align:center;padding:12px 0;font-weight:bold;cursor:pointer;border-bottom:3px solid transparent;color:var(--tab-color);transition:0.3s;">الإشعارات</div>
-    </div>
-
     <div id="chatListContainer" style="max-width:480px;margin:0 auto;">
         <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>جاري التحميل...</p></div>
-    </div>
-
-    <div id="notificationsContainer" style="max-width:480px;margin:0 auto;display:none;">
-        <!-- سيتم وضع الإشعارات هنا تلقائياً -->
     </div>
 </div>
 
@@ -1465,7 +1443,6 @@
     </div>
 </div>
 
-
 <div class="modal" id="createStoryModal">
     <div class="modal-box" style="text-align:right;max-width:420px;">
         <p style="font-weight:bold;font-size:18px;margin-bottom:12px;"><i class="fas fa-plus-circle"></i> نشر جديد</p>
@@ -1477,28 +1454,22 @@
                 <i class="fas fa-tower-broadcast"></i> بث مباشر
             </div>
         </div>
-        
-        <!-- ✨ قسم الستوري (صورة فقط + نص) -->
         <div id="storyCreatePanel" class="notif-panel active">
-            <p style="font-size:12px;opacity:0.6;margin-bottom:10px;">ارفع صورة من الجهاز:</p>
+            <div class="profile-field">
+                <label>رابط الصورة</label>
+                <input type="url" id="storyImageUrl" placeholder="https://..." dir="ltr" style="text-align:left;">
+            </div>
+            <p style="font-size:12px;opacity:0.6;margin-bottom:10px;">أو ارفع صورة من الجهاز:</p>
             <input type="file" id="storyImageFile" accept="image/*" style="width:100%;padding:8px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);font-size:13px;">
             <img id="storyImagePreview" style="display:none;width:100%;max-height:150px;object-fit:cover;border-radius:10px;margin-top:8px;">
-            
-            <div class="profile-field" style="margin-top:10px;">
-                <label>نص أو تعليق (اختياري)</label>
-                <input type="text" id="storyCaptionInput" placeholder="اكتب شيئاً..." style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);font-size:15px;">
-            </div>
         </div>
-        
-        <!-- ✨ قسم البث المباشر -->
         <div id="liveCreatePanel" class="notif-panel">
             <div class="profile-field">
-                <label>رابط البث المباشر (YouTube Live / Twitch)</label>
+                <label>رابط البث (YouTube Live / TikTok Live / Twitch)</label>
                 <input type="url" id="storyLiveUrl" placeholder="https://youtube.com/live/..." dir="ltr" style="text-align:left;">
             </div>
-            <p style="font-size:12px;opacity:0.6; color:#e0245e;">* ملاحظة: الروابط العادية (مثل فيديوهات اليوتيوب القديمة) سيتم رفضها. يجب أن يكون الرابط لبث مباشر.</p>
+            <p style="font-size:12px;opacity:0.6;">أمثلة: youtube.com/live/XXX أو youtube.com/watch?v=XXX أو twitch.tv/username</p>
         </div>
-        
         <div style="display:flex;gap:8px;margin-top:14px;">
             <button onclick="publishStory()" id="publishStoryBtn" style="flex:1;padding:12px;background:var(--tab-active-color);color:#fff;border:none;border-radius:10px;font-weight:bold;cursor:pointer;">
                 <i class="fas fa-paper-plane"></i> نشر
@@ -1507,6 +1478,7 @@
         </div>
     </div>
 </div>
+
     	
 <!-- ✨ نافذة التعليقات السفلية -->
 <div id="commentsSheet" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;justify-content:flex-end;align-items:flex-end;" onclick="if(event.target===this)closeCommentsSheet()">
@@ -1671,7 +1643,7 @@
                     <span id="profileDot" class="notification-dot"></span>
                 </div>
                 <div style="display:flex;align-items:center;gap:8px;">
-                    
+                    <button class="pv-bell" onclick="openInbox()"><i class="fas fa-bell"></i><span id="bellCount" class="bell-count" style="display:none;">0</span></button>
     <button class="pv-edit-btn" onclick="showEditProfile()"><i class="fas fa-pen"></i> تعديل</button>
     <!-- ✨ زر المشاركة الخاص بك -->
     <button class="pv-edit-btn" onclick="shareProfile(currentUserKey, document.getElementById('pfName').value, document.getElementById('pfUsername').value)"><i class="fas fa-share-alt"></i></button>
@@ -4494,14 +4466,13 @@ async function sendMessageToUser() {
     if (!body) return;
     try {
         var fb = await getFB();
-     await fb.addDoc(fb.collection(fb.db, 'systemMessages'), {
-    from: currentUserKey,
-    to: targetUser,
-    postId: currentPostIdForComments, 
-    title: 'رد جديد على تعليقك',
-    body: myName + ' رد عليك: ' + text,
-    read: false,
-    createdAt: new Date().toISOString()
+        await fb.addDoc(fb.collection(fb.db, 'systemMessages'), {
+            from: currentUserKey,
+            to: adminTargetKey,
+            title: title,
+            body: body,
+            read: false,
+            createdAt: new Date().toISOString()
         });
         alert('تم الإرسال');
     } catch (e) { alert(e.message); }
@@ -4639,37 +4610,7 @@ function showStory() {
     content.style.position = 'relative';
 
     var isLive = !!data.liveUrl;
-// ✨ إظهار زر الحذف للمالك أو المشرف
-var delBtn = document.getElementById('deleteStoryBtn');
-var captionContainer = document.getElementById('storyCaptionContainer');
 
-if (delBtn) {
-    if (data.author === currentUserKey || isAdminType(currentBadgeType)) {
-        delBtn.style.display = 'flex';
-        delBtn.onclick = function(e) { e.stopPropagation(); deleteCurrentStory(s.id); };
-    } else {
-        delBtn.style.display = 'none';
-    }
-}
-
-// ✨ عرض النص (إن وجد) وإظهار حقل التعليق
-if (captionContainer) {
-    if (isLive || (data.author !== currentUserKey)) {
-        // إظهار الحقل فقط للبث المباشر أو لمشاهدة ستوري الآخرين
-        captionContainer.style.display = 'block';
-        document.getElementById('storyViewerCaptionInput').placeholder = data.caption ? data.caption : 'أضف تعليقاً...';
-    } else {
-        captionContainer.style.display = 'none';
-    }
-}
-
-// ✨ عرض النص فوق الصورة إذا كان موجوداً
-if (data.caption && !isLive) {
-    var captionOverlay = document.createElement('div');
-    captionOverlay.style.cssText = 'position:absolute; bottom:20px; left:10%; right:10%; background:rgba(0,0,0,0.5); color:white; padding:10px; border-radius:10px; text-align:center; font-size:14px; word-wrap:break-word; pointer-events:none;';
-    captionOverlay.textContent = data.caption;
-    content.appendChild(captionOverlay);
-}
     if (isLive) {
         var embedUrl = convertToEmbed(data.liveUrl);
         var iframe = document.createElement('iframe');
@@ -4867,14 +4808,12 @@ async function publishStory() {
         var myData = mySnap.exists() ? mySnap.data() : {};
 
         var storyData = {
-    author: currentUserKey,
-    name: myData.name || 'مستخدم',
-    avatar: myData.avatar || null,
-    createdAt: new Date().toISOString(),
-    caption: document.getElementById('storyCaptionInput') ? document.getElementById('storyCaptionInput').value.trim() : ''
-};
+            author: currentUserKey,
+            name: myData.name || 'مستخدم',
+            avatar: myData.avatar || null,
+            createdAt: new Date().toISOString()
+        };
 
-        
         if (currentStoryCreateTab === 'live') {
             var liveUrl = document.getElementById('storyLiveUrl').value.trim();
             if (!liveUrl) { alert('أدخل رابط البث'); btn.disabled = false; btn.innerHTML = originalText; return; }
@@ -5489,304 +5428,6 @@ document.addEventListener('DOMContentLoaded', function() {
         subtree: true
     });
 });
-async function deleteCurrentStory(storyId) {
-    var idToDelete = storyId || (storiesList[currentStoryIndex] ? storiesList[currentStoryIndex].id : null);
-    if (!idToDelete) return;
-    
-    if (!confirm('هل أنت متأكد من حذف هذا الستوري نهائياً؟')) return;
-    
-    try {
-        var fb = await getFB();
-        await fb.deleteDoc(fb.doc(fb.db, 'stories', idToDelete));
-        toast('تم حذف الستوري');
-        closeStoryViewer();
-        loadStories(); // إعادة تحميل شريط الستوري
-    } catch (e) {
-        alert('خطأ في الحذف: ' + e.message);
-    }
-}
-/* ==================== التعديلات النهائية للستوري واللايف ==================== */
-
-// 1. إيقاف الصوت تماماً عند إغلاق الستوري أو اللايف
-window.closeStoryViewer = function() {
-    document.getElementById('storyViewer').style.display = 'none';
-    clearTimeout(storyTimer);
-    var content = document.getElementById('storyContent');
-    if (content) content.innerHTML = ''; // تفريغ الحاوية يقطع الصوت فوراً
-};
-
-// 2. منع الفيديوهات العادية في اللايف، وإضافة النص للستوري
-window.publishStory = async function() {
-    if (!currentUserKey) { alert(t('login_first')); return; }
-
-    var btn = document.getElementById('publishStoryBtn');
-    var originalText = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ...';
-
-    try {
-        var fb = await getFB();
-        var mySnap = await fb.getDoc(fb.doc(fb.db, 'profiles', currentUserKey));
-        var myData = mySnap.exists() ? mySnap.data() : {};
-
-        var storyData = {
-            author: currentUserKey,
-            name: myData.name || 'مستخدم',
-            avatar: myData.avatar || null,
-            createdAt: new Date().toISOString(),
-            caption: document.getElementById('storyCaptionInput') ? document.getElementById('storyCaptionInput').value.trim() : ''
-        };
-
-        if (currentStoryCreateTab === 'live') {
-            var liveUrl = document.getElementById('storyLiveUrl').value.trim();
-            if (!liveUrl) { alert('أدخل رابط البث'); btn.disabled = false; btn.innerHTML = originalText; return; }
-            
-            // منع الروابط العادية (يجب أن يحتوي الرابط على live)
-            var isRealLive = liveUrl.includes('youtube.com/live') || liveUrl.includes('twitch.tv');
-            
-            if (!isRealLive) {
-                alert('عذراً، يجب أن يكون الرابط بثاً مباشراً (يحتوي على كلمة live).');
-                btn.disabled = false; btn.innerHTML = originalText; return;
-            }
-            
-            storyData.liveUrl = liveUrl;
-            storyData.imageUrl = null;
-        } else {
-            var fileInput = document.getElementById('storyImageFile');
-            var file = fileInput.files[0];
-
-            if (file) {
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> رفع...';
-                var uploadedUrl = await uploadImageToImgBB(file);
-                storyData.imageUrl = uploadedUrl;
-            } else {
-                alert('أدخل صورة للستوري');
-                btn.disabled = false;
-                btn.innerHTML = originalText;
-                return;
-            }
-            storyData.liveUrl = null;
-        }
-
-        await fb.addDoc(fb.collection(fb.db, 'stories'), storyData);
-        alert('تم النشر بنجاح');
-        document.getElementById('createStoryModal').style.display = 'none';
-        loadStories();
-    } catch (e) {
-        alert('خطأ: ' + e.message);
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = originalText;
-    }
-};
-
-// 3. عرض النص فوق الصورة وإخفاء تعليق المشاهدين
-window.showStory = function() {
-    if (currentStoryIndex < 0 || currentStoryIndex >= storiesList.length) {
-        closeStoryViewer();
-        return;
-    }
-    var s = storiesList[currentStoryIndex];
-    var data = s.data;
-    document.getElementById('storyAuthorName').textContent = '';
-    var content = document.getElementById('storyContent');
-    content.innerHTML = '';
-    content.style.position = 'relative';
-
-    var isLive = !!data.liveUrl;
-
-    // زر الحذف (للمالك أو المشرف)
-    var delBtn = document.getElementById('deleteStoryBtn');
-    if (delBtn) {
-        if (data.author === currentUserKey || isAdminType(currentBadgeType)) {
-            delBtn.style.display = 'flex';
-            delBtn.onclick = function(e) { e.stopPropagation(); deleteCurrentStory(s.id); };
-        } else {
-            delBtn.style.display = 'none';
-        }
-    }
-
-    // إخفاء حقل تعليق المشاهدين
-    var captionContainer = document.getElementById('storyCaptionContainer');
-    if (captionContainer) captionContainer.style.display = 'none';
-
-    if (isLive) {
-        var embedUrl = convertToEmbed(data.liveUrl);
-        var iframe = document.createElement('iframe');
-        iframe.src = embedUrl;
-        iframe.style.cssText = 'width:100%;height:100%;border:none;border-radius:12px;';
-        iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen; microphone';
-        iframe.allowFullscreen = true;
-        iframe.setAttribute('referrerpolicy', 'origin');
-        content.appendChild(iframe);
-        clearTimeout(storyTimer);
-        storyTimer = null;
-        updateProgressBars();
-    } else if (data.imageUrl || data.avatar) {
-        var img = document.createElement('img');
-        img.src = data.imageUrl || data.avatar;
-        img.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;';
-        content.appendChild(img);
-
-        // عرض النص الذي كتبه الناشر
-        if (data.caption) {
-            var captionOverlay = document.createElement('div');
-            captionOverlay.style.cssText = 'position:absolute; bottom:30px; left:10%; right:10%; background:rgba(0,0,0,0.6); color:white; padding:10px; border-radius:10px; text-align:center; font-size:16px; font-weight:bold; word-wrap:break-word; pointer-events:none; z-index:15;';
-            captionOverlay.textContent = data.caption;
-            content.appendChild(captionOverlay);
-        }
-
-        var pauseIndicator = document.createElement('div');
-        pauseIndicator.className = 'story-paused-indicator';
-        pauseIndicator.style.display = 'none';
-        pauseIndicator.innerHTML = '<i class="fas fa-pause"></i> متوقف';
-        content.appendChild(pauseIndicator);
-
-        var storyStartTime = Date.now();
-        var remainingTime = 5000;
-        var isPaused = false;
-
-        function startTimer(ms) {
-            clearTimeout(storyTimer);
-            storyTimer = setTimeout(function(){
-                if (!isPaused) nextStory();
-            }, ms);
-        }
-
-        function pauseStory() {
-            if (isPaused) return;
-            isPaused = true;
-            clearTimeout(storyTimer);
-            remainingTime = remainingTime - (Date.now() - storyStartTime);
-            if (remainingTime < 0) remainingTime = 0;
-            pauseIndicator.style.display = 'block';
-            var fill = document.querySelector('#storyProgressContainer div > div');
-            if (fill) fill.style.animationPlayState = 'paused';
-        }
-
-        function resumeStory() {
-            if (!isPaused) return;
-            isPaused = false;
-            storyStartTime = Date.now();
-            pauseIndicator.style.display = 'none';
-            startTimer(remainingTime);
-            var fill = document.querySelector('#storyProgressContainer div > div');
-            if (fill) fill.style.animationPlayState = 'running';
-        }
-
-        img.addEventListener('mousedown', pauseStory);
-        img.addEventListener('mouseup', resumeStory);
-        img.addEventListener('mouseleave', resumeStory);
-        img.addEventListener('touchstart', function(e){ e.preventDefault(); pauseStory(); }, {passive: false});
-        img.addEventListener('touchend', function(e){ e.preventDefault(); resumeStory(); }, {passive: false});
-        img.addEventListener('touchcancel', resumeStory);
-
-        updateProgressBars();
-        startTimer(remainingTime);
-    } else {
-        clearTimeout(storyTimer);
-        storyTimer = setTimeout(nextStory, 5000);
-    }
-};
-/* ==================== دوال الإشعارات الجديدة ==================== */
-function switchChatTab(tab) {
-    var chatsContainer = document.getElementById('chatListContainer');
-    var notifsContainer = document.getElementById('notificationsContainer');
-    var tabChats = document.getElementById('tabChats');
-    var tabNotifications = document.getElementById('tabNotifications');
-
-    if (tab === 'chats') {
-        chatsContainer.style.display = 'block';
-        notifsContainer.style.display = 'none';
-        tabChats.style.borderBottomColor = 'var(--tab-active-color)';
-        tabChats.style.color = 'var(--tab-active-color)';
-        tabNotifications.style.borderBottomColor = 'transparent';
-        tabNotifications.style.color = 'var(--tab-color)';
-        loadChatList();
-    } else {
-        chatsContainer.style.display = 'none';
-        notifsContainer.style.display = 'block';
-        tabNotifications.style.borderBottomColor = 'var(--tab-active-color)';
-        tabNotifications.style.color = 'var(--tab-active-color)';
-        tabChats.style.borderBottomColor = 'transparent';
-        tabChats.style.color = 'var(--tab-color)';
-        loadNotificationsList();
-    }
-}
-
-async function loadNotificationsList() {
-    var container = document.getElementById('notificationsContainer');
-    if (!container || !currentUserKey) return;
-    container.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>جاري التحميل...</p></div>';
-
-    try {
-        var fb = await getFB();
-        var q = fb.query(fb.collection(fb.db, 'systemMessages'), fb.where('to', '==', currentUserKey));
-        var snap = await fb.getDocs(q);
-        
-        if (snap.empty) {
-            container.innerHTML = '<div class="empty-state"><i class="fas fa-bell-slash"></i><p>لا توجد إشعارات حالياً</p></div>';
-            return;
-        }
-
-        var notifs = [];
-        snap.forEach(function(ds) { notifs.push({ id: ds.id, data: ds.data() }); });
-        notifs.sort(function(a, b) { return new Date(b.data.createdAt || 0) - new Date(a.data.createdAt || 0); });
-
-        container.innerHTML = '';
-        
-        notifs.forEach(function(n) {
-            var div = document.createElement('div');
-            div.className = 'chat-list-item';
-            if (!n.data.read) div.style.background = 'rgba(29,161,242,0.1)'; 
-
-            var icon = n.data.postId ? '<i class="fas fa-comment-dots" style="font-size:24px;color:var(--tab-active-color);"></i>' : '<i class="fas fa-envelope" style="font-size:24px;color:#f39c12;"></i>';
-            
-            var bodyHtml = n.data.postId 
-                ? '<b>رد جديد:</b> ' + escapeHtml(n.data.body) 
-                : '<b>' + escapeHtml(n.data.title) + '</b><br>' + escapeHtml(n.data.body);
-
-            div.innerHTML =
-                '<div style="width:44px;height:44px;border-radius:50%;background:var(--card-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
-                    icon +
-                '</div>' +
-                '<div class="ci-info" style="text-align:right;">' +
-                    '<div style="font-size:13px;color:var(--text-color);line-height:1.4;">' + bodyHtml + '</div>' +
-                    '<div style="font-size:10px;color:var(--tab-color);margin-top:4px;">' + new Date(n.data.createdAt).toLocaleString('ar-EG') + '</div>' +
-                '</div>';
-
-            div.onclick = async function() {
-                if (!n.data.read) {
-                    fb.setDoc(fb.doc(fb.db, 'systemMessages', n.id), { read: true }, { merge: true });
-                    div.style.background = 'transparent';
-                }
-
-                if (n.data.postId) {
-                    switchTab('morePage');
-                    setTimeout(function() {
-                        var postCard = document.querySelector('.post-card button[onclick*="openCommentsSheet(\'' + n.data.postId + '\')"]');
-                        if (postCard) {
-                            var card = postCard.closest('.post-card');
-                            if (card) {
-                                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                card.style.background = 'rgba(29,161,242,0.15)';
-                                setTimeout(function() { card.style.background = ''; }, 3000);
-                            }
-                            openCommentsSheet(n.data.postId);
-                        }
-                    }, 1000);
-                } else if (n.data.from) {
-                    openChatWith(n.data.from);
-                }
-            };
-
-            container.appendChild(div);
-        });
-    } catch (e) {
-        console.error(e);
-        container.innerHTML = '<div class="empty-state"><p>حدث خطأ في جلب الإشعارات</p></div>';
-    }
-}
 </script>
 </body>
 </html>
