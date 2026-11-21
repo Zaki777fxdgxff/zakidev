@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لماذا تمت إزالة علامة التوثيق في حسابي</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ===== متغيرات الوضع الفاتح ===== */
+        :root {
+            --bg: #ffffff;
+            --text: #0f1419;
+            --muted: #536471;
+            --border: #eff3f4;
+            --callout-bg: #f7f9f9;
+            --callout-border: #1d9bf0;
+            --note-bg: #fff8e6;
+            --note-border: #f5d78a;
+            --note-text: #5c4813;
+            --accent: #1d9bf0;
+            --accent-contrast: #ffffff;
+            --select-bg: #ffffff;
+            --select-border: #cfd9de;
+            --btn-bg: #f7f9f9;
+            --btn-hover: #eff3f4;
+            --circle-border: #cfd9de;
+            
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --sidebar-bg: #ffffff;
+            --sidebar-hover: #f7f9f9;
+            --active-link-bg: #e8f5fe;
+            --active-link-text: #1d9bf0;
+            --active-link-border: #1d9bf0;
+        }
+
+        /* ===== الوضع الداكن ===== */
+        :root[data-theme="dark"] {
+            --bg: #000000;
+            --text: #e7e9ea;
+            --muted: #8b98a5;
+            --border: #2f3336;
+            --callout-bg: #16181c;
+            --callout-border: #1d9bf0;
+            --note-bg: #2a2416;
+            --note-border: #5c4a1a;
+            --note-text: #f5d78a;
+            --accent: #1d9bf0;
+            --accent-contrast: #ffffff;
+            --select-bg: #16181c;
+            --select-border: #3a3f44;
+            --btn-bg: #16181c;
+            --btn-hover: #1f2326;
+            --circle-border: #3a3f44;
+            
+            --nav-bg: rgba(0, 0, 0, 0.95);
+            --sidebar-bg: #16181c;
+            --sidebar-hover: #1f2326;
+            --active-link-bg: #1c2733;
+            --active-link-text: #1d9bf0;
+            --active-link-border: #1d9bf0;
+        }
+
+        /* ===== الوضع الأزرق ===== */
+        :root[data-theme="blue"] {
+            --bg: #15202b;
+            --text: #ffffff;
+            --muted: #8b98a5;
+            --border: #38444d;
+            --callout-bg: #1c2733;
+            --callout-border: #1d9bf0;
+            --note-bg: #2a2416;
+            --note-border: #5c4a1a;
+            --note-text: #f5d78a;
+            --accent: #1d9bf0;
+            --accent-contrast: #ffffff;
+            --select-bg: #1c2733;
+            --select-border: #38444d;
+            --btn-bg: #1c2733;
+            --btn-hover: #243547;
+            --circle-border: #38444d;
+            
+            --nav-bg: rgba(21, 32, 43, 0.95);
+            --sidebar-bg: #1c2733;
+            --sidebar-hover: #243547;
+            --active-link-bg: #243547;
+            --active-link-text: #1d9bf0;
+            --active-link-border: #1d9bf0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            padding-top: 70px;
+        }
+
+        [dir="rtl"] body {
+            font-family: "Segoe UI", Tahoma, "Noto Kufi Arabic", Arial, sans-serif;
+        }
+
+        /* =========================================================
+           الشريط العلوي (Navbar)
+        ========================================================= */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 70px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 1000;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .logo-img {
+            height: 36px;
+            width: auto;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+
+        .desktop-nav {
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-btn {
+            display: flex;
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        .menu-btn:hover { background: var(--sidebar-hover); }
+        .menu-btn svg { width: 24px; height: 24px; }
+
+        /* =========================================================
+           القائمة الجانبية (Sidebar)
+        ========================================================= */
+        .sidebar-overlay {
+            position: fixed;
+            top: 70px; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+        .sidebar {
+            position: fixed;
+            top: 70px; right: -300px; width: 280px; bottom: 0;
+            background: var(--sidebar-bg);
+            border-left: 1px solid var(--border);
+            z-index: 999; padding: 20px 16px;
+            display: flex; flex-direction: column; gap: 8px;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+        [dir="ltr"] .sidebar {
+            right: auto; left: -300px;
+            border-left: none; border-right: 1px solid var(--border);
+            transition: left 0.3s ease;
+        }
+        .sidebar.active { right: 0; }
+        [dir="ltr"] .sidebar.active { left: 0; }
+
+        .sidebar-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 16px; border-radius: 8px;
+            color: var(--text); text-decoration: none;
+            font-weight: 600; font-size: 0.95rem;
+            transition: background 0.2s, color 0.2s;
+        }
+        .sidebar-link:hover { background: var(--sidebar-hover); }
+        .sidebar-link.active {
+            background: var(--active-link-bg);
+            color: var(--active-link-text);
+            border-right: 3px solid var(--active-link-border);
+        }
+        [dir="ltr"] .sidebar-link.active {
+            border-right: none;
+            border-left: 3px solid var(--active-link-border);
+        }
+        .sidebar-link svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+        /* تنسيق زر طلب التحقق (الآن هو رابط <a>) */
+        .sidebar-btn {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; padding: 12px; margin-bottom: 16px;
+            background: var(--accent); color: var(--accent-contrast);
+            border: none; border-radius: 999px;
+            font-family: inherit; font-weight: 700; font-size: 1rem;
+            cursor: pointer; transition: background 0.2s, transform 0.15s;
+            text-decoration: none; /* إزالة الخط السفلي للرابط */
+        }
+        .sidebar-btn:hover { background: #1a8cd8; transform: translateY(-1px); color: var(--accent-contrast); }
+        .sidebar-btn:active { transform: scale(0.98); }
+        .sidebar-btn svg { width: 20px; height: 20px; }
+
+        .sidebar-divider { height: 1px; background: var(--border); margin: 8px 0; }
+
+        /* =========================================================
+           المحتوى الرئيسي
+        ========================================================= */
+        .page { max-width: 720px; margin: 0 auto; padding: 40px 20px; }
+
+        h1 { font-size: 1.9rem; font-weight: 800; color: var(--text); margin-bottom: 12px; line-height: 1.3; }
+        .lead { font-size: 1.05rem; color: var(--muted); margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+        h2 { font-size: 1.35rem; font-weight: 700; color: var(--text); margin-top: 36px; margin-bottom: 14px; }
+        p { font-size: 1rem; color: var(--text); margin-bottom: 16px; }
+
+        .callout {
+            background: var(--callout-bg); border-left: 4px solid var(--callout-border);
+            border-radius: 4px; padding: 16px 18px; margin: 20px 0;
+            font-size: 0.98rem; color: var(--text);
+        }
+        [dir="rtl"] .callout { border-left: none; border-right: 4px solid var(--callout-border); }
+
+        ul.reasons { list-style: none; padding: 0; margin: 16px 0; counter-reset: reason; }
+        ul.reasons li {
+            position: relative; padding: 12px 40px 12px 0;
+            border-bottom: 1px solid var(--border); font-size: 1rem; color: var(--text);
+        }
+        [dir="ltr"] ul.reasons li { padding: 12px 0 12px 40px; }
+        ul.reasons li:last-child { border-bottom: none; }
+        ul.reasons li::before {
+            counter-increment: reason; content: counter(reason);
+            position: absolute; right: 0; top: 14px;
+            width: 24px; height: 24px;
+            background: var(--accent); color: var(--accent-contrast);
+            border-radius: 50%; font-size: 0.8rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+        }
+        [dir="ltr"] ul.reasons li::before { right: auto; left: 0; }
+
+        .note {
+            background: var(--note-bg); border: 1px solid var(--note-border);
+            border-radius: 8px; padding: 16px 18px; margin: 24px 0;
+            font-size: 0.98rem; color: var(--note-text);
+        }
+
+        .footer-note {
+            margin-top: 40px; padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.9rem; color: var(--muted);
+        }
+
+        /* ===== التصميم السفلي للغة والمظهر ===== */
+        .bottom-bar {
+            margin-top: 40px; padding: 16px 20px;
+            background: var(--callout-bg); border: 1px solid var(--border);
+            border-radius: 12px; display: flex; flex-wrap: wrap;
+            align-items: center; justify-content: space-between; gap: 20px;
+        }
+        .language-block, .theme-block { display: flex; align-items: center; gap: 12px; }
+        .language-label, .theme-label { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+        
+        .language-select {
+            padding: 8px 12px; font-size: 0.95rem; font-family: inherit;
+            color: var(--text); background-color: var(--select-bg);
+            border: 1px solid var(--select-border); border-radius: 8px;
+            cursor: pointer; appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23536471' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 12px center; background-size: 16px;
+            padding-right: 34px;
+        }
+        [dir="rtl"] .language-select { background-position: left 12px center; padding-right: 12px; padding-left: 34px; }
+        .language-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.2); }
+
+        .theme-switch { display: inline-flex; align-items: center; gap: 8px; }
+        .theme-circle {
+            width: 36px; height: 36px; border-radius: 50%;
+            border: 1.5px solid var(--circle-border);
+            background: var(--btn-bg); color: var(--text);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; padding: 0; transition: all 0.2s;
+        }
+        .theme-circle:hover { background: var(--btn-hover); transform: translateY(-2px); }
+        .theme-circle:active { transform: scale(0.94); }
+        .theme-circle.active { border-color: var(--accent); border-width: 2px; box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.2); }
+        .theme-circle svg { width: 18px; height: 18px; display: block; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+        /* =========================================================
+           استعلامات الوسائط (Media Queries)
+        ========================================================= */
+        @media (min-width: 900px) {
+            .menu-btn { display: none; }
+            .sidebar, .sidebar-overlay { display: none !important; }
+            .desktop-nav { display: flex; }
+            
+            .desktop-nav .sidebar-btn { width: auto; padding: 8px 20px; margin-bottom: 0; font-size: 0.9rem; }
+            .desktop-nav .sidebar-link { padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; border: none !important; }
+            .desktop-nav .sidebar-link.active { background: var(--active-link-bg); color: var(--active-link-text); }
+
+            .page { padding-top: 60px; }
+        }
+
+        @media (max-width: 600px) {
+            .page { padding: 24px 16px; }
+            h1 { font-size: 1.5rem; }
+            h2 { font-size: 1.15rem; }
+            .bottom-bar { flex-direction: column; align-items: flex-start; }
+            .language-block, .theme-block { width: 100%; justify-content: space-between; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================
+         الشريط العلوي (Navbar)
+    =========================================== -->
+    <nav class="navbar">
+        <a href="#" class="logo-area">
+            <!-- ضع رابط صورتك هنا -->
+            <img src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794766853/1794698298093_mkdqr4.png" alt="logo" class="logo-img">
+            <span id="navLogoText">منصة التوثيق</span>
+        </a>
+
+        <div class="desktop-nav">
+            <!-- تم تحويل الزر إلى رابط <a> هنا -->
+            <a href="https://example.com/request-verification" class="sidebar-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                <span id="desktopBtnText">طلب التحقق</span>
+            </a>
+            <div class="sidebar-divider" style="width: 1px; height: 24px; margin: 0 8px; display: inline-block;"></div>
+            <a href="#privacy" class="sidebar-link" id="desktopPrivacy">سياسة الخصوصية</a>
+            <a href="#terms" class="sidebar-link" id="desktopTerms">شروط الخدمة</a>
+            <a href="#current" class="sidebar-link active" id="desktopCurrent">الصفحة الحالية</a>
+        </div>
+
+        <button class="menu-btn" id="menuToggle" aria-label="فتح القائمة">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+    </nav>
+
+    <!-- ==========================================
+         القائمة الجانبية (Sidebar)
+    =========================================== -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+        <!-- تم تحويل الزر إلى رابط <a> هنا أيضاً -->
+        <a href="go:verified" class="sidebar-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            <span id="mobileBtnText">طلب التحقق</span>
+        </a>
+        
+        <div class="sidebar-divider"></div>
+        
+        <a href="#current" class="sidebar-link active" id="mobileCurrent">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <span id="mobileCurrentText">الصفحة الحالية (المقال)</span>
+        </a>
+        <a href="#privacy" class="sidebar-link" id="mobilePrivacy">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span id="mobilePrivacyText">سياسة الخصوصية</span>
+        </a>
+        <a href="#terms" class="sidebar-link" id="mobileTerms">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <span id="mobileTermsText">شروط الخدمة</span>
+        </a>
+    </aside>
+
+    <!-- ==========================================
+         محتوى الصفحة
+    =========================================== -->
+    <main class="page">
+        <div id="content">
+            <h1 id="txt-title">لماذا تمت إزالة علامة التوثيق في حسابي</h1>
+            <p class="lead" id="txt-lead">حق الشركة في إزالة علامة التوثيق وفقًا لإرشادات المحتوى وشروط الاستخدام وسياسة المجتمع</p>
+            <p id="txt-intro">إن علامة التوثيق هي وسيلة لتأكيد هوية الحسابات التي تلتزم بمعايير المجتمع وأخلاقيات المنصة. ومع ذلك، فإن الشركة تحتفظ بحقها الكامل في إزالة علامة التوثيق من أي حساب في حال خالف هذا الحساب إرشادات المحتوى أو شروط الاستخدام أو سياسة المجتمع التي تحددها المنصة.</p>
+            <div class="callout" id="txt-callout">يتم منح علامة التوثيق فقط للحسابات التي تلتزم بتوجيهات المنصة بشكل مستمر وتحترم القيم والمبادئ التي تستند إليها. وإذا تبين أن الحساب قد انتهاك هذه الإرشادات أو قدم محتوى يتعارض مع شروط التطبيق وسياسة المجتمع، فإن الشركة ستتخذ قرارًا بإزالة علامة التوثيق من الحساب المعني.</div>
+            <h2 id="txt-reasonsTitle">الأسباب التي قد تؤدي إلى إزالة علامة التوثيق</h2>
+            <ul class="reasons" id="txt-reasons">
+                <li>مخالفة إرشادات المحتوى التي تحظر نشر أي محتوى ضار أو مسيء أو يتعارض مع شروط الاستخدام وسياسة المجتمع.</li>
+                <li>الترويج لمحتوى يمكن أن يسبب انقسامات في المجتمع أو يروج لفكر متطرف أو غير أخلاقي.</li>
+                <li>التحايل على النظام أو نشر معلومات مضللة تؤدي إلى خداع الآخرين أو التأثير على مصداقية المنصة.</li>
+                <li>التعرض للآخرين بالإساءات أو التهديدات، سواء كانت مباشرة أو غير مباشرة، على المنصة.</li>
+                <li>أي نشاط يتعارض مع مبادئ الاحترام المتبادل والحوار البناء داخل المجتمع.</li>
+            </ul>
+            <div class="note" id="txt-note">في حال تم اكتشاف أي من هذه المخالفات، فإن الشركة قد تقوم بإزالة علامة التوثيق <strong>بشكل مؤقت أو دائم</strong> حسب جسامة المخالفة. الهدف من ذلك هو ضمان أن المنصة تظل بيئة آمنة وموثوقة للجميع، وتحافظ على احترام معايير المجتمع التي تهدف إلى تعزيز القيم الأخلاقية والعدالة.</div>
+            <h2 id="txt-freedomTitle">حرية التعبير والآراء الطبية</h2>
+            <p id="txt-freedom">تحترم المنصة حرية التعبير عن الرأي في المجال الطبي بجميع أنواعه وطرقه، ولا تُتخذ أي إجراءات ضد المستخدم بسبب آرائه الطبية أو العلمية في حد ذاتها. وتُقتصر الإجراءات التأديبية — بما فيها إزالة علامة التوثيق — على المخالفات المذكورة أعلاه فقط.</p>
+            <div class="callout" id="txt-disclaimer">تنبيه: المحتوى الطبي المنشور على المنصة هو لأغراض التوعية والمعلومات فقط، ولا يُعد تشخيصًا طبيًا ملزمًا، ولا يغني عن استشارة الطبيب المختص.</div>
+            <p id="txt-closing">لذلك، من المهم أن يلتزم المستخدمون بالإرشادات والمعايير المحددة لكي يتمكنوا من الحفاظ على علامة التوثيق الخاصة بهم، وتجنب أي مخالفات قد تؤدي إلى فقدان هذه الميزة أو حظر حسابهم.</p>
+            <p class="footer-note" id="txt-footer">نلتزم بتوفير بيئة آمنة وموثوقة تحترم القيم الأخلاقية وحرية الرأي الطبي، وتخضع لشروط الاستخدام وسياسة المجتمع.</p>
+        </div>
+
+        <section class="bottom-bar">
+            <div class="language-block">
+                <label class="language-label" for="langSelect" id="langLabel">اللغة</label>
+                <select class="language-select" id="langSelect" aria-label="Language selector">
+                    <option value="en">English</option>
+                    <option value="ar" selected>العربية</option>
+                </select>
+            </div>
+
+            <div class="theme-block">
+                <span class="theme-label" id="themeLabel">المظهر</span>
+                <div class="theme-switch" role="group" aria-label="Theme">
+                    <button type="button" class="theme-circle" data-theme-value="light" id="themeLight" title="الوضع الفاتح" aria-label="الوضع الفاتح">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                    </button>
+                    <button type="button" class="theme-circle" data-theme-value="dark" id="themeDark" title="الوضع الداكن" aria-label="الوضع الداكن">
+                        <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    </button>
+                    <button type="button" class="theme-circle" data-theme-value="blue" id="themeBlue" title="الوضع الأزرق" aria-label="الوضع الأزرق">
+                        <svg viewBox="0 0 24 24"><path d="M2 12c2-3 4-4.5 6-4.5S12 9 14 9s4-1.5 6-4.5"/><path d="M2 17c2-3 4-4.5 6-4.5S12 14 14 14s4-1.5 6-4.5"/></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        /* =========================================================
+           1) مزامنة الثيم
+        ========================================================= */
+        const THEME_KEY = 'theme';
+        const themeButtons = {
+            light: document.getElementById('themeLight'),
+            dark: document.getElementById('themeDark'),
+            blue: document.getElementById('themeBlue')
+        };
+
+        function getStoredTheme() {
+            try {
+                const t = localStorage.getItem(THEME_KEY);
+                if (t === 'dark' || t === 'blue' || t === 'light') return t;
+            } catch (e) {}
+            const attr = document.documentElement.getAttribute('data-theme');
+            if (attr === 'dark' || attr === 'blue' || attr === 'light') return attr;
+            return 'light';
+        }
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+            Object.keys(themeButtons).forEach(function (key) {
+                if (themeButtons[key]) themeButtons[key].classList.toggle('active', key === theme);
+            });
+        }
+
+        applyTheme(getStoredTheme());
+
+        Object.keys(themeButtons).forEach(function (key) {
+            const btn = themeButtons[key];
+            if (btn) btn.addEventListener('click', () => applyTheme(key));
+        });
+
+        /* =========================================================
+           2) التحكم في القائمة الجانبية
+        ========================================================= */
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+        }
+
+        menuToggle.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+
+        document.querySelectorAll('.sidebar .sidebar-link').forEach(link => {
+            link.addEventListener('click', toggleSidebar);
+        });
+
+        /* =========================================================
+           3) الترجمة
+        ========================================================= */
+        const translations = {
+            en: {
+                navLogoText: "Verification Platform",
+                langLabel: "Language",
+                themeLabel: "Theme",
+                themeLight: "Light theme",
+                themeDark: "Dark theme",
+                themeBlue: "Blue theme",
+                requestBtn: "Request Verification",
+                currentPage: "Current Page (Article)",
+                privacy: "Privacy Policy",
+                terms: "Terms of Service",
+                title: "Why was my verification badge removed?",
+                lead: "The company's right to remove the verification badge in accordance with content guidelines, terms of service, and community policy",
+                intro: "The verification badge is a way to confirm the identity of accounts that comply with the community standards and ethics of the platform. However, the company reserves the full right to remove the verification badge from any account that violates the content guidelines, terms of service, or community policy set by the platform.",
+                callout: "The verification badge is granted only to accounts that continuously comply with the platform's directives and respect the values and principles it is based on. If an account is found to have violated these guidelines or posted content that conflicts with the app's terms and community policy, the company will decide to remove the verification badge from that account.",
+                reasonsTitle: "Reasons that may lead to removal of the verification badge",
+                reasons: [
+                    "Violating the content guidelines that prohibit posting harmful or offensive content, or content that conflicts with the terms of service and community policy.",
+                    "Promoting content that may cause divisions in society or promote extremist or unethical ideas.",
+                    "Manipulating the system or posting misleading information that deceives others or affects the credibility of the platform.",
+                    "Subjecting others to insults or threats, whether directly or indirectly, on the platform.",
+                    "Any activity that conflicts with the principles of mutual respect and constructive dialogue within the community."
+                ],
+                note: "If any of these violations are detected, the company may remove the verification badge <strong>temporarily or permanently</strong> depending on the severity of the violation. The goal is to ensure that the platform remains a safe and trustworthy environment for everyone, and to maintain respect for community standards that aim to promote ethical values and justice.",
+                freedomTitle: "Freedom of expression and medical opinions",
+                freedom: "The platform respects freedom of expression of opinion in the medical field in all its types and methods, and no action is taken against users because of their medical or scientific opinions in themselves. Disciplinary actions — including removal of the verification badge — are limited to the violations mentioned above only.",
+                disclaimer: "Note: Medical content published on the platform is for awareness and informational purposes only, and does not constitute a binding medical diagnosis, nor is it a substitute for consulting a specialized physician.",
+                closing: "Therefore, it is important that users comply with the specified guidelines and standards in order to maintain their verification badge and avoid any violations that may lead to losing this feature or having their account suspended.",
+                footer: "We are committed to providing a safe and trustworthy environment that respects ethical values and freedom of medical opinion, and is governed by the terms of service and community policy."
+            },
+            ar: {
+                navLogoText: "منصة التوثيق",
+                langLabel: "اللغة",
+                themeLabel: "المظهر",
+                themeLight: "الوضع الفاتح",
+                themeDark: "الوضع الداكن",
+                themeBlue: "الوضع الأزرق",
+                requestBtn: "طلب التحقق",
+                currentPage: "الصفحة الحالية (المقال)",
+                privacy: "سياسة الخصوصية",
+                terms: "شروط الخدمة",
+                title: "لماذا تمت إزالة علامة التوثيق في حسابي",
+                lead: "حق الشركة في إزالة علامة التوثيق وفقًا لإرشادات المحتوى وشروط الاستخدام وسياسة المجتمع",
+                intro: "إن علامة التوثيق هي وسيلة لتأكيد هوية الحسابات التي تلتزم بمعايير المجتمع وأخلاقيات المنصة. ومع ذلك، فإن الشركة تحتفظ بحقها الكامل في إزالة علامة التوثيق من أي حساب في حال خالف هذا الحساب إرشادات المحتوى أو شروط الاستخدام أو سياسة المجتمع التي تحددها المنصة.",
+                callout: "يتم منح علامة التوثيق فقط للحسابات التي تلتزم بتوجيهات المنصة بشكل مستمر وتحترم القيم والمبادئ التي تستند إليها. وإذا تبين أن الحساب قد انتهاك هذه الإرشادات أو قدم محتوى يتعارض مع شروط التطبيق وسياسة المجتمع، فإن الشركة ستتخذ قرارًا بإزالة علامة التوثيق من الحساب المعني.",
+                reasonsTitle: "الأسباب التي قد تؤدي إلى إزالة علامة التوثيق",
+                reasons: [
+                    "مخالفة إرشادات المحتوى التي تحظر نشر أي محتوى ضار أو مسيء أو يتعارض مع شروط الاستخدام وسياسة المجتمع.",
+                    "الترويج لمحتوى يمكن أن يسبب انقسامات في المجتمع أو يروج لفكر متطرف أو غير أخلاقي.",
+                    "التحايل على النظام أو نشر معلومات مضللة تؤدي إلى خداع الآخرين أو التأثير على مصداقية المنصة.",
+                    "التعرض للآخرين بالإساءات أو التهديدات، سواء كانت مباشرة أو غير مباشرة، على المنصة.",
+                    "أي نشاط يتعارض مع مبادئ الاحترام المتبادل والحوار البناء داخل المجتمع."
+                ],
+                note: "في حال تم اكتشاف أي من هذه المخالفات، فإن الشركة قد تقوم بإزالة علامة التوثيق <strong>بشكل مؤقت أو دائم</strong> حسب جسامة المخالفة. الهدف من ذلك هو ضمان أن المنصة تظل بيئة آمنة وموثوقة للجميع، وتحافظ على احترام معايير المجتمع التي تهدف إلى تعزيز القيم الأخلاقية والعدالة.",
+                freedomTitle: "حرية التعبير والآراء الطبية",
+                freedom: "تحترم المنصة حرية التعبير عن الرأي في المجال الطبي بجميع أنواعه وطرقه، ولا تُتخذ أي إجراءات ضد المستخدم بسبب آرائه الطبية أو العلمية في حد ذاتها. وتُقتصر الإجراءات التأديبية — بما فيها إزالة علامة التوثيق — على المخالفات المذكورة أعلاه فقط.",
+                disclaimer: "تنبيه: المحتوى الطبي المنشور على المنصة هو لأغراض التوعية والمعلومات فقط، ولا يُعد تشخيصًا طبيًا ملزمًا، ولا يغني عن استشارة الطبيب المختص.",
+                closing: "لذلك، من المهم أن يلتزم المستخدمون بالإرشادات والمعايير المحددة لكي يتمكنوا من الحفاظ على علامة التوثيق الخاصة بهم، وتجنب أي مخالفات قد تؤدي إلى فقدان هذه الميزة أو حظر حسابهم.",
+                footer: "نلتزم بتوفير بيئة آمنة وموثوقة تحترم القيم الأخلاقية وحرية الرأي الطبي، وتخضع لشروط الاستخدام وسياسة المجتمع."
+            }
+        };
+
+        const langSelect = document.getElementById("langSelect");
+        const langLabel = document.getElementById("langLabel");
+        const themeLabel = document.getElementById("themeLabel");
+
+        function render(lang) {
+            const t = translations[lang];
+            const isRtl = lang === "ar";
+
+            document.documentElement.lang = lang;
+            document.documentElement.dir = isRtl ? "rtl" : "ltr";
+            document.title = t.title;
+            
+            document.getElementById('navLogoText').textContent = t.navLogoText;
+            langLabel.textContent = t.langLabel;
+            themeLabel.textContent = t.themeLabel;
+            
+            document.getElementById('mobileBtnText').textContent = t.requestBtn;
+            document.getElementById('desktopBtnText').textContent = t.requestBtn;
+            
+            document.getElementById('mobileCurrentText').textContent = t.currentPage;
+            document.getElementById('desktopCurrent').textContent = t.currentPage;
+            
+            document.getElementById('mobilePrivacyText').textContent = t.privacy;
+            document.getElementById('desktopPrivacy').textContent = t.privacy;
+            
+            document.getElementById('mobileTermsText').textContent = t.terms;
+            document.getElementById('desktopTerms').textContent = t.terms;
+
+            themeButtons.light.title = t.themeLight;
+            themeButtons.light.setAttribute("aria-label", t.themeLight);
+            themeButtons.dark.title = t.themeDark;
+            themeButtons.dark.setAttribute("aria-label", t.themeDark);
+            themeButtons.blue.title = t.themeBlue;
+            themeButtons.blue.setAttribute("aria-label", t.themeBlue);
+
+            document.getElementById('txt-title').textContent = t.title;
+            document.getElementById('txt-lead').textContent = t.lead;
+            document.getElementById('txt-intro').textContent = t.intro;
+            document.getElementById('txt-callout').textContent = t.callout;
+            document.getElementById('txt-reasonsTitle').textContent = t.reasonsTitle;
+            
+            const reasonsContainer = document.getElementById('txt-reasons');
+            reasonsContainer.innerHTML = t.reasons.map(r => `<li>${r}</li>`).join("");
+            
+            document.getElementById('txt-note').innerHTML = t.note;
+            document.getElementById('txt-freedomTitle').textContent = t.freedomTitle;
+            document.getElementById('txt-freedom').textContent = t.freedom;
+            document.getElementById('txt-disclaimer').textContent = t.disclaimer;
+            document.getElementById('txt-closing').textContent = t.closing;
+            document.getElementById('txt-footer').textContent = t.footer;
+        }
+
+        const savedLang = localStorage.getItem("preferredLang");
+        const initialLang = savedLang === "en" ? "en" : "ar";
+        langSelect.value = initialLang;
+        render(initialLang);
+
+        langSelect.addEventListener("change", function () {
+            const lang = this.value;
+            localStorage.setItem("preferredLang", lang);
+            render(lang);
+        });
+    </script>
+    <script language="JavaScript">
+<!--
+//Disable right click script III- By Renigade (renigade@mediaone.net) //Disable select-text script (IE4+, NS6+)- By Andy Scott //Visit http://hashem-earn-from-internet.blogspot.com/ 
+var message=""; 
+function clickIE() {
+if (document.all) {
+(message);return false;
+}
+} function clickNS(e) { 
+if (document.layers||(document.getElementById&&!document.all)) { 
+if (e.which==2||e.which==3) { (message); return false;
+} } } if (document.layers) { document.captureEvents(Event.MOUSEDOWN); 
+document.onmousedown=clickNS;
+} else { document.onmouseup=clickNS;
+document.oncontextmenu=clickIE; 
+} document.oncontextmenu=new Function("return false")
+function disableselect(e) { return false } function reEnable() { return true } 
+document.onselectstart=new Function ("return false") //if NS6 if (window.sidebar){ document.onmousedown=disableselect document.onclick=reEnable } //
+//-->
+</script>
+  
+  <script type='text/القران الكريم'> 
+function nocontext(e) {var clickedTag = (e==null) ? event.srcElement.tagName : e.target.tagName; if (clickedTag == "IMG") {alert(alertMsg);return false;}} var alertMsg = "ممنوع تحميل الصورة";document.oncontextmenu = nocontext; 
+  </script>
+  
+</body>
+</html>
