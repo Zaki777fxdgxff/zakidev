@@ -3167,7 +3167,7 @@ var actionsHtml =
             '<i class="fas fa-comment"></i><span class="count" id="comments-count-' + p.id + '">' + commentsCount + '</span>' +
         '</button>' +
         '<button class="post-action-btn" onclick="sharePost(\'' + p.id + '\', \'' + escapeHtml(p.data.caption || '').replace(/'/g, "\\'") + '\')">' +
-    '<i class="fas fa-share"></i><span class="count">مشاركة</span>' +
+    '<i class="fas fa-share"></i><span class="count" id="shares-count-' + p.id + '">' + (p.data.sharesCount || 0) + '</span>' +
 '</button>' +
 '<button class="post-action-btn" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)">' +
     '<i class="fas fa-eye"></i><span class="count" id="views-' + p.id + '">' + views + '</span>' +
@@ -5960,6 +5960,33 @@ async function loadComments(postId) {
         console.error(e);
         list.innerHTML = '<p style="text-align:center;color:red;padding:20px;">خطأ في تحميل التعليقات</p>';
     }
+}
+
+async function sharePost(postId, caption) {
+    var url = window.location.origin + window.location.pathname + '?post=' + postId;
+    
+    // تحديث العداد في قاعدة البيانات فوراً
+    try {
+        var fb = await getFB();
+        var postRef = fb.doc(fb.db, 'posts', postId);
+        var snap = await fb.getDoc(postRef);
+        if (snap.exists()) {
+            var currentShares = snap.data().sharesCount || 0;
+            var newShares = currentShares + 1;
+            
+            // حفظ الرقم الجديد
+            await fb.setDoc(postRef, { sharesCount: newShares }, { merge: true });
+            
+            // تحديث الرقم في الشاشة فوراً
+            var el = document.getElementById('shares-count-' + postId);
+            if (el) el.textContent = newShares;
+        }
+    } catch (e) {
+        console.warn("لم يتم حفظ عداد المشاركة", e);
+    }
+
+    // فتح نافذة المشاركة
+    openShareSheet(url, caption || 'شاهد هذا المنشور');
 }
 </script>
 </body>
