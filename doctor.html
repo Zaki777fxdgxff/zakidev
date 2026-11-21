@@ -5988,6 +5988,90 @@ async function sharePost(postId, caption) {
     // فتح نافذة المشاركة
     openShareSheet(url, caption || 'شاهد هذا المنشور');
 }
+/* ==================== التحديث النهائي لدالة التعليقات والردود ==================== */
+window.loadComments = async function(postId) {
+    var list = document.getElementById('commentsList');
+    list.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;"><i class="fas fa-spinner fa-spin"></i></p>';
+    
+    try {
+        var fb = await getFB();
+        
+        var postSnap = await fb.getDoc(fb.doc(fb.db, 'posts', postId));
+        var postAuthor = postSnap.exists() ? postSnap.data().author : null;
+
+        var q = fb.query(fb.collection(fb.db, 'comments'), fb.where('postId', '==', postId));
+        var snap = await fb.getDocs(q);
+        
+        if (snap.empty) {
+            list.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;">لا توجد تعليقات بعد. كن أول من يعلق!</p>';
+            return;
+        }
+
+        var comments = [];
+        snap.forEach(function(ds) { comments.push({ id: ds.id, data: ds.data() }); });
+        comments.sort(function(a, b) { return new Date(a.data.createdAt || 0) - new Date(b.data.createdAt || 0); });
+
+        list.innerHTML = '';
+        for (var i = 0; i < comments.length; i++) {
+            var c = comments[i];
+            var isReply = !!c.data.replyTo;
+            
+            var userSnap = await fb.getDoc(fb.doc(fb.db, 'profiles', c.data.userId));
+            var userData = userSnap.exists() ? userSnap.data() : { name: 'مستخدم', avatar: null };
+            
+            var userBt = userData.badgeType || (userData.owner ? 'owner' : (userData.blackBadge ? 'black' : (userData.verified ? 'normal' : 'none')));
+            var badgeHtml = (userBt && userBt !== 'none') ? ' <img src="' + badgeSrc(userBt) + '" style="width:15px;height:15px;vertical-align:-3px;display:inline-block;margin-right:2px;">' : '';
+
+            var div = document.createElement('div');
+            // تمييز الرد بخط جانبي ومسافة
+            div.style.cssText = 'display:flex;gap:10px;align-items:flex-start;padding:8px;background:var(--content-bg);border-radius:10px;' + (isReply ? 'margin-right:20px;border-right:3px solid var(--tab-active-color);' : '');
+            div.setAttribute('data-comment-id', c.id);
+
+            var canDelete = (c.data.userId === currentUserKey) || isAdminType(currentBadgeType) || (currentUserKey === postAuthor);
+            var deleteBtnHtml = canDelete ? 
+                '<i class="fas fa-trash" style="color:#e0245e;cursor:pointer;font-size:14px;margin-top:5px;margin-left:10px;" onclick="deleteComment(\'' + c.id + '\')"></i>' : '';
+
+            // النص الذي يوضح أن هذا رد
+            var replyHeader = isReply ? '<div style="font-size:11px; color:var(--tab-active-color); margin-top:4px; font-weight:bold;"><i class="fas fa-reply-all"></i> رداً على ' + escapeHtml(c.data.replyToName) + '</div>' : '';
+            
+            var commentText = '<div style="font-size:13px;color:var(--text-color);margin-top:4px;word-break:break-word;">' + escapeHtml(c.data.text) + '</div>';
+
+            // زر الرد
+            var replyBtn = '<div style="margin-top:5px; font-size:11px; color:var(--tab-active-color); cursor:pointer; font-weight:bold;" onclick="replyToComment(\'' + c.id + '\', \'' + escapeHtml(userData.name) + '\')"><i class="fas fa-reply"></i> رد</div>';
+
+            div.innerHTML = 
+                '<img src="' + (userData.avatar || DEFAULT_AVATAR) + '" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;">' +
+                '<div style="flex:1;text-align:right;min-width:0;">' +
+                    '<div style="font-size:13px;font-weight:bold;color:var(--text-color);display:flex;align-items:center;gap:2px;flex-wrap:wrap;">' +
+                        '<span>' + escapeHtml(userData.name || 'مستخدم') + '</span>' + badgeHtml +
+                    '</div>' +
+                    replyHeader +
+                    commentText +
+                    replyBtn +
+                '</div>' +
+                deleteBtnHtml;
+                
+            list.appendChild(div);
+        }
+        list.scrollTop = list.scrollHeight;
+    } catch (e) {
+        console.error(e);
+        list.innerHTML = '<p style="text-align:center;color:red;padding:20px;">خطأ في تحميل التعليقات</p>';
+    }
+};
+
+// تأكيد وجود دالة الرد
+if (typeof window.replyToComment !== 'function') {
+    window.replyToComment = function(commentId, userName) {
+        window.currentReplyToId = commentId;
+        window.currentReplyToName = userName;
+        var input = document.getElementById('commentInput');
+        if (input) {
+            input.placeholder = 'الرد على ' + userName + '...';
+            input.focus();
+        }
+    };
+}
 </script>
 </body>
 </html>
