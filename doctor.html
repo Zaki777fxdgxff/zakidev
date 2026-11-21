@@ -1140,7 +1140,7 @@
         <div class="badge-verify-title" id="badgeModalTitle">Verified account</div>
         <div class="badge-verify-text" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 5px;">
     <span id="badgeModalText"></span>
-    <a href="go:verified" target="_blank" style="color: #1d9bf0; text-decoration: none; font-weight: bold;">عرض المزيد</a>
+    <a id="badgeModalLink" href="go:verified" target="_blank" style="color: #1d9bf0; text-decoration: none; font-weight: bold;"></a>
 </div>
         
         <button class="badge-verify-btn" id="badgeModalDismissBtn" onclick="closeBadgeVerifyModal()">Dismiss</button>
@@ -1697,28 +1697,37 @@
     </div>
 
     <div id="createAccountForm" style="max-width:420px;margin:0 auto;display:none;">
-        <div class="profile-card">
-            <div class="auth-form-header"><button onclick="showAuthChoice()"><i class="fas fa-arrow-right"></i> رجوع</button><h3 style="margin-right:auto;"><i class="fas fa-user-plus"></i> إنشاء حساب</h3></div>
-            <div id="createStep1">
-                <div class="profile-field"><label>الاسم الكامل</label><input type="text" id="regName" placeholder="اكتب اسمك"></div>
-                <div class="profile-field"><label>اسم المستخدم (بدون @)</label><input type="text" id="regUsername" placeholder="username"></div>
-                <div class="profile-field"><label>البريد الإلكتروني</label><input type="email" id="regEmail" placeholder="example@email.com"></div>
-                <div class="profile-field"><label>كلمة المرور</label><input type="password" id="regPassword" placeholder="6 أحرف على الأقل"></div>
-                <button id="registerBtn" onclick="createAccountAndSendVerification()" style="width:100%;padding:14px;background:#28a745;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer;margin-top:10px;"><i class="fas fa-user-plus"></i> إنشاء الحساب وإرسال رابط التفعيل</button>
+    <div class="profile-card">
+        <div class="auth-form-header">
+            <button onclick="showAuthChoice()"><i class="fas fa-arrow-right"></i> رجوع</button>
+            <h3 style="margin-right:auto;"><i class="fas fa-user-plus"></i> إنشاء حساب</h3>
+        </div>
+        <div id="createStep1">
+            <div class="profile-field"><label>الاسم الكامل</label><input type="text" id="regName" placeholder="اكتب اسمك"></div>
+            <div class="profile-field"><label>اسم المستخدم (بدون @)</label><input type="text" id="regUsername" placeholder="username"></div>
+            <div class="profile-field"><label>البريد الإلكتروني</label><input type="email" id="regEmail" placeholder="example@email.com"></div>
+            <div class="profile-field"><label>كلمة المرور</label><input type="password" id="regPassword" placeholder="6 أحرف على الأقل"></div>
+            
+            <button id="registerBtn" onclick="createAccountAndSendVerification()" style="width:100%;padding:14px;background:#28a745;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer;margin-top:10px;">
+                <i class="fas fa-user-plus"></i> إنشاء الحساب وإرسال رابط التفعيل
+            </button>
+        </div>
+        
+        <div id="verifyMessageBox" style="display:none;">
+            <div class="verify-message-box">
+                <i class="fas fa-envelope-open-text"></i>
+                <h3>تم إرسال رابط تفعيل الحساب</h3>
+                <p>لقد أرسلنا رابطاً لتفعيل حسابك إلى البريد:</p>
+                <div class="email-highlight" id="verifySentEmail">—</div>
+                <p style="margin-top:12px;">افتح بريدك واضغط على رابط التفعيل، ثم عُد للتطبيق.</p>
+                <button class="resend-link" onclick="resendVerificationEmail()"><i class="fas fa-paper-plane"></i> إعادة إرسال الرابط</button>
             </div>
-            <div id="verifyMessageBox" style="display:none;">
-                <div class="verify-message-box">
-                    <i class="fas fa-envelope-open-text"></i>
-                    <h3>تم إرسال رابط تفعيل الحساب</h3>
-                    <p>لقد أرسلنا رابطاً لتفعيل حسابك إلى البريد:</p>
-                    <div class="email-highlight" id="verifySentEmail">—</div>
-                    <p style="margin-top:12px;">افتح بريدك واضغط على رابط التفعيل، ثم عُد للتطبيق.</p>
-                    <button class="resend-link" onclick="resendVerificationEmail()"><i class="fas fa-paper-plane"></i> إعادة إرسال الرابط</button>
-                </div>
-                <button onclick="showLoginForm()" style="width:100%;padding:14px;background:var(--btn-bg);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:bold;cursor:pointer;margin-top:15px;"><i class="fas fa-sign-in-alt"></i> الانتقال لتسجيل الدخول</button>
-            </div>
+            <button onclick="showLoginForm()" style="width:100%;padding:14px;background:var(--btn-bg);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:bold;cursor:pointer;margin-top:15px;">
+                <i class="fas fa-sign-in-alt"></i> الانتقال لتسجيل الدخول
+            </button>
         </div>
     </div>
+</div>
 
     <div id="pendingVerificationScreen" style="display:none;max-width:420px;margin:0 auto;text-align:center;padding:30px 15px;">
         <div style="width:110px;height:110px;margin:0 auto 20px;border-radius:50%;background:linear-gradient(135deg,#1da1f2,#0d8ecf);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(29,161,242,0.4);"><i class="fas fa-envelope" style="font-size:50px;color:#fff;"></i></div>
@@ -1806,20 +1815,29 @@
     </div>
 </div>
             <div class="profile-avatar-wrap">
-                <img id="profileAvatarImg" src="" alt="Avatar" style="cursor:pointer;" onclick="document.getElementById('avatarInput').click()">
-                <button class="avatar-upload-btn" onclick="document.getElementById('avatarInput').click()"><i class="fas fa-camera"></i></button>
-                <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)">
-            </div>
-            <div class="profile-field"><label>الاسم الكامل</label><input type="text" id="pfName" placeholder="اكتب اسمك"></div>
-            <div class="profile-field"><label>اسم المستخدم (بدون @)</label><input type="text" id="pfUsername" placeholder="username"></div>
-            <div class="profile-field"><label>نبذة تعريفية</label><textarea id="pfBio" rows="2" placeholder="اكتب نبذة..."></textarea></div>
-            <div class="profile-field"><label>رابط الموقع الإلكتروني</label><input type="url" id="pfWebsite" placeholder="https://example.com" dir="ltr" style="text-align:left;"></div>
-            <div class="profile-field"><label>البريد الإلكتروني</label><input type="email" id="pfEmail" placeholder="example@email.com"></div>
-            <div class="profile-field"><label>خصوصية البروفايل</label><select id="pfPrivacy"><option value="public">عام</option><option value="private">خاص</option></select></div>
-            <div class="profile-actions">
-                <button id="saveProfileBtn" onclick="saveProfile()"><i class="fas fa-save"></i> حفظ البيانات</button>
-                <button onclick="logoutUser()" style="background:#e0245e;color:#fff;"><i class="fas fa-sign-out-alt"></i> خروج</button>
-            </div>
+    <img id="profileAvatarImg" src="" alt="Avatar" style="cursor:pointer;" onclick="document.getElementById('avatarInput').click()">
+    <button class="avatar-upload-btn" onclick="document.getElementById('avatarInput').click()"><i class="fas fa-camera"></i></button>
+    <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)">
+</div>
+<div class="profile-field"><label>الاسم الكامل</label><input type="text" id="pfName" placeholder="اكتب اسمك"></div>
+<div class="profile-field"><label>اسم المستخدم (بدون @)</label><input type="text" id="pfUsername" placeholder="username"></div>
+<div class="profile-field"><label>نبذة تعريفية</label><textarea id="pfBio" rows="2" placeholder="اكتب نبذة..."></textarea></div>
+<div class="profile-field"><label>رابط الموقع الإلكتروني</label><input type="url" id="pfWebsite" placeholder="https://example.com" dir="ltr" style="text-align:left;"></div>
+<div class="profile-field"><label>البريد الإلكتروني</label><input type="email" id="pfEmail" placeholder="example@email.com"></div>
+<div class="profile-field"><label>خصوصية البروفايل</label><select id="pfPrivacy"><option value="public">عام</option><option value="private">خاص</option></select></div>
+
+<!-- ✨ أزرار الخصوصية الجديدة -->
+
+<div class="profile-field" style="display:flex; justify-content:space-between; align-items:center; background:var(--content-bg); padding:12px; border-radius:10px; margin-top:10px;">
+    <label style="margin:0; font-weight:bold; font-size:14px;">منع استقبال الرسائل (الدردشة)</label>
+    <input type="checkbox" id="pfDisableChat" style="width:20px; height:20px; cursor:pointer; accent-color:var(--tab-active-color);">
+</div>
+<!-- ✨ نهاية الأزرار -->
+
+<div class="profile-actions">
+    <button id="saveProfileBtn" onclick="saveProfile()"><i class="fas fa-save"></i> حفظ البيانات</button>
+    <button onclick="logoutUser()" style="background:#e0245e;color:#fff;"><i class="fas fa-sign-out-alt"></i> خروج</button>
+</div>
         </div>
     </div>
 </div>
@@ -3007,14 +3025,16 @@ async function saveProfile() {
     try {
         var fb = await getFB();
         await fb.setDoc(fb.doc(fb.db, 'profiles', currentUserKey), {
-            name: document.getElementById('pfName').value.trim(),
-            username: document.getElementById('pfUsername').value.trim(),
-            bio: document.getElementById('pfBio').value.trim(),
-            website: document.getElementById('pfWebsite').value.trim(),
-            email: document.getElementById('pfEmail').value.trim(),
-            privacy: document.getElementById('pfPrivacy').value,
-            updatedAt: fb.serverTimestamp()
-        }, { merge: true });
+    name: document.getElementById('pfName').value.trim(),
+    username: document.getElementById('pfUsername').value.trim(),
+    bio: document.getElementById('pfBio').value.trim(),
+    website: document.getElementById('pfWebsite').value.trim(),
+    email: document.getElementById('pfEmail').value.trim(),
+    privacy: document.getElementById('pfPrivacy').value,
+    hideFromSearch: document.getElementById('pfHideFromSearch').checked,
+    disableChat: document.getElementById('pfDisableChat').checked,
+    updatedAt: fb.serverTimestamp()
+}, { merge: true });
         alert('تم حفظ البيانات');
         renderProfileView();
         showProfileView();
@@ -6400,6 +6420,77 @@ async function loadMyPosts() {
         container.innerHTML = '<div class="empty-state"><p>حدث خطأ في التحميل</p></div>';
     }
 }
+// تحميل إعدادات الخصوصية
+if (currentUserKey) {
+    getFB().then(fb => {
+        fb.getDoc(fb.doc(fb.db, 'profiles', currentUserKey)).then(snap => {
+            if(snap.exists()) {
+                var d = snap.data();
+                if(document.getElementById('pfHideFromSearch')) document.getElementById('pfHideFromSearch').checked = d.hideFromSearch || false;
+                if(document.getElementById('pfDisableChat')) document.getElementById('pfDisableChat').checked = d.disableChat || false;
+            }
+        });
+    });
+}
+
+/* ==================== تحديث دالة البحث (لاحترام إعدادات الخصوصية) ==================== */
+window.searchUsers = async function(query) {
+    var resultsDiv = document.getElementById('searchResults');
+    if (!query || query.trim().length < 1) {
+        resultsDiv.classList.remove('active');
+        return;
+    }
+
+    try {
+        var fb = await getFB();
+        var snap = await fb.getDocs(fb.collection(fb.db, 'profiles'));
+        
+        var results = [];
+        var qLower = query.toLowerCase().trim();
+
+        snap.forEach(function(ds) {
+            var d = ds.data();
+            var name = (d.name || '').toLowerCase();
+            var username = (d.username || '').toLowerCase();
+            var email = ds.id.toLowerCase();
+
+            // ✨ التحقق: يجب أن يكون مطابقاً للبحث، وألا يكون مخفياً من البحث
+            if ((name.includes(qLower) || username.includes(qLower) || email.includes(qLower)) && d.hideFromSearch !== true) {
+                results.push({ key: ds.id, data: d });
+            }
+        });
+
+        resultsDiv.innerHTML = '';
+        if (results.length === 0) {
+            resultsDiv.innerHTML = '<p style="text-align:center;padding:15px;opacity:0.6;font-size:14px;">لا توجد نتائج</p>';
+        } else {
+            results.forEach(function(user) {
+                var div = document.createElement('div');
+                div.className = 'search-user-item';
+                
+                var bt = user.data.badgeType || (user.data.owner ? 'owner' : (user.data.blackBadge ? 'black' : (user.data.verified ? 'normal' : 'none')));
+                var badgeHtml = (bt && bt !== 'none') ? '<img src="' + badgeSrc(bt) + '" style="width:16px;height:16px;display:inline-block;">' : '';
+
+                div.innerHTML = 
+                    '<img src="' + (user.data.avatar || DEFAULT_AVATAR) + '">' +
+                    '<div class="search-user-info">' +
+                        '<div class="search-user-name">' + escapeHtml(user.data.name || 'مستخدم') + ' ' + badgeHtml + '</div>' +
+                        '<div class="search-user-username">@' + escapeHtml(user.data.username || 'user') + '</div>' +
+                    '</div>';
+
+                div.onclick = function() {
+                    document.getElementById('globalSearchInput').value = '';
+                    resultsDiv.classList.remove('active');
+                    openPublicProfile(user.key);
+                };
+                resultsDiv.appendChild(div);
+            });
+        }
+        resultsDiv.classList.add('active');
+    } catch (e) {
+        console.error(e);
+    }
+};
 </script>
 </body>
 </html>
