@@ -2307,6 +2307,7 @@ function showBadgeTooltip(e, imgEl) {
         
 if (modalLink) {
     modalLink.textContent = moreText; 
+            modalLink.href = 'go:verified'; 
 }
         
         // تغيير الصورة حسب نوع التوثيق
@@ -6242,7 +6243,7 @@ function showBadgeTooltip(e, imgEl) {
 // ✨ تحديث الرابط بناءً على اللغة
 var linkEl = document.getElementById('badgeModalLink');
 if (linkEl) {
-    linkEl.textContent = (lang === 'en') ? 'Learn more' : 'عرض المزيد';
+    linkEl.textContent = (lang === 'en') ? 'Learn more.' : 'عرض المزيد.';
 }
 
     // عرض البيانات في النافذة
