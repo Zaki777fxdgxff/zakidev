@@ -1047,6 +1047,60 @@
 #fab-checkbox:checked ~ .fab-options .fab-option:nth-child(2) {
     transition-delay: 0.1s;
 }
+/* ==================== نافذة التوثيق (متوافقة مع الثيمات) ==================== */
+.badge-verify-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100000;
+    display: none;
+    justify-content: center;
+    align-items: flex-end;
+}
+.badge-verify-modal.active {
+    display: flex;
+}
+.badge-verify-content {
+    background: var(--card-bg); /* لون يتغير حسب الثيم */
+    color: var(--text-color);   /* لون النص يتغير حسب الثيم */
+    width: 100%;
+    max-width: 600px;
+    border-radius: 20px 20px 0 0;
+    padding: 30px 20px 20px;
+    text-align: center;
+    animation: slideUp 0.3s ease;
+    border-top: 1px solid var(--border-color);
+}
+.badge-verify-title {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: var(--text-color);
+}
+.badge-verify-text {
+    font-size: 15px;
+    color: var(--text-color);
+    opacity: 0.7;
+    line-height: 1.5;
+    margin-bottom: 25px;
+}
+.badge-verify-btn {
+    width: 100%; /* تصغير العرض ليصبح أنيقاً */
+    margin: 0 auto; /* توسيط الزر في المنتصف */
+    display: block;
+    padding: 10px 0; /* تصغير الارتفاع */
+    border-radius: 20px; /* جعله دائرياً أكثر */
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-color);
+    font-size: 14px; /* تصغير حجم الخط */
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.badge-verify-btn:hover {
+    background: rgba(128,128,128,0.1);
+}
     </style>
 </head>
 <!-- ✨ نافذة المشاركة السفلية -->
@@ -1075,6 +1129,22 @@
 <div id="profileImageModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:99999;justify-content:center;align-items:center;flex-direction:column;" onclick="if(event.target===this)closeProfileImageModal()">
     <button onclick="closeProfileImageModal()" style="position:absolute;top:20px;left:20px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.2);color:#fff;border:none;font-size:20px;cursor:pointer;z-index:100000;display:flex;align-items:center;justify-content:center;"><i class="fas fa-times"></i></button>
     <img id="profileFullImage" src="" style="max-width:95%;max-height:85vh;object-fit:contain;border-radius:12px;">
+</div>
+
+<!-- ✨ نافذة التوثيق (تويتر ستايل) -->
+<div id="badgeVerifyModal" class="badge-verify-modal" onclick="if(event.target===this)closeBadgeVerifyModal()">
+    <div class="badge-verify-content">
+        <!-- ✨ ضع رابط صورتك هنا -->
+        <img id="badgeModalImage" src="" style="width:60px; height:60px; object-fit:contain; margin:0 auto 15px; display:block;">
+        
+        <div class="badge-verify-title" id="badgeModalTitle">Verified account</div>
+        <div class="badge-verify-text" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 5px;">
+    <span id="badgeModalText"></span>
+    <a href="go:verified" target="_blank" style="color: #1d9bf0; text-decoration: none; font-weight: bold;">عرض المزيد</a>
+</div>
+        
+        <button class="badge-verify-btn" id="badgeModalDismissBtn" onclick="closeBadgeVerifyModal()">Dismiss</button>
+    </div>
 </div>
 <body>
 	
@@ -2003,7 +2073,7 @@ var TRANSLATIONS = {
         footer_games: 'Games',
         footer_products: 'Store',
         footer_chat: 'Chats',
-        footer_account: 'Account',
+        footer_account: 'You',
         footer_labels_show: 'Show labels',
         footer_labels_hide: 'Hide labels'
     }
@@ -2175,28 +2245,34 @@ function showBadgeTooltip(e, imgEl) {
     e.stopPropagation();
     var inProfile = imgEl.closest('#profileView') || imgEl.closest('#publicProfilePage');
     if (!inProfile) return;
-    var tooltip = document.getElementById('badgeTooltip');
+    
     var src = imgEl.src || '';
     var isOwner = src === OWNER_BADGE_URL || src.indexOf('Gold') >= 0;
     var isBlack = src === BLACK_BADGE_URL;
     var lang = localStorage.getItem('lang') || 'ar';
     var text;
-    if (isBlack) text = lang === 'en' ? 'Black Verified Account' : 'حساب موثّق (توثيق أسود)';
-    else if (isOwner) text = lang === 'en' ? 'Owner / Partner Account' : 'حساب مالك التطبيق أو أحد شركائه';
-    else text = lang === 'en' ? 'Verified Account' : 'حساب تم التحقق منه';
-    tooltip.textContent = text;
-    tooltip.className = 'badge-tooltip show ' + (isBlack ? 'black' : (isOwner ? 'gold' : 'blue'));
-    var rect = imgEl.getBoundingClientRect();
-    tooltip.style.left = (rect.left + rect.width / 2) + 'px';
-    tooltip.style.top = (rect.top - 10) + 'px';
-    tooltip.style.transform = 'translate(-50%, -100%)';
-    tooltip.style.display = 'block';
-    tooltip.style.opacity = '1';
-    clearTimeout(tooltip._timeout);
-    tooltip._timeout = setTimeout(function () {
-        tooltip.classList.remove('show');
-        setTimeout(function(){ tooltip.style.display = 'none'; }, 250);
-    }, 3000);
+
+    if (isBlack) {
+        text = lang === 'en' ? "This account is verified because it is the official owner account" : "تم توثيق هذا الحساب لأنه حساب المالك الرسمي";
+    } else if (isOwner) {
+        text = lang === 'en' ? "This account is verified because it is an official organization" : "تم التحقق من هذا الحساب لأنه تابع لمنظمة رسمية";
+    } else {
+        text = lang === 'en' ? "This account is verified." : "هذا الحساب موثق.";
+    }
+
+    // عرض النافذة الجديدة
+    var modalText = document.getElementById('badgeModalText');
+    var modal = document.getElementById('badgeVerifyModal');
+    
+    if (modalText && modal) {
+        modalText.textContent = text;
+        modal.classList.add('active');
+    }
+}
+
+function closeBadgeVerifyModal() {
+    var modal = document.getElementById('badgeVerifyModal');
+    if (modal) modal.classList.remove('active');
 }
 
 /* ==================== IMAGE VIEWER ==================== */
@@ -6071,6 +6147,56 @@ if (typeof window.replyToComment !== 'function') {
             input.focus();
         }
     };
+}
+function showBadgeTooltip(e, imgEl) {
+    e.stopPropagation();
+    var inProfile = imgEl.closest('#profileView') || imgEl.closest('#publicProfilePage');
+    if (!inProfile) return;
+    
+    var src = imgEl.src || '';
+    var isOwner = src === OWNER_BADGE_URL || src.indexOf('Gold') >= 0;
+    var isBlack = src === BLACK_BADGE_URL;
+    var lang = localStorage.getItem('lang') || 'ar';
+    var text, title, dismissText;
+
+    // النصوص والأزرار تتغير حسب اللغة
+    if (lang === 'en') {
+        title = "Verified account";
+        dismissText = "Dismiss";
+        if (isBlack) text = "This account is verified because it is the official owner account.";
+        else if (isOwner) text = "This account is verified because it is an official organization.";
+        else text = "This account is verified.";
+    } else {
+        title = "حساب موثق";
+        dismissText = "إغلاق";
+        if (isBlack) text = "تم توثيق هذا الحساب لأنه حساب المالك الرسمي.";
+        else if (isOwner) text = "تم التحقق من هذا الحساب لأنه تابع لمنظمة رسمية.";
+        else text = "هذا الحساب موثق.";
+    }
+
+    // عرض البيانات في النافذة
+    var modalText = document.getElementById('badgeModalText');
+    var modalTitle = document.getElementById('badgeModalTitle');
+    var modalBtn = document.getElementById('badgeModalDismissBtn');
+    var modalImage = document.getElementById('badgeModalImage');
+    var modal = document.getElementById('badgeVerifyModal');
+    
+    if (modalText && modal) {
+        modalText.textContent = text;
+        modalTitle.textContent = title;
+        modalBtn.textContent = dismissText;
+        
+        // ✨ هنا يتم تغيير الصورة حسب نوع التوثيق
+        if (isBlack) {
+            modalImage.src = BLACK_BADGE_URL; // صورة التوثيق الأسود
+        } else if (isOwner) {
+            modalImage.src = OWNER_BADGE_URL; // صورة التوثيق الذهبي
+        } else {
+            modalImage.src = NORMAL_BADGE_URL; // صورة التوثيق الأزرق
+        }
+        
+        modal.classList.add('active');
+    }
 }
 </script>
 </body>
