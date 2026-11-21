@@ -1827,7 +1827,10 @@
 <div class="profile-field"><label>خصوصية البروفايل</label><select id="pfPrivacy"><option value="public">عام</option><option value="private">خاص</option></select></div>
 
 <!-- ✨ أزرار الخصوصية الجديدة -->
-
+<div class="profile-field" style="display:flex; justify-content:space-between; align-items:center; background:var(--content-bg); padding:12px; border-radius:10px; margin-top:10px;">
+    <label style="margin:0; font-weight:bold; font-size:14px;">إخفاء الحساب من البحث</label>
+    <input type="checkbox" id="pfHideFromSearch" style="width:20px; height:20px; cursor:pointer; accent-color:var(--tab-active-color);">
+</div>
 <div class="profile-field" style="display:flex; justify-content:space-between; align-items:center; background:var(--content-bg); padding:12px; border-radius:10px; margin-top:10px;">
     <label style="margin:0; font-weight:bold; font-size:14px;">منع استقبال الرسائل (الدردشة)</label>
     <input type="checkbox" id="pfDisableChat" style="width:20px; height:20px; cursor:pointer; accent-color:var(--tab-active-color);">
@@ -6432,65 +6435,6 @@ if (currentUserKey) {
         });
     });
 }
-
-/* ==================== تحديث دالة البحث (لاحترام إعدادات الخصوصية) ==================== */
-window.searchUsers = async function(query) {
-    var resultsDiv = document.getElementById('searchResults');
-    if (!query || query.trim().length < 1) {
-        resultsDiv.classList.remove('active');
-        return;
-    }
-
-    try {
-        var fb = await getFB();
-        var snap = await fb.getDocs(fb.collection(fb.db, 'profiles'));
-        
-        var results = [];
-        var qLower = query.toLowerCase().trim();
-
-        snap.forEach(function(ds) {
-            var d = ds.data();
-            var name = (d.name || '').toLowerCase();
-            var username = (d.username || '').toLowerCase();
-            var email = ds.id.toLowerCase();
-
-            // ✨ التحقق: يجب أن يكون مطابقاً للبحث، وألا يكون مخفياً من البحث
-            if ((name.includes(qLower) || username.includes(qLower) || email.includes(qLower)) && d.hideFromSearch !== true) {
-                results.push({ key: ds.id, data: d });
-            }
-        });
-
-        resultsDiv.innerHTML = '';
-        if (results.length === 0) {
-            resultsDiv.innerHTML = '<p style="text-align:center;padding:15px;opacity:0.6;font-size:14px;">لا توجد نتائج</p>';
-        } else {
-            results.forEach(function(user) {
-                var div = document.createElement('div');
-                div.className = 'search-user-item';
-                
-                var bt = user.data.badgeType || (user.data.owner ? 'owner' : (user.data.blackBadge ? 'black' : (user.data.verified ? 'normal' : 'none')));
-                var badgeHtml = (bt && bt !== 'none') ? '<img src="' + badgeSrc(bt) + '" style="width:16px;height:16px;display:inline-block;">' : '';
-
-                div.innerHTML = 
-                    '<img src="' + (user.data.avatar || DEFAULT_AVATAR) + '">' +
-                    '<div class="search-user-info">' +
-                        '<div class="search-user-name">' + escapeHtml(user.data.name || 'مستخدم') + ' ' + badgeHtml + '</div>' +
-                        '<div class="search-user-username">@' + escapeHtml(user.data.username || 'user') + '</div>' +
-                    '</div>';
-
-                div.onclick = function() {
-                    document.getElementById('globalSearchInput').value = '';
-                    resultsDiv.classList.remove('active');
-                    openPublicProfile(user.key);
-                };
-                resultsDiv.appendChild(div);
-            });
-        }
-        resultsDiv.classList.add('active');
-    } catch (e) {
-        console.error(e);
-    }
-};
 </script>
 </body>
 </html>
