@@ -6198,6 +6198,208 @@ function showBadgeTooltip(e, imgEl) {
         modal.classList.add('active');
     }
 }
+var mediaUrls = Array.isArray(p.data.mediaUrls) ? p.data.mediaUrls : [p.data.mediaUrl];
+var mediaHtml = '';
+
+if (mediaUrls.length === 1) {
+    mediaHtml = '<div class="post-image-wrap" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" alt=""></div>';
+} else if (mediaUrls.length === 2) {
+    mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + mediaUrls.map(function(u,i){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + i + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
+} else if (mediaUrls.length === 3) {
+    mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;grid-auto-rows:1fr;">' + '<div style="grid-row:span 2;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" style="width:100%;height:100%;object-fit:cover;"></div>' + mediaUrls.slice(1).map(function(u,i){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + (i+1) + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
+} else {
+    var displayUrls = mediaUrls.slice(0, 4);
+    mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + displayUrls.map(function(u,i){ var extra = (i === 3 && mediaUrls.length > 4) ? '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.65);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:bold;">+' + (mediaUrls.length - 4) + '</div>' : ''; return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;position:relative;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + i + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;">' + extra + '</div>'; }).join('') + '</div>';
+}
+async function loadUserPosts(userKey) {
+    var section = document.getElementById('pubPostsSection');
+    var container = document.getElementById('pubPostsGrid');
+    if (!section || !container) return;
+    
+    container.className = 'posts-container';
+    container.style.margin = '20px auto';
+    container.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>جاري تحميل المنشورات...</p></div>';
+    
+    try {
+        var fb = await getFB();
+        var q = fb.query(fb.collection(fb.db, 'posts'), fb.where('author', '==', userKey));
+        var snap = await fb.getDocs(q);
+        
+        if (snap.empty) { 
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-images"></i><p>لا توجد منشورات</p></div>';
+            return; 
+        }
+        
+        var posts = [];
+        snap.forEach(function(ds){ posts.push({ id: ds.id, data: ds.data() }); });
+        posts = posts.filter(function(p){ return p.data.privacy !== 'private' || p.data.author === currentUserKey; });
+        
+        if (posts.length === 0) { 
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-images"></i><p>لا توجد منشورات عامة</p></div>';
+            return; 
+        }
+        
+        container.innerHTML = '';
+        posts.sort(function(a,b){ return new Date(b.data.createdAt||0) - new Date(a.data.createdAt||0); });
+        
+        var userSnap = await fb.getDoc(fb.doc(fb.db, 'profiles', userKey));
+        var author = userSnap.exists() ? userSnap.data() : { name: 'مستخدم', username: 'user', avatar: null };
+        var authorBt = author.badgeType || (author.owner ? 'owner' : (author.blackBadge ? 'black' : (author.verified ? 'normal' : 'none')));
+        var badgeHtml = (authorBt && authorBt !== 'none') ? '<img class="post-header-badge" src="' + badgeSrc(authorBt) + '">' : '';
+        var lang = localStorage.getItem('lang') || 'ar';
+
+        for (var i = 0; i < posts.length; i++) {
+            var p = posts[i];
+            var mediaUrls = Array.isArray(p.data.mediaUrls) ? p.data.mediaUrls : [p.data.mediaUrl];
+            var mediaHtml = '';
+            
+            if (mediaUrls.length === 1) {
+                mediaHtml = '<div class="post-image-wrap" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" alt=""></div>';
+            } else if (mediaUrls.length === 2) {
+                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + mediaUrls.map(function(u,idx){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + idx + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
+            } else if (mediaUrls.length === 3) {
+                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;grid-auto-rows:1fr;">' + '<div style="grid-row:span 2;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" style="width:100%;height:100%;object-fit:cover;"></div>' + mediaUrls.slice(1).map(function(u,idx){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + (idx+1) + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
+            } else {
+                var displayUrls = mediaUrls.slice(0, 4);
+                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + displayUrls.map(function(u,idx){ var extra = (idx === 3 && mediaUrls.length > 4) ? '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.65);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:bold;">+' + (mediaUrls.length - 4) + '</div>' : ''; return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;position:relative;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + idx + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;">' + extra + '</div>'; }).join('') + '</div>';
+            }
+
+            var commentsCount = 0;
+            try {
+                var cQ = fb.query(fb.collection(fb.db, 'comments'), fb.where('postId', '==', p.id));
+                var cSnap = await fb.getDocs(cQ);
+                commentsCount = cSnap.size;
+            } catch (e) { commentsCount = 0; }
+
+            var dateStr = p.data.createdAt ? new Date(p.data.createdAt).toLocaleString(lang === 'en' ? 'en-US' : 'ar-EG') : '';
+            var likes = Array.isArray(p.data.likes) ? p.data.likes : [];
+            var dislikes = Array.isArray(p.data.dislikes) ? p.data.dislikes : [];
+            var views = p.data.views || 0;
+            var isLiked = currentUserKey && likes.indexOf(currentUserKey) > -1;
+            var isDisliked = currentUserKey && dislikes.indexOf(currentUserKey) > -1;
+
+            var card = document.createElement('div');
+            card.className = 'post-card';
+            card.style.marginBottom = '16px';
+
+            card.innerHTML =
+                '<div class="post-header">' +
+                '<img class="post-header-avatar" src="' + (author.avatar || DEFAULT_AVATAR) + '" alt="">' +
+                '<div class="post-header-info">' +
+                '<div class="post-header-name">' + escapeHtml(author.name || 'مستخدم') + ' ' + badgeHtml + '</div>' +
+                '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
+                '</div></div>' +
+                (p.data.caption ? '<div class="post-caption">' + escapeHtml(p.data.caption) + '</div>' : '') +
+                '<div class="post-date"><i class="fas fa-clock"></i> ' + dateStr + '</div>' +
+                mediaHtml +
+                '<div class="post-actions">' +
+                    '<button class="post-action-btn' + (isLiked ? ' liked' : '') + '" onclick="toggleLike(\'' + p.id + '\', this)"><i class="fas fa-heart"></i><span class="count">' + likes.length + '</span></button>' +
+                    '<button class="post-action-btn' + (isDisliked ? ' disliked' : '') + '" onclick="toggleDislike(\'' + p.id + '\', this)"><i class="fas fa-thumbs-down"></i><span class="count">' + dislikes.length + '</span></button>' +
+                    '<button class="post-action-btn" onclick="openCommentsSheet(\'' + p.id + '\')"><i class="fas fa-comment"></i><span class="count" id="comments-count-' + p.id + '">' + commentsCount + '</span></button>' +
+                    '<button class="post-action-btn" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><i class="fas fa-eye"></i><span class="count" id="views-' + p.id + '">' + views + '</span></button>' +
+                '</div>';
+            
+            container.appendChild(card);
+        }
+    } catch (e) { 
+        console.error(e);
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>خطأ في تحميل المنشورات</p></div>';
+    }
+}
+async function loadMyPosts() {
+    if (!currentUserKey) return;
+    var container = document.getElementById('myPostsGrid');
+    var empty = document.getElementById('myPostsEmpty');
+    var sec = document.getElementById('myPostsSection');
+    if (!container || !sec) return;
+    
+    sec.style.display = 'block';
+    container.className = 'posts-container';
+    container.style.margin = '20px auto';
+    container.style.display = 'block';
+
+    try {
+        var fb = await getFB();
+        var q = fb.query(fb.collection(fb.db, 'posts'), fb.where('author', '==', currentUserKey));
+        var snap = await fb.getDocs(q);
+        
+        container.innerHTML = '';
+        
+        if (snap.empty) { 
+            if (empty) empty.style.display = 'block'; 
+            return; 
+        }
+        if (empty) empty.style.display = 'none';
+        
+        var posts = [];
+        snap.forEach(function (ds) { posts.push({ id: ds.id, data: ds.data() }); });
+        posts.sort(function (a, b) { return new Date(b.data.createdAt || 0) - new Date(a.data.createdAt || 0); });
+        
+        var lang = localStorage.getItem('lang') || 'ar';
+        
+        var userSnap = await fb.getDoc(fb.doc(fb.db, 'profiles', currentUserKey));
+        var author = userSnap.exists() ? userSnap.data() : { name: 'مستخدم', username: 'user', avatar: null };
+        var authorBt = author.badgeType || (author.owner ? 'owner' : (author.blackBadge ? 'black' : (author.verified ? 'normal' : 'none')));
+        var badgeHtml = (authorBt && authorBt !== 'none') ? '<img class="post-header-badge" src="' + badgeSrc(authorBt) + '">' : '';
+
+        for (var i = 0; i < posts.length; i++) {
+            var p = posts[i];
+            var mediaUrls = Array.isArray(p.data.mediaUrls) ? p.data.mediaUrls : [p.data.mediaUrl];
+            var mediaHtml = '';
+            
+            if (mediaUrls.length === 1) {
+                mediaHtml = '<div class="post-image-wrap" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" alt=""></div>';
+            } else if (mediaUrls.length === 2) {
+                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + mediaUrls.map(function(u,idx){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + idx + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
+            } else if (mediaUrls.length === 3) {
+                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;grid-auto-rows:1fr;">' + '<div style="grid-row:span 2;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" style="width:100%;height:100%;object-fit:cover;"></div>' + mediaUrls.slice(1).map(function(u,idx){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + (idx+1) + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
+            } else {
+                var displayUrls = mediaUrls.slice(0, 4);
+                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + displayUrls.map(function(u,idx){ var extra = (idx === 3 && mediaUrls.length > 4) ? '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.65);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:bold;">+' + (mediaUrls.length - 4) + '</div>' : ''; return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;position:relative;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + idx + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;">' + extra + '</div>'; }).join('') + '</div>';
+            }
+
+            var commentsCount = 0;
+            try {
+                var cQ = fb.query(fb.collection(fb.db, 'comments'), fb.where('postId', '==', p.id));
+                var cSnap = await fb.getDocs(cQ);
+                commentsCount = cSnap.size;
+            } catch (e) { commentsCount = 0; }
+
+            var dateStr = p.data.createdAt ? new Date(p.data.createdAt).toLocaleString(lang === 'en' ? 'en-US' : 'ar-EG') : '';
+            var likes = Array.isArray(p.data.likes) ? p.data.likes : [];
+            var dislikes = Array.isArray(p.data.dislikes) ? p.data.dislikes : [];
+            var views = p.data.views || 0;
+            var isLiked = currentUserKey && likes.indexOf(currentUserKey) > -1;
+            var isDisliked = currentUserKey && dislikes.indexOf(currentUserKey) > -1;
+
+            var card = document.createElement('div');
+            card.className = 'post-card';
+            card.style.marginBottom = '16px';
+
+            card.innerHTML =
+                '<div class="post-header">' +
+                '<img class="post-header-avatar" src="' + (author.avatar || DEFAULT_AVATAR) + '" alt="">' +
+                '<div class="post-header-info">' +
+                '<div class="post-header-name">' + escapeHtml(author.name || 'مستخدم') + ' ' + badgeHtml + '</div>' +
+                '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
+                '</div></div>' +
+                (p.data.caption ? '<div class="post-caption">' + escapeHtml(p.data.caption) + '</div>' : '') +
+                '<div class="post-date"><i class="fas fa-clock"></i> ' + dateStr + '</div>' +
+                mediaHtml +
+                '<div class="post-actions">' +
+                    '<button class="post-action-btn' + (isLiked ? ' liked' : '') + '" onclick="toggleLike(\'' + p.id + '\', this)"><i class="fas fa-heart"></i><span class="count">' + likes.length + '</span></button>' +
+                    '<button class="post-action-btn' + (isDisliked ? ' disliked' : '') + '" onclick="toggleDislike(\'' + p.id + '\', this)"><i class="fas fa-thumbs-down"></i><span class="count">' + dislikes.length + '</span></button>' +
+                    '<button class="post-action-btn" onclick="openCommentsSheet(\'' + p.id + '\')"><i class="fas fa-comment"></i><span class="count" id="comments-count-' + p.id + '">' + commentsCount + '</span></button>' +
+                    '<button class="post-action-btn" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><i class="fas fa-eye"></i><span class="count" id="views-' + p.id + '">' + views + '</span></button>' +
+                '</div>';
+            
+            container.appendChild(card);
+        }
+    } catch (e) { 
+        console.warn(e); 
+        container.innerHTML = '<div class="empty-state"><p>حدث خطأ في التحميل</p></div>';
+    }
+}
 </script>
 </body>
 </html>
