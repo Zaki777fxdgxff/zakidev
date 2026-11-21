@@ -1140,7 +1140,7 @@
         <div class="badge-verify-title" id="badgeModalTitle">Verified account</div>
         <div class="badge-verify-text" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 5px;">
     <span id="badgeModalText"></span>
-    <a id="badgeModalLink" href="go:verified" target="_blank" style="color: #1d9bf0; text-decoration: none; font-weight: bold;"></a>
+    <a id="badgeModalLink" href="go:verified" target="_blank" style="color: #1d9bf0; text-decoration: none; font-weight: bold; display: inline-block;">عرض المزيد.</a>
 </div>
         
         <button class="badge-verify-btn" id="badgeModalDismissBtn" onclick="closeBadgeVerifyModal()">Dismiss</button>
@@ -2261,7 +2261,9 @@ function toast(msg) {
     el._timeout = setTimeout(function(){ el.classList.remove('show'); }, 2000);
 }
 
-/* ==================== BADGE TOOLTIP ==================== */
+
+
+
 function showBadgeTooltip(e, imgEl) {
     e.stopPropagation();
     var inProfile = imgEl.closest('#profileView') || imgEl.closest('#publicProfilePage');
@@ -2271,24 +2273,56 @@ function showBadgeTooltip(e, imgEl) {
     var isOwner = src === OWNER_BADGE_URL || src.indexOf('Gold') >= 0;
     var isBlack = src === BLACK_BADGE_URL;
     var lang = localStorage.getItem('lang') || 'ar';
-    var text;
+    var text, title, dismissText, moreText;
 
-    if (isBlack) {
-        text = lang === 'en' ? "This account is verified because it is the official owner account" : "تم توثيق هذا الحساب لأنه حساب المالك الرسمي";
-    } else if (isOwner) {
-        text = lang === 'en' ? "This account is verified because it is an official organization" : "تم التحقق من هذا الحساب لأنه تابع لمنظمة رسمية";
+    // تحديد النصوص بناءً على اللغة
+    if (lang === 'en') {
+        title = "Verified account";
+        dismissText = "Dismiss";
+        moreText = "Learn more"; // النص الإنجليزي
+        if (isBlack) text = "This account is verified because it is the official owner account.";
+        else if (isOwner) text = "This account is verified because it is an official organization.";
+        else text = "This account is verified.";
     } else {
-        text = lang === 'en' ? "This account is verified." : "هذا الحساب موثق.";
+        title = "حساب موثق";
+        dismissText = "إغلاق";
+        moreText = "عرض المزيد"; // النص العربي
+        if (isBlack) text = "تم توثيق هذا الحساب لأنه حساب المالك الرسمي.";
+        else if (isOwner) text = "تم التحقق من هذا الحساب لأنه تابع لمنظمة رسمية.";
+        else text = "هذا الحساب موثق.";
     }
 
-    // عرض النافذة الجديدة
+    // عرض البيانات في النافذة
     var modalText = document.getElementById('badgeModalText');
+    var modalTitle = document.getElementById('badgeModalTitle');
+    var modalBtn = document.getElementById('badgeModalDismissBtn');
+    var modalImage = document.getElementById('badgeModalImage');
+    var modalLink = document.getElementById('badgeModalLink');
     var modal = document.getElementById('badgeVerifyModal');
     
     if (modalText && modal) {
         modalText.textContent = text;
+        modalTitle.textContent = title;
+        modalBtn.textContent = dismissText;
+        
+if (modalLink) {
+    modalLink.textContent = moreText; 
+}
+        
+        // تغيير الصورة حسب نوع التوثيق
+        if (isBlack) {
+            modalImage.src = BLACK_BADGE_URL; 
+        } else if (isOwner) {
+            modalImage.src = OWNER_BADGE_URL; 
+        } else {
+            modalImage.src = NORMAL_BADGE_URL; 
+        }
+        
         modal.classList.add('active');
     }
+
+
+    
 }
 
 function closeBadgeVerifyModal() {
@@ -3024,24 +3058,33 @@ console.log('My profile counts — followers:', followers.length, 'following:', 
 
 /* ==================== SAVE PROFILE ==================== */
 async function saveProfile() {
-    if (!currentUserKey) { alert(t('login_first')); return; }
+    if (!currentUserKey) { alert('يجب تسجيل الدخول أولاً'); return; }
     try {
         var fb = await getFB();
+        
+        // قراءة حالة الأزرار من الشاشة
+        var isHideSearch = document.getElementById('pfHideFromSearch') ? document.getElementById('pfHideFromSearch').checked : false;
+        var isDisableChat = document.getElementById('pfDisableChat') ? document.getElementById('pfDisableChat').checked : false;
+
+        // حفظها في قاعدة البيانات
         await fb.setDoc(fb.doc(fb.db, 'profiles', currentUserKey), {
-    name: document.getElementById('pfName').value.trim(),
-    username: document.getElementById('pfUsername').value.trim(),
-    bio: document.getElementById('pfBio').value.trim(),
-    website: document.getElementById('pfWebsite').value.trim(),
-    email: document.getElementById('pfEmail').value.trim(),
-    privacy: document.getElementById('pfPrivacy').value,
-    hideFromSearch: document.getElementById('pfHideFromSearch').checked,
-    disableChat: document.getElementById('pfDisableChat').checked,
-    updatedAt: fb.serverTimestamp()
-}, { merge: true });
-        alert('تم حفظ البيانات');
+            name: document.getElementById('pfName').value.trim(),
+            username: document.getElementById('pfUsername').value.trim(),
+            bio: document.getElementById('pfBio').value.trim(),
+            website: document.getElementById('pfWebsite').value.trim(),
+            email: document.getElementById('pfEmail').value.trim(),
+            privacy: document.getElementById('pfPrivacy').value,
+            hideFromSearch: isHideSearch, 
+            disableChat: isDisableChat,   
+            updatedAt: fb.serverTimestamp()
+        }, { merge: true });
+        
+        // ✨ إظهار تنبيه للتأكد من أن القيمة تم حفظها
+        alert('تم الحفظ! حالة منع الدردشة: ' + (isDisableChat ? 'مفعل (يعني ممنوع)' : 'غير مفعل (يعني مسموح)'));
+        
         renderProfileView();
         showProfileView();
-    } catch (e) { alert(e.message); }
+    } catch (e) { alert('خطأ: ' + e.message); }
 }
 
 /* ==================== IMAGE UPLOAD ==================== */
@@ -3667,13 +3710,17 @@ actionsRow.style.zIndex = '5';
 
         // 2. زر المراسلة
         var msgBtn = document.createElement('button');
-        msgBtn.className = 'pv-action-btn message';
-        msgBtn.style.padding = '6px 12px';
-        msgBtn.style.height = '34px';
-        msgBtn.style.background = 'var(--card-bg)';
-        msgBtn.innerHTML = '<i class="fas fa-comment"></i> ' + t('message');
-        msgBtn.onclick = function() { openChatWith(tKey); };
-        actionsRow.appendChild(msgBtn);
+msgBtn.className = 'pv-action-btn message';
+msgBtn.innerHTML = '<i class="fas fa-comment"></i> ' + t('message');
+msgBtn.onclick = function() { 
+    // ✨ التحقق من إعدادات منع الدردشة قبل الفتح
+    if (d.disableChat === true && currentBadgeType !== 'black') {
+        alert('هذا المستخدم قام بتعطيل خاصية استقبال الرسائل.');
+        return;
+    }
+    openChatWith(tKey); 
+};
+actionsRow.appendChild(msgBtn);
 
         // 3. زر المشاركة
         var shareBtn = document.createElement('button');
@@ -6184,18 +6231,19 @@ function showBadgeTooltip(e, imgEl) {
 
     // النصوص والأزرار تتغير حسب اللغة
     if (lang === 'en') {
-        title = "Verified account";
-        dismissText = "Dismiss";
-        if (isBlack) text = "This account is verified because it is the official owner account.";
-        else if (isOwner) text = "This account is verified because it is an official organization.";
-        else text = "This account is verified.";
-    } else {
-        title = "حساب موثق";
-        dismissText = "إغلاق";
-        if (isBlack) text = "تم توثيق هذا الحساب لأنه حساب المالك الرسمي.";
-        else if (isOwner) text = "تم التحقق من هذا الحساب لأنه تابع لمنظمة رسمية.";
-        else text = "هذا الحساب موثق.";
-    }
+    title = "Verified account";
+    dismissText = "Dismiss";
+    moreText = "Learn more.";
+} else {
+    title = "حساب موثق";
+    dismissText = "تجاهل";
+    moreText = "عرض المزيد.";
+}
+// ✨ تحديث الرابط بناءً على اللغة
+var linkEl = document.getElementById('badgeModalLink');
+if (linkEl) {
+    linkEl.textContent = (lang === 'en') ? 'Learn more' : 'عرض المزيد';
+}
 
     // عرض البيانات في النافذة
     var modalText = document.getElementById('badgeModalText');
@@ -6561,6 +6609,39 @@ window.showEditProfile = function() {
                 }
             });
         });
+    }
+};
+/* ==================== الحماية القاطعة لمنع الدردشة ==================== */
+
+// حفظ الدالة الأصلية التي تفتح الشات
+var _originalOpenChatWith = window.openChatWith;
+
+// استبدالها بدالة جديدة تفحص الخصوصية أولاً
+window.openChatWith = async function(partnerKey) {
+    if (!currentUserKey) { alert('يجب تسجيل الدخول أولاً'); return; }
+    if (partnerKey === currentUserKey) { alert('لا يمكنك مراسلة نفسك'); return; }
+
+    try {
+        var fb = await getFB();
+        // جلب بيانات الشخص الذي نريد مراسلته
+        var checkSnap = await fb.getDoc(fb.doc(fb.db, 'profiles', partnerKey));
+        
+        if (checkSnap.exists()) {
+            var targetData = checkSnap.data();
+            
+            // إذا كان الشخص قد فعل "منع الدردشة" وكان المستخدم الحالي ليس مشرفاً أسود
+            if (targetData.disableChat === true && currentBadgeType !== 'black') {
+                alert('عذراً، هذا المستخدم قام بتعطيل خاصية استقبال الرسائل.');
+                return; // إيقاف العملية هنا، ولن يفتح الشات
+            }
+        }
+    } catch (e) {
+        console.error("خطأ أثناء فحص الخصوصية:", e);
+    }
+
+    // إذا كان كل شيء سليماً، نفتح الشات باستخدام الدالة الأصلية
+    if (typeof _originalOpenChatWith === 'function') {
+        _originalOpenChatWith(partnerKey);
     }
 };
 </script>
