@@ -1140,7 +1140,7 @@
         <div class="badge-verify-title" id="badgeModalTitle">Verified account</div>
         <div class="badge-verify-text" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 5px;">
     <span id="badgeModalText"></span>
-    <a id="badgeModalLink" href="go:verified" target="_blank" style="color: #1d9bf0; text-decoration: none; font-weight: bold; display: inline-block;">عرض المزيد.</a>
+    <a id="badgeModalLink" href="https://zakidev.shop/what-is-the-verification-mark" target="_blank" style="color: #1d9bf0; text-decoration: none; font-weight: bold; display: inline-block;">عرض المزيد.</a>
 </div>
         
         <button class="badge-verify-btn" id="badgeModalDismissBtn" onclick="closeBadgeVerifyModal()">Dismiss</button>
@@ -1405,7 +1405,7 @@
         </div>
         <div class="profile-field">
             <label><i class="fas fa-shield-alt"></i> التحقق من الحساب</label>
-            <a href="go:verified" style="display:block;background:var(--btn-bg);color:#fff;padding:12px;border-radius:10px;text-decoration:none;text-align:center;font-weight:bold;">
+            <a href="https://zakidev.shop/what-is-the-verification-mark" style="display:block;background:var(--btn-bg);color:#fff;padding:12px;border-radius:10px;text-decoration:none;text-align:center;font-weight:bold;">
                 <i class="fas fa-check-circle"></i> طلب التوثيق
             </a>
             <a onclick="toggleFooterLabels()" style="display:block;background:var(--btn-bg);color:#fff;padding:12px;border-radius:10px;text-decoration:none;text-align:center;font-weight:bold;margin-top:10px;">
@@ -1985,7 +1985,8 @@ var currentStoryCreateTab = 'story';
 var currentProductCategory = 'all';
 
 /* ==================== CONSTANTS ==================== */
-var IMGBB_API_KEY = "af3d93f81d6477d7859d22e79094bda2";
+var FREEIMAGE_API_KEY = "6d207e02198a847aa98d0a2a901485a5";
+var FREEIMAGE_UPLOAD_URL = "https://freeimage.host/api/1/upload";
 var NORMAL_BADGE_URL = 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794862678/Twitter_Verified_Badge.svg_qqheob.png';
 var OWNER_BADGE_URL  = 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794862679/Twitter_Verified_Badge_Gold.svg_suieqe.png';
 var BLACK_BADGE_URL  = 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1795016192/Twitter_Verified_Badge_Gray.svg_1_hr48kq.png';
@@ -3090,24 +3091,39 @@ async function saveProfile() {
 }
 
 /* ==================== IMAGE UPLOAD ==================== */
-async function uploadImageToImgBB(file) {
-    return new Promise(function (resolve, reject) {
-        var reader = new FileReader();
-        reader.onload = async function () {
-            try {
-                var base64 = reader.result.split(',')[1];
-                var formData = new FormData();
-                formData.append('key', IMGBB_API_KEY);
-                formData.append('image', base64);
-                var response = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
-                var data = await response.json();
-                if (data && data.success) resolve(data.data.display_url);
-                else reject(new Error('فشل رفع الصورة'));
-            } catch (e) { reject(e); }
-        };
-        reader.onerror = function () { reject(new Error('تعذر قراءة الملف')); };
-        reader.readAsDataURL(file);
+async function uploadImageToFreeImage(file) {
+    if (!file) throw new Error('لم يتم اختيار ملف');
+    if (!file.type.startsWith('image/')) throw new Error('الملف ليس صورة');
+
+    var formData = new FormData();
+    formData.append('key', FREEIMAGE_API_KEY);
+    formData.append('action', 'upload');
+    formData.append('format', 'json');
+    formData.append('source', file);
+
+    var response = await fetch(FREEIMAGE_UPLOAD_URL, {
+        method: 'POST',
+        body: formData
     });
+
+    if (!response.ok) {
+        throw new Error('فشل الاتصال بالسيرفر (' + response.status + ')');
+    }
+
+    var data = await response.json();
+
+    if (data.status_code !== 200 || !data.image || !data.image.url) {
+        var errMsg = (data.error && data.error.message) || data.status_txt || 'فشل رفع الصورة';
+        throw new Error(errMsg);
+    }
+
+    // إرجاع رابط الصورة المباشر
+    return data.image.url;
+}
+
+// ← اسم قديم للتوافق مع بقية الكود (لا تغيّره)
+async function uploadImageToImgBB(file) {
+    return uploadImageToFreeImage(file);
 }
 async function handleAvatarUpload(event) {
     var file = event.target.files[0];
