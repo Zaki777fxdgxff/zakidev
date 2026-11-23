@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hope for Walking Recovery After Traumatic Paraplegia: Medical and Rehabilitative Solutions</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #ffffff;
+            --text: #0f1419;
+            --muted: #536471;
+            --border: #eff3f4;
+            --callout-bg: #f7f9f9;
+            --callout-border: #1d9bf0;
+            --note-bg: #fff8e6;
+            --note-border: #f5d78a;
+            --note-text: #5c4813;
+            --accent: #1d9bf0;
+            --accent-contrast: #ffffff;
+            --select-bg: #ffffff;
+            --select-border: #cfd9de;
+            --btn-bg: #f7f9f9;
+            --btn-hover: #eff3f4;
+            --circle-border: #cfd9de;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --sidebar-bg: #ffffff;
+            --sidebar-hover: #f7f9f9;
+            --active-link-bg: #e8f5fe;
+            --active-link-text: #1d9bf0;
+            --active-link-border: #1d9bf0;
+            --table-head-bg: #f7f9f9;
+            --table-row-alt: #fafafa;
+            --copy-btn-bg: #e8f5fe;
+            --copy-btn-text: #1d9bf0;
+            --copy-btn-hover: #d0ebfd;
+            --copy-success-bg: #d1f4e0;
+            --copy-success-text: #0f7b4a;
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #000000;
+            --text: #e7e9ea;
+            --muted: #8b98a5;
+            --border: #2f3336;
+            --callout-bg: #16181c;
+            --callout-border: #1d9bf0;
+            --note-bg: #2a2416;
+            --note-border: #5c4a1a;
+            --note-text: #f5d78a;
+            --accent: #1d9bf0;
+            --accent-contrast: #ffffff;
+            --select-bg: #16181c;
+            --select-border: #3a3f44;
+            --btn-bg: #16181c;
+            --btn-hover: #1f2326;
+            --circle-border: #3a3f44;
+            --nav-bg: rgba(0, 0, 0, 0.95);
+            --sidebar-bg: #16181c;
+            --sidebar-hover: #1f2326;
+            --active-link-bg: #1c2733;
+            --active-link-text: #1d9bf0;
+            --active-link-border: #1d9bf0;
+            --table-head-bg: #16181c;
+            --table-row-alt: #111316;
+            --copy-btn-bg: #1c2733;
+            --copy-btn-text: #1d9bf0;
+            --copy-btn-hover: #243547;
+            --copy-success-bg: #0f3d26;
+            --copy-success-text: #6ee7a7;
+        }
+
+        :root[data-theme="blue"] {
+            --bg: #15202b;
+            --text: #ffffff;
+            --muted: #8b98a5;
+            --border: #38444d;
+            --callout-bg: #1c2733;
+            --callout-border: #1d9bf0;
+            --note-bg: #2a2416;
+            --note-border: #5c4a1a;
+            --note-text: #f5d78a;
+            --accent: #1d9bf0;
+            --accent-contrast: #ffffff;
+            --select-bg: #1c2733;
+            --select-border: #38444d;
+            --btn-bg: #1c2733;
+            --btn-hover: #243547;
+            --circle-border: #38444d;
+            --nav-bg: rgba(21, 32, 43, 0.95);
+            --sidebar-bg: #1c2733;
+            --sidebar-hover: #243547;
+            --active-link-bg: #243547;
+            --active-link-text: #1d9bf0;
+            --active-link-border: #1d9bf0;
+            --table-head-bg: #1c2733;
+            --table-row-alt: #1f2c3a;
+            --copy-btn-bg: #243547;
+            --copy-btn-text: #1d9bf0;
+            --copy-btn-hover: #2f4a61;
+            --copy-success-bg: #0f3d26;
+            --copy-success-text: #6ee7a7;
+        }
+
+        html, body { overflow-x: hidden; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            padding-top: 70px;
+        }
+
+        [dir="rtl"] body {
+            font-family: "Segoe UI", Tahoma, "Noto Kufi Arabic", Arial, sans-serif;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 70px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 1000;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .logo-img {
+            height: 36px;
+            width: auto;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+
+        .desktop-nav {
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-btn {
+            display: flex;
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        .menu-btn:hover { background: var(--sidebar-hover); }
+        .menu-btn svg { width: 24px; height: 24px; }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 70px; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+        .sidebar {
+            position: fixed;
+            top: 70px; right: -300px; width: 280px; bottom: 0;
+            background: var(--sidebar-bg);
+            border-left: 1px solid var(--border);
+            z-index: 999; padding: 20px 16px;
+            display: flex; flex-direction: column; gap: 8px;
+            transition: right 0.3s ease, left 0.3s ease;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+        [dir="ltr"] .sidebar {
+            right: auto; left: -300px;
+            border-left: none; border-right: 1px solid var(--border);
+        }
+        [dir="rtl"] .sidebar.active { right: 0; }
+        [dir="ltr"] .sidebar.active { left: 0; }
+
+        .sidebar-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 16px; border-radius: 8px;
+            color: var(--text); text-decoration: none;
+            font-weight: 600; font-size: 0.95rem;
+            transition: background 0.2s, color 0.2s;
+        }
+        .sidebar-link:hover { background: var(--sidebar-hover); }
+        .sidebar-link.active {
+            background: var(--active-link-bg);
+            color: var(--active-link-text);
+            border-right: 3px solid var(--active-link-border);
+        }
+        [dir="ltr"] .sidebar-link.active {
+            border-right: none;
+            border-left: 3px solid var(--active-link-border);
+        }
+        .sidebar-link svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+        .sidebar-divider { height: 1px; background: var(--border); margin: 8px 0; }
+
+        .page { max-width: 820px; margin: 0 auto; padding: 40px 20px; }
+
+        h1 { font-size: 1.9rem; font-weight: 800; color: var(--text); margin-bottom: 12px; line-height: 1.3; }
+        .lead { font-size: 1.05rem; color: var(--muted); margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+        h2 { font-size: 1.35rem; font-weight: 700; color: var(--text); margin-top: 36px; margin-bottom: 14px; }
+        h3 { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-top: 22px; margin-bottom: 10px; }
+        h4 { font-size: 1rem; font-weight: 700; color: var(--text); margin-top: 18px; margin-bottom: 8px; }
+        p { font-size: 1rem; color: var(--text); margin-bottom: 16px; }
+        ul { margin: 0 0 16px 0; padding-right: 24px; }
+        [dir="ltr"] ul { padding-right: 0; padding-left: 24px; }
+        li { font-size: 1rem; color: var(--text); margin-bottom: 8px; }
+        strong { font-weight: 700; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .callout {
+            background: var(--callout-bg); border-left: 4px solid var(--callout-border);
+            border-radius: 4px; padding: 16px 18px; margin: 20px 0;
+            font-size: 0.98rem; color: var(--text);
+        }
+        [dir="rtl"] .callout { border-left: none; border-right: 4px solid var(--callout-border); }
+
+        .note {
+            background: var(--note-bg); border: 1px solid var(--note-border);
+            border-radius: 8px; padding: 16px 18px; margin: 24px 0;
+            font-size: 0.98rem; color: var(--note-text);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 20px 0;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+            min-width: 600px;
+        }
+
+        th {
+            background: var(--table-head-bg);
+            color: var(--text);
+            font-weight: 700;
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+        [dir="rtl"] th { text-align: right; }
+
+        td {
+            padding: 12px 14px;
+            color: var(--text);
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        tbody tr:nth-child(even) { background: var(--table-row-alt); }
+        tbody tr:last-child td { border-bottom: none; }
+
+        .clinic-card {
+            background: var(--callout-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
+        }
+        .clinic-card h4 { margin-top: 0; margin-bottom: 8px; }
+        .clinic-card p { margin-bottom: 6px; font-size: 0.95rem; }
+
+        .copy-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+
+        .copy-text {
+            flex: 1;
+            min-width: 0;
+            word-break: break-word;
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+
+        .copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            font-size: 0.82rem;
+            font-family: inherit;
+            font-weight: 700;
+            color: var(--copy-btn-text);
+            background: var(--copy-btn-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, transform 0.1s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .copy-btn:hover { background: var(--copy-btn-hover); }
+        .copy-btn:active { transform: scale(0.96); }
+        .copy-btn.copied {
+            background: var(--copy-success-bg);
+            color: var(--copy-success-text);
+            border-color: var(--copy-success-text);
+        }
+        .copy-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+        .footer-note {
+            margin-top: 40px; padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.9rem; color: var(--muted);
+        }
+
+        .bottom-bar {
+            margin-top: 40px; padding: 16px 20px;
+            background: var(--callout-bg); border: 1px solid var(--border);
+            border-radius: 12px; display: flex; flex-wrap: wrap;
+            align-items: center; justify-content: space-between; gap: 20px;
+        }
+        .language-block, .theme-block { display: flex; align-items: center; gap: 12px; }
+        .language-label, .theme-label { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+
+        .language-select {
+            padding: 8px 12px; font-size: 0.95rem; font-family: inherit;
+            color: var(--text); background-color: var(--select-bg);
+            border: 1px solid var(--select-border); border-radius: 8px;
+            cursor: pointer; appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23536471' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 12px center; background-size: 16px;
+            padding-right: 34px;
+        }
+        [dir="rtl"] .language-select { background-position: left 12px center; padding-right: 12px; padding-left: 34px; }
+        .language-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.2); }
+
+        .theme-switch { display: inline-flex; align-items: center; gap: 8px; }
+        .theme-circle {
+            width: 36px; height: 36px; border-radius: 50%;
+            border: 1.5px solid var(--circle-border);
+            background: var(--btn-bg); color: var(--text);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; padding: 0; transition: all 0.2s;
+        }
+        .theme-circle:hover { background: var(--btn-hover); transform: translateY(-2px); }
+        .theme-circle:active { transform: scale(0.94); }
+        .theme-circle.active { border-color: var(--accent); border-width: 2px; box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.2); }
+        .theme-circle svg { width: 18px; height: 18px; display: block; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+        .lang-ar { display: none; }
+        .lang-en { display: block; }
+        html[lang="ar"] .lang-ar { display: block; }
+        html[lang="ar"] .lang-en { display: none; }
+        html[lang="en"] .lang-ar { display: none; }
+        html[lang="en"] .lang-en { display: block; }
+
+        @media (min-width: 900px) {
+            .menu-btn { display: none; }
+            .sidebar, .sidebar-overlay { display: none !important; }
+            .desktop-nav { display: flex; }
+            .desktop-nav .sidebar-link { padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; border: none !important; }
+            .desktop-nav .sidebar-link.active { background: var(--active-link-bg); color: var(--active-link-text); }
+            .page { padding-top: 60px; }
+        }
+
+        @media (max-width: 600px) {
+            .page { padding: 24px 16px; }
+            h1 { font-size: 1.5rem; }
+            h2 { font-size: 1.15rem; }
+            .bottom-bar { flex-direction: column; align-items: flex-start; }
+            .language-block, .theme-block { width: 100%; justify-content: space-between; }
+            .copy-row { flex-direction: column; align-items: flex-start; }
+            .copy-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="logo-area">
+            <img src="https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794766853/1794698298093_mkdqr4.png" alt="logo" class="logo-img">
+            <span>Doctor AI</span>
+        </a>
+
+        <div class="desktop-nav">
+            <a href="#privacy" class="sidebar-link" id="desktopPrivacy">Privacy Policy</a>
+            <a href="#terms" class="sidebar-link" id="desktopTerms">Terms of Service</a>
+            <a href="#current" class="sidebar-link active" id="desktopCurrent">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+                <span id="desktopCurrentText">What is the purpose?</span>
+            </a>
+        </div>
+
+        <button class="menu-btn" id="menuToggle" aria-label="Open menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+    </nav>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+        <a href="#current" class="sidebar-link active" id="mobileCurrentLink">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+            <span id="mobileCurrentText">What is the purpose?</span>
+        </a>
+        
+        <a href="https://zakidev.shop/what-is-the-verification-mark" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            <span id="mobileRequestText">Request Verification</span>
+        </a>
+        
+        <a href="https://zakidev.shop/about-removing-the-verification-badge" class="sidebar-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+            <span id="mobileRemoveText">Why was the verification badge removed?</span>
+        </a>
+        
+        <a href="#terms" class="sidebar-link" id="mobileTermsLink">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span id="mobileTermsText">Terms of Service</span>
+        </a>
+        
+        <a href="#privacy" class="sidebar-link" id="mobilePrivacyLink">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span id="mobilePrivacyText">Privacy Policy</span>
+        </a>
+        
+        <class="sidebar-link" id="mobilePrivacyLink">
+            
+            <span id="mobilePrivacyText">سيتم إطلاق التطبيق قريبًا، ترقبوا!</span>
+            <br/>
+            <class="sidebar-link" id="mobilePrivacyLink">
+            <span id="mobilePrivacyText">
+The app will be launched soon, stay tuned!</span>
+        </a>
+    </aside>
+
+    <main class="page">
+        <div id="content">
+
+            <!-- ==================== ENGLISH VERSION (DEFAULT) ==================== -->
+            <div class="lang-en">
+                <h1>Hope for Walking Recovery After Traumatic Paraplegia: Medical and Rehabilitative Solutions</h1>
+                <p class="lead">Spinal cord injuries resulting from accidents are among the most challenging medical conditions, often leading to paraplegia and loss of the ability to walk. Although medicine has not yet developed a conventional surgery that can fully reattach a completely severed spinal cord, enormous medical advances have opened new and promising doors that enable many patients to stand and regain the ability to walk again.</p>
+
+                <h2>First: Surgical Options and Modern Medical Interventions</h2>
+                <p>Surgical intervention depends on the timing and nature of the injury (whether it is a complete or partial cut). Key solutions include the following:</p>
+
+                <h3>1. Epidural Spinal Cord Stimulation Implant Surgery</h3>
+                <p><strong>Scientific idea:</strong> This is a revolutionary technique in which a small electronic device (a stimulation chip) is implanted over the spinal cord below the injury site.</p>
+                <p><strong>How does it help walking?</strong> The chip amplifies weak neural signals coming from the brain and sends carefully calibrated electrical pulses to the leg muscles, allowing the patient to voluntarily move their legs, stand, and walk with the help of a walker — even years after the accident.</p>
+
+                <h3>2. Decompression and Spinal Fixation Surgeries</h3>
+                <p><strong>Timing:</strong> This surgery is performed urgently within the first hours or days after the accident.</p>
+                <p><strong>Goal:</strong> To remove bone fragments or cartilage pressing on the spinal cord and to stabilize fractured vertebrae, protecting the remaining nerve fibers from damage and giving them a chance to recover.</p>
+
+                <h3>3. Nerve &amp; Tendon Transfers</h3>
+                <p><strong>Goal:</strong> In cases of partial injury or injuries at lower spinal levels, the surgeon can transfer healthy nerves or tendons from normally functioning areas and connect them to affected muscles to restore essential motor functions in the knee or foot.</p>
+
+                <h3>4. Spasticity Management Surgeries</h3>
+                <p><strong>Importance:</strong> Many spinal cord injury patients suffer from severe stiffness and spasms in the leg muscles that hinder movement. Surgical intervention (such as implanting a baclofen pump or microscopic intervention on nerve roots) reduces this spasticity and facilitates the use of assistive devices and walking training.</p>
+
+                <h2>Second: Intensive Neurological Rehabilitation (The Cornerstone of Treatment)</h2>
+                <p>No surgical intervention can succeed alone without a comprehensive rehabilitation program, which includes:</p>
+                <ul>
+                    <li><strong>Neuro-Rehabilitation:</strong> Aims to train the nervous system to form alternative neural pathways (neuroplasticity) and strengthen the trunk and upper body muscles.</li>
+                    <li><strong>Robotics and Exoskeletons:</strong> Using mechanical external frames that support the patient's body and help them practice correct walking steps to stimulate muscles and nerves.</li>
+                    <li><strong>Hydrotherapy:</strong> Using water buoyancy to reduce body weight, making it easier for the patient to stand and move their legs without joint strain.</li>
+                </ul>
+
+                <h2>Third: Medical Specialties Responsible for Assessing the Condition</h2>
+                <p>To begin the treatment journey correctly, two parallel paths should be pursued:</p>
+                <ul>
+                    <li><strong>Consultant of Neurosurgery and Spine Surgery:</strong> To examine imaging and determine the need for surgical intervention or stimulator implantation.</li>
+                    <li><strong>Consultant and Specialist in Neurological Rehabilitation and Spinal Cord Injuries:</strong> To develop an intensive and long-term physical therapy plan.</li>
+                </ul>
+
+                <h2>Fourth: Directory of Doctors and Specialized Centers (Cairo and Giza)</h2>
+                <p>Below is a list of the most prominent consultants and specialized centers for assessing the condition and beginning rehabilitation:</p>
+
+                <h3>1. Neurosurgery and Spine Consultants</h3>
+
+                <div class="clinic-card">
+                    <h4>Prof. Dr. Ayman Tarek Mahmoud (Professor of Neurosurgery and Spine Surgery – Kasr Al-Ainy)</h4>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>Address:</strong> 45 El-Dokki Street, Giza.</span>
+                        <button class="copy-btn" data-copy="45 El-Dokki Street, Giza" data-copied="Copied!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>Phone:</strong> 01033207048</span>
+                        <button class="copy-btn" data-copy="01033207048" data-copied="Copied!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="clinic-card">
+                    <h4>Dr. Hussein Zakaria (Consultant of Neurosurgery, Spine and Spinal Cord Surgery – Kasr Al-Ainy)</h4>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>Address:</strong> 43 Mesdak Street, El-Dokki, Giza.</span>
+                        <button class="copy-btn" data-copy="43 Mesdak Street, El-Dokki, Giza" data-copied="Copied!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>Phone:</strong> 01289888618</span>
+                        <button class="copy-btn" data-copy="01289888618" data-copied="Copied!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="clinic-card">
+                    <h4>Dr. Ahmed Hussein Omar (Professor of Neurosurgery, Spine Endoscopy and Nerve Transfers – Kasr Al-Ainy)</h4>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>Address:</strong> 119 El-Tahrir Street, El-Borg El-Masry Administrative Building (facing El-Dokki Metro Station), Giza.</span>
+                        <button class="copy-btn" data-copy="119 El-Tahrir Street, El-Borg El-Masry Administrative Building (facing El-Dokki Metro Station), Giza" data-copied="Copied!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>Phone:</strong> 01140376679</span>
+                        <button class="copy-btn" data-copy="01140376679" data-copied="Copied!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <h3>2. Neurological Rehabilitation and Hydrotherapy Centers</h3>
+
+                <div class="clinic-card">
+                    <h4>Al-Manara Center for Physiotherapy and Rehabilitation (Specialized in Spinal Cord Injury Rehabilitation and Walking Devices)</h4>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>Address:</strong> 67 Shihab Street, Mohandessin / 20 Fawzy Ramah Street behind Al-Amal Hospital, Mohandessin, Giza.</span>
+                        <button class="copy-btn" data-copy="67 Shihab Street, Mohandessin / 20 Fawzy Ramah Street behind Al-Amal Hospital, Mohandessin, Giza" data-copied="Copied!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>Phone:</strong> 01011451647</span>
+                        <button class="copy-btn" data-copy="01011451647" data-copied="Copied!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="clinic-card">
+                    <h4>Elalawy Center for Medical Rehabilitation and Hydrotherapy (Includes a Specialized Neurological Rehabilitation Unit and a Hydrotherapy Unit)</h4>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>Address:</strong> 8 Abdel Azim Pasha Rashed Street, Agouza, Giza.</span>
+                        <button class="copy-btn" data-copy="8 Abdel Azim Pasha Rashed Street, Agouza, Giza" data-copied="Copied!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>Phone:</strong> 01550501352</span>
+                        <button class="copy-btn" data-copy="01550501352" data-copied="Copied!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <h2>Fifth: Practical Steps Before the Medical Examination</h2>
+                <p>To get the most out of the first medical consultation, it is recommended to prepare the following:</p>
+                <ul>
+                    <li><strong>MRI and CT Scans:</strong> The most recent imaging should be brought to clearly show the condition of the vertebrae and spinal cord.</li>
+                    <li><strong>Previous Surgical Reports:</strong> A summary of the case and details of any operations performed immediately after the accident.</li>
+                    <li><strong>EMG/NCS (Nerve and Muscle Study):</strong> If available, as it shows the integrity and response of peripheral nerves.</li>
+                </ul>
+
+                <div class="note"><strong>Medical Disclaimer:</strong> The information in this article is for general medical awareness and guidance purposes and does not replace direct clinical examination and evaluation by a specialist physician for each individual case.</div>
+
+                <h2>Walking Recovery Rates: A Detailed Statistical Breakdown</h2>
+                <p>The rate of walking recovery after traumatic paraplegia depends on two main factors: the initial degree of spinal cord injury (according to the global AIS medical scale) and the type of therapeutic and surgical intervention used. Statistical rates of walking recovery (with or without assistive devices) range from less than 15% in complete injuries to more than 90% in mild partial injuries. <strong>[1, 2]</strong></p>
+                <p>Below is a detailed breakdown of recovery and walking rates across all medical possibilities:</p>
+
+                <h3>First: Walking Recovery Rates by "Injury Grade" (Rehabilitation and Conventional Surgeries)</h3>
+                <p>Physicians classify spinal cord injuries into 4 main grades (A to D). This grade determines the chances of improvement during the first 12 to 18 months of intensive physical therapy and spinal fixation: <strong>[1]</strong></p>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Injury Grade (AIS Scale)</th>
+                                <th>Neurological Description</th>
+                                <th>Walking Recovery Rate</th>
+                                <th>Expected Improvement Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Grade A (Complete Injury)</strong></td>
+                                <td>Total loss of movement and sensation below the injury level.</td>
+                                <td>Less than 15% – 20%</td>
+                                <td>Chances of independent walking are very low; however, about 20% may convert to a partial injury if the injury is in the lower lumbar vertebrae.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Grade B (Sensory Incomplete)</strong></td>
+                                <td>Sensation present below the injury (even if slight) with complete loss of movement.</td>
+                                <td>About 33% – 35%</td>
+                                <td>About one-third of patients regain the ability to walk with a walker or crutches after intensive rehabilitation.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Grade C (Motor Incomplete)</strong></td>
+                                <td>Weak movement present in less than half of the muscles below the injury.</td>
+                                <td>71% – 92% (under 50 years)<br>25% – 42% (over 50 years)</td>
+                                <td>Very high chances of walking with assistive devices; the patient's age plays a major role in the rate.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Grade D (Mild Partial Injury)</strong></td>
+                                <td>Moderate movement and strength present in more than half of the affected muscles.</td>
+                                <td>95% – 100%</td>
+                                <td>The vast majority regain the ability to walk independently or with a simple cane in the community.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p style="font-size:0.88rem; color:var(--muted);">(Source: Neurological rehabilitation studies, the American Spinal Injury Association scale, Shirley Ryan AbilityLab, and the National Library of Medicine PMC). <strong>[1, 2]</strong></p>
+
+                <h3>Second: Improvement Rates with "Modern Interventions and Specialized Surgeries"</h3>
+                <p>When a patient's response to conventional physical therapy stalls (especially in chronic cases after a year or more), modern interventions increase the rates of movement and standing recovery:</p>
+
+                <h4>Epidural Spinal Cord Stimulation</h4>
+                <ul>
+                    <li><strong>Stepping and standing recovery rate:</strong> Scientific reviews published in PMC indicate that about 44% of patients with chronic injuries were able to regain the ability to stand and perform walking steps (with a walker or weight support) when the stimulator was combined with intensive rehabilitation, while 87% showed noticeable improvement in voluntary muscle activity.</li>
+                    <li><strong>Practical outcome:</strong> In complete paralysis cases (AIS A), walking is often limited to short distances at home or in the rehabilitation center using a walker and while the device is on, whereas patients with partial grades (B and C) achieve longer walking distances and greater independence. <strong>[1, 2, 3]</strong></li>
+                </ul>
+
+                <h4>Nerve &amp; Tendon Transfers</h4>
+                <p><strong>Success rate:</strong> Achieves functional success ranging between 70% and 85% in restoring a specific movement (such as lifting a dropped foot or extending the knee), provided it is performed in partial or low-level injuries where healthy transferable nerves are available, and intervention is done at the appropriate time before muscle atrophy.</p>
+
+                <h4>Decompression and Spinal Fixation Surgeries (Early)</h4>
+                <p><strong>Impact rate:</strong> Performing them within the first 24 to 72 hours of the accident increases the patient's chances of improving by one or two grades on the AIS scale by up to double compared to cases where surgical intervention is delayed, by rescuing nerve fibers from swelling and continuous pressure.</p>
+
+                <h4>Spasticity Management Surgeries (e.g., Baclofen Pump)</h4>
+                <p><strong>Success rate:</strong> Succeeds in reducing muscle stiffness in more than 85% of patients. It does not restore the nerve signal itself, but it removes the mechanical obstacle that prevents the patient from extending their legs and standing.</p>
+
+                <h3>Decisive Factors That Raise or Lower These Rates</h3>
+                <ul>
+                    <li><strong>Level of spinal injury:</strong> Injuries in the lumbar vertebrae (lower back) have much higher chances of walking recovery compared to injuries in the upper thoracic vertebrae. <strong>[1]</strong></li>
+                    <li><strong>Age and general health status:</strong> Patients under 50 years of age have a higher ability to form alternative neural pathways (neuroplasticity). <strong>[1]</strong></li>
+                    <li><strong>Commitment to intensive rehabilitation:</strong> The figures above assume the patient undergoes a daily, intensive neurological rehabilitation program for several months; without this rehabilitation, the benefit rates of any surgery drop by about half.</li>
+                </ul>
+
+                <div class="callout"><strong>Note on the data:</strong> If you are incorporating these data into your article or application, you can always refer back to the original sources listed below to verify the accuracy and currency of the numbers.</div>
+
+                <h2>Scientific Sources and References</h2>
+                <h4>1. Sources on walking recovery rates by injury grade (AIS scale)</h4>
+                <ul>
+                    <li><strong>Shirley Ryan AbilityLab:</strong> Shows the precise statistical distribution of walking rates for each grade of partial and complete injury (A, B, C, D) and the effect of age on recovery rates. <a href="https://www.rehabchicago.org/incomplete-sci/" target="_blank" rel="noopener">Incomplete Spinal Cord Injury: AIS Grades &amp; Walking Recovery</a>.</li>
+                    <li><strong>National Library of Medicine (NIH / PMC):</strong> A long-term study analyzing neurological recovery indicators and the likelihood of regaining walking ability after traumatic spinal cord injuries. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10889415/" target="_blank" rel="noopener">Long-term outcome and predictors of neurological recovery</a>.</li>
+                </ul>
+
+                <h4>2. Sources on the success rates of epidural spinal cord stimulation</h4>
+                <ul>
+                    <li><strong>Systematic review of 64 clinical studies (PMC):</strong> Documents that 44% of patients with chronic injuries regained the ability to stand and perform assisted walking steps, and that 87% showed improvement in voluntary muscle activity. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10889415/" target="_blank" rel="noopener">Epidural Spinal Cord Stimulation for Spinal Cord Injury in Humans</a>.</li>
+                    <li><strong>Phase II study of motor improvement with epidural stimulation (PMC):</strong> Tracks the timeline of improvement in movement, balance, and spasticity reduction over 12 months of implantation and rehabilitation. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12454953/" target="_blank" rel="noopener">Time Course of Motor Improvement by Epidural Stimulation</a>.</li>
+                </ul>
+
+                <h4>3. Sources on the success rates of early decompression and spinal fixation surgeries</h4>
+                <ul>
+                    <li><strong>Updated clinical guidelines for managing acute spinal cord injuries (PMC):</strong> Confirm that surgical intervention within 24 hours of the accident doubles the likelihood of the patient improving by two or more grades on the AIS scale. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10964895/" target="_blank" rel="noopener">Clinical Practice Guideline on Timing of Decompressive Surgery</a>.</li>
+                    <li><strong>Scientific review of surgical timing after spinal cord injury (PMC):</strong> Shows that decompression within the first 24 hours increases the chances of neurological improvement and motor independence by about threefold compared to delayed intervention. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12599412/" target="_blank" rel="noopener">Surgical Timing After Spinal Cord Injury</a>.</li>
+                </ul>
+
+                <h4>4. Sources on nerve transfer surgeries and spasticity management</h4>
+                <ul>
+                    <li><strong>Scientific review on nerve transfer surgeries in the lower extremities (PubMed):</strong> Reviews the mechanisms of transferring healthy nerves to restore movement functions in the leg and foot after spinal cord and brachial plexus injuries. <a href="https://pubmed.ncbi.nlm.nih.gov/40433077/" target="_blank" rel="noopener">Nerve Transfers in the Lower Extremity</a>.</li>
+                    <li><strong>Systematic review of the effectiveness of baclofen pump in treating spasticity (PMC):</strong> Documents the significant reduction in muscle stiffness scores (Ashworth scale) in patients with chronic spinal cord injuries, facilitating standing and rehabilitation. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4066544/" target="_blank" rel="noopener">Effectiveness of Intrathecal Baclofen on Spasticity</a>.</li>
+                    <li><strong>Meta-analysis of the effect of baclofen on spasticity and walking speed (PMC):</strong> Confirms its role in improving walking speed and reducing spasticity that is unresponsive to conventional treatment. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10990847/" target="_blank" rel="noopener">Intrathecal Baclofen Injection Efficacy for Spasticity and Gait</a>.</li>
+                </ul>
+
+                <p class="footer-note"><strong>Doctor AI... with you in work and study, and with you toward a more connected and advanced medical community.</strong></p>
+            </div>
+
+            <!-- ==================== ARABIC VERSION ==================== -->
+            <div class="lang-ar">
+                <h1>الأمل في استعادة المشي بعد الشلل النصفي الناتج عن الحوادث: الحلول الطبية والتأهيلية المتاحة</h1>
+                <p class="lead">تُعد إصابات الحبل الشوكي الناتجة عن الحوادث من أصعب التحديات الطبية، حيث تؤدي في كثير من الأحيان إلى الشلل النصفي وفقدان القدرة على المشي. ورغم أن الطب لم يتوصل بعد إلى جراحة تقليدية تعيد لحام الحبل الشوكي المقطوع بالكامل، إلا أن التطور الطبي الهائل فتح أبواباً جديدة ومبشرة تُمكّن الكثير من المصابين من الوقوف واستعادة القدرة على المشي مرة أخرى.</p>
+
+                <h2>أولاً: الخيارات الجراحية والتدخلات الطبية الحديثة</h2>
+                <p>يعتمد التدخل الجراحي على توقيت الإصابة وطبيعتها (هل هي قطع كامل أم جزئي)، وتشمل أبرز الحلول ما يلي:</p>
+
+                <h3>1. جراحة زراعة محفز الحبل الشوكي فوق الجافية (Epidural Stimulation)</h3>
+                <p><strong>الفكرة العلمية:</strong> هي تقنية ثورية يتم فيها زراعة جهاز إلكتروني دقيق (شريحة تحفيز) فوق الحبل الشوكي أسفل منطقة الإصابة.</p>
+                <p><strong>كيف تساعد على المشي؟</strong> تعمل هذه الشريحة على تضخيم الإشارات العصبية الضعيفة القادمة من المخ وإرسال نبضات كهربائية مدروسة لعضلات الساقين، مما يسمح للمريض بتحريك ساقيه إرادياً، والوقوف، والمشي بمساعدة مشاية، حتى بعد مرور سنوات على الحادث.</p>
+
+                <h3>2. جراحات تخفيف الضغط وتثبيت الفقرات</h3>
+                <p><strong>التوقيت:</strong> تُجرى هذه الجراحة بشكل عاجل في الساعات أو الأيام الأولى بعد وقوع الحادث.</p>
+                <p><strong>الهدف:</strong> إزالة شظايا العظام أو الغضاريف التي تضغط على النخاع الشوكي وتثبيت الفقرات المكسورة، مما يحمي الألياف العصبية المتبقية من التلف ويمنحها فرصة للتعافي.</p>
+
+                <h3>3. جراحات نقل الأعصاب والأوتار (Nerve &amp; Tendon Transfers)</h3>
+                <p><strong>الهدف:</strong> في الحالات التي تكون فيها الإصابة جزئية أو في مستويات منخفضة من العمود الفقري، يمكن للجراح نقل أعصاب أو أوتار سليمة من مناطق تعمل بشكل طبيعي وتوصيلها بالعضلات المتأثرة لاستعادة وظائف حركية أساسية في الركبة أو القدم.</p>
+
+                <h3>4. جراحات السيطرة على التشنج العضلي (Spasticity Management)</h3>
+                <p><strong>أهميتها:</strong> يعاني الكثير من مصابي الحبل الشوكي من تيبس وتشنج شديد في عضلات الساقين يعيق حركتهم. التدخل الجراحي (مثل زراعة مضخة باكلوفين أو التدخل الميكروسكوبي على جذور الأعصاب) يقلل هذا التشنج ويسهّل استخدام الأجهزة التعويضية والتدريب على المشي.</p>
+
+                <h2>ثانياً: التأهيل العصبي المكثف (حجر الأساس في العلاج)</h2>
+                <p>لا يمكن لأي تدخل جراحي أن ينجح بمفرده دون برنامج تأهيلي متكامل، ويشمل:</p>
+                <ul>
+                    <li><strong>العلاج الطبيعي العصبي (Neuro-Rehabilitation):</strong> يهدف إلى تدريب الجهاز العصبي على تكوين مسارات عصبية بديلة (المرونة العصبية) وتقوية عضلات الجذع والجزء العلوي من الجسم.</li>
+                    <li><strong>الروبوتات والأجهزة التعويضية (Exoskeletons):</strong> استخدام هياكل خارجية آلية تدعم جسم المريض وتساعده على ممارسة خطوات المشي الصحيحة لتحفيز العضلات والأعصاب.</li>
+                    <li><strong>العلاج المائي (Hydrotherapy):</strong> استغلال طفو الماء لتقليل وزن الجسم، مما يسهل على المريض الوقوف وتحريك ساقيه دون إجهاد المفاصل.</li>
+                </ul>
+
+                <h2>ثالثاً: التخصصات الطبية المسؤولة عن تقييم الحالة</h2>
+                <p>لبدء رحلة العلاج بشكل صحيح، يجب التوجه إلى مسارين متوازيين:</p>
+                <ul>
+                    <li><strong>استشاري جراحة المخ والأعصاب والعمود الفقري:</strong> لفحص الأشعة وتحديد مدى الحاجة لتدخل جراحي أو زراعة محفز.</li>
+                    <li><strong>استشاري وأخصائي التأهيل العصبي وإصابات الحبل الشوكي:</strong> لوضع خطة علاج طبيعي مكثفة وطويلة الأمد.</li>
+                </ul>
+
+                <h2>رابعاً: دليل الأطباء والمراكز المتخصصة (القاهرة والجيزة)</h2>
+                <p>فيما يلي قائمة بأبرز الاستشاريين والمراكز المتخصصة لتقييم الحالة والبدء في التأهيل:</p>
+
+                <h3>1. استشاريو جراحة المخ والأعصاب والعمود الفقري</h3>
+
+                <div class="clinic-card">
+                    <h4>أ.د. أيمن طارق محمود (أستاذ جراحة المخ والأعصاب والعمود الفقري – القصر العيني)</h4>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>العنوان:</strong> 45 شارع الدقي، الجيزة.</span>
+                        <button class="copy-btn" data-copy="45 شارع الدقي، الجيزة" data-copied="تم النسخ!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>نسخ</span>
+                        </button>
+                    </div>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>الهاتف:</strong> 01033207048</span>
+                        <button class="copy-btn" data-copy="01033207048" data-copied="تم النسخ!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>نسخ</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="clinic-card">
+                    <h4>د. حسين زكريا (استشاري جراحة المخ والأعصاب والعمود الفقري والنخاع الشوكي – القصر العيني)</h4>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>العنوان:</strong> 43 شارع مصدق، الدقي، الجيزة.</span>
+                        <button class="copy-btn" data-copy="43 شارع مصدق، الدقي، الجيزة" data-copied="تم النسخ!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>نسخ</span>
+                        </button>
+                    </div>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>الهاتف:</strong> 01289888618</span>
+                        <button class="copy-btn" data-copy="01289888618" data-copied="تم النسخ!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>نسخ</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="clinic-card">
+                    <h4>د. أحمد حسين عمر (أستاذ جراحة الأعصاب ومناظير العمود الفقري ونقل الأعصاب – القصر العيني)</h4>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>العنوان:</strong> 119 شارع التحرير، البرج المصري الإداري (أمام محطة مترو الدقي)، الجيزة.</span>
+                        <button class="copy-btn" data-copy="119 شارع التحرير، البرج المصري الإداري (أمام محطة مترو الدقي)، الجيزة" data-copied="تم النسخ!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>نسخ</span>
+                        </button>
+                    </div>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>الهاتف:</strong> 01140376679</span>
+                        <button class="copy-btn" data-copy="01140376679" data-copied="تم النسخ!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>نسخ</span>
+                        </button>
+                    </div>
+                </div>
+
+                <h3>2. مراكز التأهيل العصبي والعلاج المائي</h3>
+
+                <div class="clinic-card">
+                    <h4>مركز المنارة للعلاج الطبيعي والتأهيل (متخصص في تأهيل إصابات النخاع الشوكي وأجهزة المشي)</h4>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>العنوان:</strong> 67 شارع شهاب، المهندسين / 20 شارع فوزي رماح خلف مستشفى الأمل، المهندسين، الجيزة.</span>
+                        <button class="copy-btn" data-copy="67 شارع شهاب، المهندسين / 20 شارع فوزي رماح خلف مستشفى الأمل، المهندسين، الجيزة" data-copied="تم النسخ!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>نسخ</span>
+                        </button>
+                    </div>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>الهاتف:</strong> 01011451647</span>
+                        <button class="copy-btn" data-copy="01011451647" data-copied="تم النسخ!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>نسخ</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="clinic-card">
+                    <h4>مركز علاجي للتأهيل الطبي والعلاج المائي (يضم وحدة متخصصة للتأهيل العصبي ووحدة علاج مائي)</h4>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>العنوان:</strong> 8 شارع عبد العظيم باشا راشد، العجوزة، الجيزة.</span>
+                        <button class="copy-btn" data-copy="8 شارع عبد العظيم باشا راشد، العجوزة، الجيزة" data-copied="تم النسخ!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>نسخ</span>
+                        </button>
+                    </div>
+                    <div class="copy-row">
+                        <span class="copy-text"><strong>الهاتف:</strong> 01550501352</span>
+                        <button class="copy-btn" data-copy="01550501352" data-copied="تم النسخ!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>نسخ</span>
+                        </button>
+                    </div>
+                </div>
+
+                <h2>خامساً: خطوات عملية قبل الذهاب للكشف الطبي</h2>
+                <p>لتحقيق أقصى استفادة من الاستشارة الطبية الأولى، يُنصح بتجهيز الآتي:</p>
+                <ul>
+                    <li><strong>أشعة الرنين المغناطيسي (MRI) والأشعة المقطعية:</strong> يجب إحضار أحدث الأشعات لتوضيح وضع الفقرات والحبل الشوكي بدقة.</li>
+                    <li><strong>التقارير الجراحية السابقة:</strong> ملخص الحالة وتفاصيل أي عمليات أُجريت بعد الحادث مباشرة.</li>
+                    <li><strong>رسم الأعصاب والعضلات (EMG/NCS):</strong> في حال توفره، لأنه يوضح مدى سلامة الأعصاب الطرفية واستجابتها.</li>
+                </ul>
+
+                <div class="note"><strong>تنويه طبي:</strong> المعلومات الواردة في هذا المقال هي لأغراض التوعية والإرشاد الطبي العام، ولا تغني عن الفحص السريري المباشر وتقييم الطبيب المختص لكل حالة على حدة.</div>
+
+                <h2>نسب استعادة القدرة على المشي: تفصيل إحصائي دقيق</h2>
+                <p>تعتمد نسبة استعادة القدرة على المشي بعد الشلل النصفي الناتج عن الحوادث على عاملين رئيسيين: درجة الإصابة الأولية للحبل الشوكي (وفقاً لمقياس AIS الطبي العالمي) ونوع التدخل العلاجي والجراحي المتبع، وتتراوح النسب الإحصائية لاستعادة المشي (بمساعدة أجهزة أو بدونها) بين أقل من 15% في الإصابات الكاملة وتصل إلى أكثر من 90% في الإصابات الجزئية البسيطة. <strong>[1, 2]</strong></p>
+                <p>فيما يلي تفصيل دقيق لنسب الشفاء واستعادة المشي في كافة الاحتمالات الطبية:</p>
+
+                <h3>أولاً: نسب استعادة المشي حسب "درجة الإصابة" (التأهيل والجراحات التقليدية)</h3>
+                <p>يُصنف الأطباء إصابات النخاع الشوكي إلى 4 درجات رئيسية (من A إلى D)، وتحدد هذه الدرجة فرص التحسن خلال أول 12 إلى 18 شهراً من العلاج الطبيعي المكثف وتثبيت الفقرات: <strong>[1]</strong></p>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>درجة الإصابة (مقياس AIS)</th>
+                                <th>وصف الحالة العصبية</th>
+                                <th>نسبة استعادة القدرة على المشي</th>
+                                <th>تفاصيل التحسن المتوقع</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>الدرجة A (إصابة كاملة)</strong></td>
+                                <td>فقدان تام للحركة والإحساس أسفل مستوى الإصابة.</td>
+                                <td>أقل من 15% – 20%</td>
+                                <td>فرص المشي المستقل ضعيفة جداً؛ ولكن حوالي 20% قد يتحولون إلى إصابة جزئية إذا كانت الإصابة في الفقرات القطنية السفلى.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>الدرجة B (إصابة حسية جزئية)</strong></td>
+                                <td>وجود إحساس أسفل الإصابة (ولو بسيط) مع فقدان تام للحركة.</td>
+                                <td>حوالي 33% – 35%</td>
+                                <td>ثلث المصابين تقريباً يستعيدون القدرة على المشي بمساعدة مشاية أو عكازات بعد التأهيل المكثف.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>الدرجة C (إصابة حركية جزئية)</strong></td>
+                                <td>وجود حركة ضعيفة في أقل من نصف العضلات أسفل الإصابة.</td>
+                                <td>71% – 92% (أقل من 50 عاماً)<br>25% – 42% (أكبر من 50 عاماً)</td>
+                                <td>فرص عالية جداً للمشي بمساعدة أجهزة تعويضية، ويلعب عمر المريض دوراً كبيراً في النسبة.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>الدرجة D (إصابة جزئية بسيطة)</strong></td>
+                                <td>وجود حركة وقوة متوسطة في أكثر من نصف العضلات المتأثرة.</td>
+                                <td>95% – 100%</td>
+                                <td>الغالبية العظمى تستعيد القدرة على المشي بشكل مستقل أو بعكاز بسيط في المجتمع.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p style="font-size:0.88rem; color:var(--muted);">(المصدر: دراسات التأهيل العصبي ومقياس جمعية إصابات العمود الفقري الأمريكية Shirley Ryan AbilityLab ومكتبة الطب الوطنية PMC). <strong>[1, 2]</strong></p>
+
+                <h3>ثانياً: نسب التحسن مع "التدخلات الحديثة والجراحات المتخصصة"</h3>
+                <p>عندما تتوقف استجابة المريض للعلاج الطبيعي التقليدي (خاصة في الحالات المزمنة بعد مرور عام أو أكثر)، ترفع التدخلات الحديثة من نسب استعادة الحركة والوقوف:</p>
+
+                <h4>زراعة محفز الحبل الشوكي فوق الجافية (Epidural Stimulation)</h4>
+                <ul>
+                    <li><strong>نسبة استعادة الخطو والوقوف:</strong> تشير المراجعات العلمية المنشورة في PMC إلى أن حوالي 44% من المصابين بإصابات مزمنة تمكنوا من استعادة القدرة على الوقوف وأداء خطوات مشي (بمساعدة مشاية أو دعم وزن) عند دمج المحفز مع التأهيل المكثف، بينما أظهر 87% منهم تحسناً ملحوظاً في نشاط العضلات الإرادي.</li>
+                    <li><strong>النتيجة العملية:</strong> في حالات الشلل الكامل (AIS A)، غالباً ما يقتصر المشي على المسافات القصيرة داخل المنزل أو المركز التأهيلي باستخدام مشاية وأثناء تشغيل الجهاز، بينما يحقق مصابو الدرجات الجزئية (B و C) مسافات مشي أطول واستقلالية أكبر. <strong>[1, 2, 3]</strong></li>
+                </ul>
+
+                <h4>جراحات نقل الأعصاب والأوتار (Nerve &amp; Tendon Transfers)</h4>
+                <p><strong>نسبة النجاح:</strong> تحقق نجاحاً وظيفياً يتراوح بين 70% و 85% في استعادة حركة محددة (مثل رفع مشط القدم الساقط أو فرد الركبة)، بشرط أن تُجرى في الإصابات الجزئية أو المنخفضة التي تتوفر فيها أعصاب سليمة قابلة للنقل، وأن يتم التدخل في التوقيت المناسب قبل ضمور العضلات.</p>
+
+                <h4>جراحات تخفيف الضغط وتثبيت الفقرات (المبكرة)</h4>
+                <p><strong>نسبة التأثير:</strong> إجراؤها خلال أول 24 إلى 72 ساعة من الحادث يرفع فرص تحسن المريض بمقدار درجة أو درجتين على مقياس (AIS) بنسبة تصل إلى ضعف الحالات التي يتأخر فيها التدخل الجراحي، وذلك عبر إنقاذ الألياف العصبية من التورم والضغط المستمر.</p>
+
+                <h4>جراحات السيطرة على التشنج (مثل مضخة باكلوفين)</h4>
+                <p><strong>نسبة النجاح:</strong> تنجح في تقليل التيبس العضلي لدى أكثر من 85% من المرضى، وهي لا تعيد الإشارة العصبية بنفسها، لكنها تزيل العائق الميكانيكي الذي يمنع المريض من فرد ساقيه والوقوف.</p>
+
+                <h3>عوامل حاسمة ترفع أو تقلل من هذه النسب</h3>
+                <ul>
+                    <li><strong>مستوى الإصابة في العمود الفقري:</strong> الإصابات في الفقرات القطنية (أسفل الظهر) تمتلك فرصاً أعلى بكثير لاستعادة المشي مقارنة بالإصابات في الفقرات الصدرية العلوية. <strong>[1]</strong></li>
+                    <li><strong>السن والحالة الصحية العامة:</strong> المرضى تحت سن الـ 50 عاماً يمتلكون قدرة أعلى على تكوين مسارات عصبية بديلة (المرونة العصبية). <strong>[1]</strong></li>
+                    <li><strong>الالتزام بالتأهيل المكثف:</strong> الأرقام المذكورة أعلاه تفترض خضوع المريض لبرنامج تأهيل عصبي يومي ومكثف لعدة أشهر؛ وبدون هذا التأهيل تنخفض نسب الاستفادة من أي جراحة إلى النصف تقريباً.</li>
+                </ul>
+
+                <div class="callout"><strong>ملاحظة حول البيانات:</strong> إذا كنت تضع هذه البيانات ضمن مقالك أو تطبيقك، يمكنك دائماً الرجوع إلى المصادر الأصلية المذكورة أدناه للتأكد من دقة الأرقام وتحديثها.</div>
+
+                <h2>المصادر والمراجع العلمية</h2>
+                <h4>1. مصادر نسب استعادة المشي حسب درجات الإصابة (مقياس AIS)</h4>
+                <ul>
+                    <li><strong>المعهد الوطني لأبحاث التأهيل (Shirley Ryan AbilityLab):</strong> يوضح التوزيع الإحصائي الدقيق لنسب المشي لكل درجة من درجات الإصابة الجزئية والكاملة (A, B, C, D) وتأثير السن على نسب التعافي. <a href="https://www.rehabchicago.org/incomplete-sci/" target="_blank" rel="noopener">Incomplete Spinal Cord Injury: AIS Grades &amp; Walking Recovery</a>.</li>
+                    <li><strong>المكتبة الوطنية للطب (NIH / PMC):</strong> دراسة طويلة المدى تحلل مؤشرات التعافي العصبي واحتمالات استعادة القدرة على المشي بعد إصابات الحبل الشوكي الرضّية. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10889415/" target="_blank" rel="noopener">Long-term outcome and predictors of neurological recovery</a>.</li>
+                </ul>
+
+                <h4>2. مصادر نسب نجاح زراعة محفز الحبل الشوكي (Epidural Stimulation)</h4>
+                <ul>
+                    <li><strong>مراجعة منهجية لـ 64 دراسة سريرية (PMC):</strong> توثق أن 44% من المصابين بإصابات مزمنة استعادوا القدرة على الوقوف وأداء خطوات مشي بمساعدة، وأن 87% أظهروا تحسناً في نشاط العضلات الإرادي. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10889415/" target="_blank" rel="noopener">Epidural Spinal Cord Stimulation for Spinal Cord Injury in Humans</a>.</li>
+                    <li><strong>دراسة المرحلة الثانية للتطور الحركي بالتحفيز فوق الجافية (PMC):</strong> ترصد الجدول الزمني لتحسن الحركة والتوازن وتقليل التشنج على مدار 12 شهراً من الزراعة والتأهيل. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12454953/" target="_blank" rel="noopener">Time Course of Motor Improvement by Epidural Stimulation</a>.</li>
+                </ul>
+
+                <h4>3. مصادر نسب نجاح جراحات تخفيف الضغط وتثبيت الفقرات المبكرة</h4>
+                <ul>
+                    <li><strong>الإرشادات السريرية المحدثة لإدارة إصابات النخاع الشوكي الحادة (PMC):</strong> تؤكد أن التدخل الجراحي خلال 24 ساعة من الحادث يضاعف احتمالية تحسن المريض بمقدار درجتين أو أكثر على مقياس (AIS). <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10964895/" target="_blank" rel="noopener">Clinical Practice Guideline on Timing of Decompressive Surgery</a>.</li>
+                    <li><strong>مراجعة علمية لتوقيت الجراحة بعد إصابة الحبل الشوكي (PMC):</strong> توضح أن تخفيف الضغط خلال أول 24 ساعة يرفع فرص التحسن العصبي والاستقلالية الحركية بنحو ثلاثة أضعاف مقارنة بالتدخل المتأخر. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12599412/" target="_blank" rel="noopener">Surgical Timing After Spinal Cord Injury</a>.</li>
+                </ul>
+
+                <h4>4. مصادر جراحات نقل الأعصاب والسيطرة على التشنج العضلي</h4>
+                <ul>
+                    <li><strong>مراجعة علمية حول جراحات نقل الأعصاب في الأطراف السفلية (PubMed):</strong> تستعرض آليات نقل الأعصاب السليمة لاستعادة وظائف الحركة في الساق والقدم بعد إصابات الحبل الشوكي والضفيرة العصبية. <a href="https://pubmed.ncbi.nlm.nih.gov/40433077/" target="_blank" rel="noopener">Nerve Transfers in the Lower Extremity</a>.</li>
+                    <li><strong>مراجعة منهجية لفعالية مضخة باكلوفين في علاج التشنج (PMC):</strong> توثق الانخفاض الكبير في درجات التيبس العضلي (مقياس أشوورث) لدى مرضى إصابات النخاع الشوكي المزمنة، مما يسهل الوقوف والتأهيل. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4066544/" target="_blank" rel="noopener">Effectiveness of Intrathecal Baclofen on Spasticity</a>.</li>
+                    <li><strong>تحليل تلوي لتأثير باكلوفين على التشنج وسرعة المشي (PMC):</strong> يثبت دوره في تحسين سرعة المشي وتقليل التشنجات غير المستجيبة للعلاج التقليدي. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10990847/" target="_blank" rel="noopener">Intrathecal Baclofen Injection Efficacy for Spasticity and Gait</a>.</li>
+                </ul>
+
+                <p class="footer-note"><strong>Doctor AI... معك في العمل والدراسة، ومعك نحو مجتمع طبي أكثر ترابطًا وتطورًا.</strong></p>
+            </div>
+
+        </div>
+
+        <section class="bottom-bar">
+            <div class="language-block">
+                <label class="language-label" for="langSelect" id="langLabel">Language</label>
+                <select class="language-select" id="langSelect" aria-label="Language selector">
+                    <option value="en" selected>English</option>
+                    <option value="ar">العربية</option>
+                </select>
+            </div>
+
+            <div class="theme-block">
+                <span class="theme-label" id="themeLabel">Theme</span>
+                <div class="theme-switch" role="group" aria-label="Theme">
+                    <button type="button" class="theme-circle" data-theme-value="light" id="themeLight" title="Light theme" aria-label="Light theme">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                    </button>
+                    <button type="button" class="theme-circle" data-theme-value="dark" id="themeDark" title="Dark theme" aria-label="Dark theme">
+                        <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    </button>
+                    <button type="button" class="theme-circle" data-theme-value="blue" id="themeBlue" title="Blue theme" aria-label="Blue theme">
+                        <svg viewBox="0 0 24 24"><path d="M2 12c2-3 4-4.5 6-4.5S12 9 14 9s4-1.5 6-4.5"/><path d="M2 17c2-3 4-4.5 6-4.5S12 14 14 14s4-1.5 6-4.5"/></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const THEME_KEY = 'theme';
+        const themeButtons = {
+            light: document.getElementById('themeLight'),
+            dark: document.getElementById('themeDark'),
+            blue: document.getElementById('themeBlue')
+        };
+
+        function getStoredTheme() {
+            try {
+                const t = localStorage.getItem(THEME_KEY);
+                if (t === 'dark' || t === 'blue' || t === 'light') return t;
+            } catch (e) {}
+            const attr = document.documentElement.getAttribute('data-theme');
+            if (attr === 'dark' || attr === 'blue' || attr === 'light') return attr;
+            return 'light';
+        }
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+            Object.keys(themeButtons).forEach(function (key) {
+                if (themeButtons[key]) themeButtons[key].classList.toggle('active', key === theme);
+            });
+        }
+
+        applyTheme(getStoredTheme());
+
+        Object.keys(themeButtons).forEach(function (key) {
+            const btn = themeButtons[key];
+            if (btn) btn.addEventListener('click', () => applyTheme(key));
+        });
+
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+        }
+
+        menuToggle.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+
+        document.querySelectorAll('.sidebar .sidebar-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (sidebar.classList.contains('active')) toggleSidebar();
+            });
+        });
+
+        // ===== Language switching =====
+        const langSelect = document.getElementById('langSelect');
+        const langLabel = document.getElementById('langLabel');
+        const themeLabel = document.getElementById('themeLabel');
+        const desktopCurrentText = document.getElementById('desktopCurrentText');
+        const mobileCurrentText = document.getElementById('mobileCurrentText');
+        const mobileRequestText = document.getElementById('mobileRequestText');
+        const mobileRemoveText = document.getElementById('mobileRemoveText');
+        const mobileTermsText = document.getElementById('mobileTermsText');
+        const mobilePrivacyText = document.getElementById('mobilePrivacyText');
+        const desktopPrivacy = document.getElementById('desktopPrivacy');
+        const desktopTerms = document.getElementById('desktopTerms');
+
+        const uiStrings = {
+            en: {
+                langLabel: 'Language',
+                themeLabel: 'Theme',
+                currentPage: 'What is the purpose?',
+                requestBtn: 'Request Verification',
+                removeBadge: 'Why was the verification badge removed?',
+                terms: 'Terms of Service',
+                privacy: 'Privacy Policy',
+                themeLight: 'Light theme',
+                themeDark: 'Dark theme',
+                themeBlue: 'Blue theme',
+                title: 'Hope for Walking Recovery After Traumatic Paraplegia: Medical and Rehabilitative Solutions'
+            },
+            ar: {
+                langLabel: 'اللغة',
+                themeLabel: 'المظهر',
+                currentPage: 'ما هدف التطبيق؟',
+                requestBtn: 'طلب التحقق',
+                removeBadge: 'لماذا تم إزالة علامة التوثيق',
+                terms: 'شروط الخدمة',
+                privacy: 'سياسة الخصوصية',
+                themeLight: 'الوضع الفاتح',
+                themeDark: 'الوضع الداكن',
+                themeBlue: 'الوضع الأزرق',
+                title: 'الأمل في استعادة المشي بعد الشلل النصفي الناتج عن الحوادث: الحلول الطبية والتأهيلية المتاحة'
+            }
+        };
+
+        function applyLanguage(lang) {
+            const t = uiStrings[lang];
+            const isRtl = lang === 'ar';
+
+            document.documentElement.lang = lang;
+            document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+            document.title = t.title;
+
+            langLabel.textContent = t.langLabel;
+            themeLabel.textContent = t.themeLabel;
+
+            desktopCurrentText.textContent = t.currentPage;
+            mobileCurrentText.textContent = t.currentPage;
+            mobileRequestText.textContent = t.requestBtn;
+            mobileRemoveText.textContent = t.removeBadge;
+            mobileTermsText.textContent = t.terms;
+            mobilePrivacyText.textContent = t.privacy;
+            desktopPrivacy.textContent = t.privacy;
+            desktopTerms.textContent = t.terms;
+
+            themeButtons.light.title = t.themeLight;
+            themeButtons.light.setAttribute('aria-label', t.themeLight);
+            themeButtons.dark.title = t.themeDark;
+            themeButtons.dark.setAttribute('aria-label', t.themeDark);
+            themeButtons.blue.title = t.themeBlue;
+            themeButtons.blue.setAttribute('aria-label', t.themeBlue);
+
+            // Update copy buttons label + copied state text
+            document.querySelectorAll('.copy-btn').forEach(function (btn) {
+                const labelSpan = btn.querySelector('span');
+                if (labelSpan) labelSpan.textContent = isRtl ? 'نسخ' : 'Copy';
+                btn.setAttribute('data-copied', isRtl ? 'تم النسخ!' : 'Copied!');
+            });
+
+            try { localStorage.setItem('preferredLang', lang); } catch (e) {}
+        }
+
+        // Initialize language (default English)
+        let savedLang = 'en';
+        try {
+            const stored = localStorage.getItem('preferredLang');
+            if (stored === 'ar' || stored === 'en') savedLang = stored;
+        } catch (e) {}
+        langSelect.value = savedLang;
+        applyLanguage(savedLang);
+
+        langSelect.addEventListener('change', function () {
+            applyLanguage(this.value);
+        });
+
+        // ===== Copy to clipboard =====
+        function copyText(text, btn) {
+            const done = function () {
+                const originalSpan = btn.querySelector('span');
+                const originalText = originalSpan ? originalSpan.textContent : '';
+                const originalBg = btn.style.background;
+                const originalColor = btn.style.color;
+
+                btn.classList.add('copied');
+                if (originalSpan) originalSpan.textContent = btn.getAttribute('data-copied') || 'Copied!';
+
+                setTimeout(function () {
+                    btn.classList.remove('copied');
+                    if (originalSpan) originalSpan.textContent = originalText;
+                    btn.style.background = originalBg;
+                    btn.style.color = originalColor;
+                }, 1600);
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(done).catch(function () {
+                    fallbackCopy(text, done);
+                });
+            } else {
+                fallbackCopy(text, done);
+            }
+        }
+
+        function fallbackCopy(text, done) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.setAttribute('readonly', '');
+            ta.style.position = 'absolute';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                done();
+            } catch (e) {
+                alert('Copy failed. Please copy manually: ' + text);
+            }
+            document.body.removeChild(ta);
+        }
+
+        document.querySelectorAll('.copy-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const text = btn.getAttribute('data-copy') || '';
+                copyText(text, btn);
+            });
+        });
+    </script>
+
+    <script>
+        var alertMsg = "ممنوع تحميل الصورة";
+        document.oncontextmenu = function (e) {
+            var clickedTag = (e == null) ? event.srcElement.tagName : e.target.tagName;
+            if (clickedTag === "IMG") { alert(alertMsg); return false; }
+            return false;
+        };
+        document.onselectstart = function () { return false; };
+    </script>
+
+</body>
+</html>
