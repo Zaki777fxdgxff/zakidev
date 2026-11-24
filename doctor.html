@@ -1101,6 +1101,230 @@
 .badge-verify-btn:hover {
     background: rgba(128,128,128,0.1);
 }
+
+
+/* ==================== عرض المزيد للمنشورات ==================== */
+.post-caption.collapsed {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.post-caption.expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+}
+
+.post-caption-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--tab-active-color);
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 2px 0;
+    margin: 0;
+    font-family: inherit;
+    text-align: right; /* في العربي */
+}
+
+[dir="ltr"] .post-caption-toggle {
+    text-align: left; /* في الإنجليزي */
+}
+
+/* بيظهر بس لو الكلام طويل */
+.post-caption-toggle.show {
+    display: block;
+}
+/* ==================== تنسيقات الترجمة وعرض المزيد ==================== */
+.post-text-container {
+    margin: 6px 0 8px;
+}
+
+.post-text-content {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text-color);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.post-text-content.expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+}
+
+.post-action-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 6px;
+}
+
+.post-btn-link {
+    background: none;
+    border: none;
+    color: var(--tab-active-color);
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+    display: none; /* مخفي افتراضياً */
+}
+
+.post-btn-link.show {
+    display: block;
+}
+
+.post-btn-link.translate {
+    display: block !important; /* زرار الترجمة ظاهر دايماً */
+    color: var(--tab-color);
+}
+/* ==================== 1. تظبيط شكل المنشورات (Community Feed) ==================== */
+.post-card .post-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    padding: 0 !important;
+    margin-bottom: 10px !important;
+    width: 100% !important;
+}
+
+.post-card .post-header-avatar {
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    flex-shrink: 0 !important;
+}
+
+.post-card .post-header-info {
+    display: flex !important;
+    flex-direction: column !important; /* الاسم فوق واليوزر نيم تحت */
+    justify-content: center !important;
+    align-items: flex-end !important; /* محاذاة لليمين */
+    flex: 1 !important;
+    gap: 0 !important;
+}
+
+.post-card .post-header-name {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    color: var(--tw-text) !important;
+    margin: 0 !important;
+    line-height: 1.2 !important;
+}
+
+.post-card .post-header-badge {
+    width: 16px !important;
+    height: 16px !important;
+    flex-shrink: 0 !important;
+}
+
+.post-card .post-header-username {
+    display: block !important;
+    width: 100% !important;
+    text-align: right !important; /* في العربي */
+    margin-top: 3px !important; /* مسافة صغيرة جداً */
+    padding: 0 !important;
+    font-size: 13px !important;
+    color: var(--tw-muted) !important;
+    line-height: 1.2 !important;
+}
+
+[dir="ltr"] .post-card .post-header-username,
+[dir="ltr"] .post-card .post-header-info {
+    align-items: flex-start !important;
+    text-align: left !important;
+}
+
+/* ==================== 2. تصليح شكل صفحة البروفايل (Profile View) ==================== */
+/* الكود ده بيمنع أي تعارض عشان البروفايل يرجع لطبيعته */
+.pv-card .pv-head {
+    padding: 0 16px 16px !important;
+}
+
+.pv-card .pv-name-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    margin-bottom: 4px !important; /* مسافة تحت الاسم */
+}
+
+.pv-card .pv-name-row h2 {
+    margin: 0 !important;
+    font-size: 20px !important;
+    font-weight: 800 !important;
+}
+
+.pv-card .pv-username {
+    font-size: 14px !important;
+    opacity: 0.6 !important;
+    margin-bottom: 12px !important; /* مسافة بين اليوزر نيم والبايو */
+    display: block !important;
+    direction: ltr !important;
+    text-align: right !important;
+}
+
+.pv-card .pv-bio {
+    font-size: 14px !important;
+    line-height: 1.7 !important;
+    margin-top: 0 !important;
+    margin-bottom: 12px !important; /* مسافة بين البايو والمعلومات */
+}
+
+.pv-card .pv-meta {
+    margin-top: 0 !important;
+    margin-bottom: 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important; /* مسافة بين كل معلومة والتانية */
+}
+
+.pv-card .pv-follow-stats {
+    margin-top: 12px !important;
+    margin-bottom: 4px !important;
+    display: flex !important;
+    gap: 15px !important;
+}
+#pvUsername, #pubUsername {
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+#pvUsername:hover, #pubUsername:hover {
+    color: var(--tab-active-color) !important;
+    text-decoration: underline;
+}
+.pv-card .pv-name-row {
+    margin-bottom: 0px !important; /* شيلنا المسافة اللي تحت الاسم */
+}
+
+.pv-card .pv-username {
+    margin-top: 2px !important; /* مسافة صغيرة جداً عشان ميبقوش لازقين في بعض */
+    margin-bottom: 10px !important; /* مسافة تحت اليوزر نيم قبل البايو */
+    display: block !important;
+}
+
+/* تظبيط شكل اسم المستخدم في المنشورات برضو (للتأكيد بس) */
+.post-card .post-header-username {
+    margin-top: 2px !important; 
+}
     </style>
 </head>
 <!-- ✨ نافذة المشاركة السفلية -->
@@ -1739,10 +1963,10 @@
         <button onclick="logoutUser()" style="width:100%;padding:12px;background:#e0245e;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:bold;cursor:pointer;"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
     </div>
 
+    <!-- ==================== عرض الملف الشخصي (الخاص) ==================== -->
     <div class="pv-card" id="profileView" style="display:none;">
         <div class="pv-cover">
             <img id="pvCoverImg" src="" alt="" style="display:none;">
-            
         </div>
         <div class="pv-head">
             <div class="pv-avatar-row">
@@ -1751,11 +1975,9 @@
                     <span id="profileDot" class="notification-dot"></span>
                 </div>
                 <div style="display:flex;align-items:center;gap:8px;">
-                    
-    <button class="pv-edit-btn" onclick="showEditProfile()"><i class="fas fa-pen"></i> تعديل</button>
-    <!-- ✨ زر المشاركة الخاص بك -->
-    <button class="pv-edit-btn" onclick="shareProfile(currentUserKey, document.getElementById('pfName').value, document.getElementById('pfUsername').value)"><i class="fas fa-share-alt"></i></button>
-</div>
+                    <button class="pv-edit-btn" onclick="showEditProfile()"><i class="fas fa-pen"></i> تعديل</button>
+                    <button class="pv-edit-btn" onclick="shareProfile(currentUserKey, document.getElementById('pfName').value, document.getElementById('pfUsername').value)"><i class="fas fa-share-alt"></i></button>
+                </div>
             </div>
             <div class="pv-name-row">
                 <h2 id="pvName">اسم المستخدم</h2>
@@ -1764,6 +1986,15 @@
             </div>
             <div id="pvUsername">@username</div>
             <p class="pv-bio" id="pvBio"></p>
+            
+            <!-- ✨ أيقونات التواصل في بروفايلك الشخصي -->
+            <div id="pvSocialLinks" style="display: none; gap: 15px; margin-top: 15px; flex-wrap: wrap; align-items: center;">
+                <a id="pvInstaLink" href="#" target="_blank" style="display: none; font-size: 24px; color: #E1306C; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-instagram"></i></a>
+                <a id="pvWhatsLink" href="#" target="_blank" style="display: none; font-size: 24px; color: #25D366; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-whatsapp"></i></a>
+                <a id="pvFaceLink" href="#" target="_blank" style="display: none; font-size: 24px; color: #1877F2; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-facebook"></i></a>
+                <a id="pvTwitLink" href="#" target="_blank" style="display: none; font-size: 24px; color: #1DA1F2; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-twitter"></i></a>
+            </div>
+
             <div class="pv-meta">
                 <span><i class="fas fa-envelope"></i> <span id="pvEmail">—</span></span>
                 <span><i class="fas fa-calendar"></i> انضم في <span id="pvJoined">—</span></span>
@@ -1771,7 +2002,7 @@
             </div>
             <div class="pv-follow-stats">
                 <span id="pubFollowersSpan" onclick="openFollowersList(currentViewingProfileKey)" style="cursor:pointer;"><b id="pubFollowersCount"></b>(قائمة المتابعين)</span>
-<span id="pubFollowingSpan" onclick="openFollowingList(currentViewingProfileKey)" style="cursor:pointer;"><b id="pubFollowingCount"></b>(قائمة المتابعات)</span>
+                <span id="pubFollowingSpan" onclick="openFollowingList(currentViewingProfileKey)" style="cursor:pointer;"><b id="pubFollowingCount"></b>(قائمة المتابعات)</span>
             </div>
         </div>
     </div>
@@ -1802,50 +2033,78 @@
         </div>
     </div>
 
+    <!-- ==================== تعديل الحساب (معدل) ==================== -->
     <div id="profileEditForm" style="display:none;">
         <button class="pv-back-btn" onclick="showProfileView()"><i class="fas fa-arrow-right"></i> رجوع للملف الشخصي</button>
         <div class="profile-card">
             <div class="profile-field" style="text-align:center; margin-bottom: 20px;">
-    <label style="text-align:right; display:block;">صورة الغلاف</label>
-    <div style="position:relative; width:100%; height:120px; border-radius:12px; overflow:hidden; background:var(--content-bg); border:2px dashed var(--tab-color); margin-top:8px;">
-        <img id="editCoverPreview" src="" style="width:100%; height:100%; object-fit:cover; display:none;">
-        <button type="button" onclick="document.getElementById('coverInput').click()" style="position:absolute; bottom:10px; left:10px; width:36px; height:36px; border-radius:50%; background:var(--btn-bg); color:#fff; border:none; font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,0.3); z-index:5;">
-            <i class="fas fa-camera"></i>
-        </button>
-        <input type="file" id="coverInput" accept="image/*" style="display:none" onchange="handleCoverUpload(event)">
-    </div>
-</div>
+                <label style="text-align:right; display:block;">صورة الغلاف</label>
+                <div style="position:relative; width:100%; height:120px; border-radius:12px; overflow:hidden; background:var(--content-bg); border:2px dashed var(--tab-color); margin-top:8px;">
+                    <img id="editCoverPreview" src="" style="width:100%; height:100%; object-fit:cover; display:none;">
+                    <button type="button" onclick="document.getElementById('coverInput').click()" style="position:absolute; bottom:10px; left:10px; width:36px; height:36px; border-radius:50%; background:var(--btn-bg); color:#fff; border:none; font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,0.3); z-index:5;">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                    <input type="file" id="coverInput" accept="image/*" style="display:none" onchange="handleCoverUpload(event)">
+                </div>
+            </div>
+
             <div class="profile-avatar-wrap">
-    <img id="profileAvatarImg" src="" alt="Avatar" style="cursor:pointer;" onclick="document.getElementById('avatarInput').click()">
-    <button class="avatar-upload-btn" onclick="document.getElementById('avatarInput').click()"><i class="fas fa-camera"></i></button>
-    <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)">
-</div>
-<div class="profile-field"><label>الاسم الكامل</label><input type="text" id="pfName" placeholder="اكتب اسمك"></div>
-<div class="profile-field"><label>اسم المستخدم (بدون @)</label><input type="text" id="pfUsername" placeholder="username"></div>
-<div class="profile-field"><label>نبذة تعريفية</label><textarea id="pfBio" rows="2" placeholder="اكتب نبذة..."></textarea></div>
-<div class="profile-field"><label>رابط الموقع الإلكتروني</label><input type="url" id="pfWebsite" placeholder="https://example.com" dir="ltr" style="text-align:left;"></div>
-<div class="profile-field"><label>البريد الإلكتروني</label><input type="email" id="pfEmail" placeholder="example@email.com"></div>
-<div class="profile-field"><label>خصوصية البروفايل</label><select id="pfPrivacy"><option value="public">عام</option><option value="private">خاص</option></select></div>
+                <img id="profileAvatarImg" src="" alt="Avatar" style="cursor:pointer;" onclick="document.getElementById('avatarInput').click()">
+                <button class="avatar-upload-btn" onclick="document.getElementById('avatarInput').click()"><i class="fas fa-camera"></i></button>
+                <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)">
+            </div>
 
-<!-- ✨ أزرار الخصوصية الجديدة -->
-<div class="profile-field" style="display:flex; justify-content:space-between; align-items:center; background:var(--content-bg); padding:12px; border-radius:10px; margin-top:10px;">
-    <label style="margin:0; font-weight:bold; font-size:14px;">إخفاء الحساب من البحث</label>
-    <input type="checkbox" id="pfHideFromSearch" style="width:20px; height:20px; cursor:pointer; accent-color:var(--tab-active-color);">
-</div>
-<div class="profile-field" style="display:flex; justify-content:space-between; align-items:center; background:var(--content-bg); padding:12px; border-radius:10px; margin-top:10px;">
-    <label style="margin:0; font-weight:bold; font-size:14px;">منع استقبال الرسائل (الدردشة)</label>
-    <input type="checkbox" id="pfDisableChat" style="width:20px; height:20px; cursor:pointer; accent-color:var(--tab-active-color);">
-</div>
-<!-- ✨ نهاية الأزرار -->
+            <div class="profile-field"><label>الاسم الكامل</label><input type="text" id="pfName" placeholder="اكتب اسمك"></div>
+            <div class="profile-field"><label>اسم المستخدم (بدون @)</label><input type="text" id="pfUsername" placeholder="username"></div>
+            <div class="profile-field"><label>نبذة تعريفية</label><textarea id="pfBio" rows="2" placeholder="اكتب نبذة..."></textarea></div>
+            <div class="profile-field"><label>رابط الموقع الإلكتروني</label><input type="url" id="pfWebsite" placeholder="https://example.com" dir="ltr" style="text-align:left;"></div>
+            <div class="profile-field"><label>البريد الإلكتروني</label><input type="email" id="pfEmail" placeholder="example@email.com"></div>
+            <div class="profile-field"><label>خصوصية البروفايل</label><select id="pfPrivacy"><option value="public">عام</option><option value="private">خاص</option></select></div>
 
-<div class="profile-actions">
-    <button id="saveProfileBtn" onclick="saveProfile()"><i class="fas fa-save"></i> حفظ البيانات</button>
-    <button onclick="logoutUser()" style="background:#e0245e;color:#fff;"><i class="fas fa-sign-out-alt"></i> خروج</button>
-</div>
+            <!-- ✨ حقول التواصل الاجتماعي (جديدة) -->
+            <div class="profile-field" style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                <label style="color: var(--tab-active-color); font-size: 15px; margin-bottom: 10px; display: block;">
+                    <i class="fas fa-share-nodes"></i> روابط التواصل الاجتماعي (اختياري)
+                </label>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <i class="fab fa-instagram" style="font-size: 20px; color: #E1306C; width: 24px; text-align: center;"></i>
+                    <input type="url" id="pfInstagram" placeholder="رابط حساب انستجرام..." style="flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--tab-color); background: var(--content-bg); color: var(--text-color); font-size: 15px; font-family: inherit;">
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <i class="fab fa-whatsapp" style="font-size: 20px; color: #25D366; width: 24px; text-align: center;"></i>
+                    <input type="url" id="pfWhatsapp" placeholder="رابط محادثة واتساب..." style="flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--tab-color); background: var(--content-bg); color: var(--text-color); font-size: 15px; font-family: inherit;">
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <i class="fab fa-facebook" style="font-size: 20px; color: #1877F2; width: 24px; text-align: center;"></i>
+                    <input type="url" id="pfFacebook" placeholder="رابط حساب فيسبوك..." style="flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--tab-color); background: var(--content-bg); color: var(--text-color); font-size: 15px; font-family: inherit;">
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <i class="fab fa-twitter" style="font-size: 20px; color: #1DA1F2; width: 24px; text-align: center;"></i>
+                    <input type="url" id="pfTwitter" placeholder="رابط حساب تويتر (X)..." style="flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--tab-color); background: var(--content-bg); color: var(--text-color); font-size: 15px; font-family: inherit;">
+                </div>
+            </div>
+            <!-- ✨ نهاية حقول التواصل -->
+
+            <!-- ✨ أزرار الخصوصية الجديدة -->
+            <div class="profile-field" style="display:flex; justify-content:space-between; align-items:center; background:var(--content-bg); padding:12px; border-radius:10px; margin-top:10px;">
+                <label style="margin:0; font-weight:bold; font-size:14px;">إخفاء الحساب من البحث</label>
+                <input type="checkbox" id="pfHideFromSearch" style="width:20px; height:20px; cursor:pointer; accent-color:var(--tab-active-color);">
+            </div>
+            <div class="profile-field" style="display:flex; justify-content:space-between; align-items:center; background:var(--content-bg); padding:12px; border-radius:10px; margin-top:10px;">
+                <label style="margin:0; font-weight:bold; font-size:14px;">منع استقبال الرسائل (الدردشة)</label>
+                <input type="checkbox" id="pfDisableChat" style="width:20px; height:20px; cursor:pointer; accent-color:var(--tab-active-color);">
+            </div>
+            <!-- ✨ نهاية الأزرار -->
+
+            <div class="profile-actions">
+                <button id="saveProfileBtn" onclick="saveProfile()"><i class="fas fa-save"></i> حفظ البيانات</button>
+                <button onclick="logoutUser()" style="background:#e0245e;color:#fff;"><i class="fas fa-sign-out-alt"></i> خروج</button>
+            </div>
         </div>
     </div>
 </div>
 
+<!-- ==================== عرض الملف الشخصي (العام) ==================== -->
 <div class="content" id="publicProfilePage">
     <button class="pv-back-btn" onclick="goBackFromPublicProfile()"><i class="fas fa-arrow-right"></i> رجوع</button>
     <div class="pv-card">
@@ -1863,6 +2122,15 @@
             <div id="pubUsername">@—</div>
             <div id="pubPublicContent">
                 <p class="pv-bio" id="pubBio"></p>
+                
+                <!-- ✨ أيقونات التواصل في بروفايل الآخرين -->
+                <div id="pubSocialLinks" style="display: none; gap: 15px; margin-top: 15px; flex-wrap: wrap; align-items: center;">
+                    <a id="pubInstaLink" href="#" target="_blank" style="display: none; font-size: 24px; color: #E1306C; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-instagram"></i></a>
+                    <a id="pubWhatsLink" href="#" target="_blank" style="display: none; font-size: 24px; color: #25D366; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-whatsapp"></i></a>
+                    <a id="pubFaceLink" href="#" target="_blank" style="display: none; font-size: 24px; color: #1877F2; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-facebook"></i></a>
+                    <a id="pubTwitLink" href="#" target="_blank" style="display: none; font-size: 24px; color: #1DA1F2; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-twitter"></i></a>
+                </div>
+
                 <div class="pv-meta">
                     <span><i class="fas fa-calendar"></i> انضم في <span id="pubJoined">—</span></span>
                     <span id="pubWebsiteRow" style="display:none;"><i class="fas fa-link"></i> <a id="pubWebsite" class="pv-website-link" href="#" target="_blank" rel="noopener noreferrer"></a></span>
@@ -1880,15 +2148,6 @@
     </div>
     <div id="pubPostsSection" style="max-width:560px;margin:0 auto;">
         <div id="pubPostsGrid" class="posts-container" style="margin:20px auto;"></div>
-    </div>
-</div>
-                
-            </div>
-        </div>
-    </div>
-    <div id="pubPostsSection" style="display:none;max-width:480px;margin:20px auto;padding:15px;background:var(--card-bg);border-radius:16px;box-shadow:0 2px 10px var(--card-shadow);">
-        <h3 style="font-size:16px;margin-bottom:12px;display:flex;align-items:center;gap:8px;"><i class="fas fa-images" style="color:var(--tab-active-color);"></i> المنشورات</h3>
-        <div id="pubPostsGrid" class="my-posts-grid"></div>
     </div>
 </div>
 
@@ -3330,7 +3589,7 @@ var actionsHtml =
                 '<div class="post-header-name">' + escapeHtml(author.name || 'مستخدم') + ' ' + badgeHtml + customIconHtml + '</div>' +
                 '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
                 '</div></div>' +
-                (p.data.caption ? '<div class="post-caption">' + escapeHtml(p.data.caption) + '</div>' : '') +
+                (p.data.caption ? '<div class="post-caption collapsed" id="caption-' + p.id + '">' + escapeHtml(p.data.caption) + '</div><button class="post-caption-toggle" id="toggle-' + p.id + '" onclick="togglePostCaption(\'' + p.id + '\')">عرض المزيد</button>' : '') +
                 '<div class="post-date"><i class="fas fa-clock"></i> ' + dateStr + '</div>' +
                 mediaHtml +
                 actionsHtml;
@@ -5556,7 +5815,13 @@ async function loadMyPosts() {
                 '<div class="post-header-name">' + escapeHtml(author.name || 'مستخدم') + ' ' + badgeHtml + '</div>' +
                 '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
                 '</div></div>' +
-                (p.data.caption ? '<div class="post-caption">' + escapeHtml(p.data.caption) + '</div>' : '') +
+                (p.data.caption ? 
+    '<div class="post-caption-text" id="caption-' + p.id + '" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:6px 0 2px;font-size:15px;line-height:1.5;white-space:pre-wrap;word-break:break-word;">' + escapeHtml(p.data.caption) + '</div>' +
+    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">' +
+        '<button class="post-caption-toggle" id="toggle-' + p.id + '" onclick="togglePostCaption(\'' + p.id + '\', this)" style="display:none;background:none;border:none;color:var(--tab-active-color);font-weight:bold;font-size:13px;cursor:pointer;padding:0;">عرض المزيد...</button>' +
+        '<button class="post-translate-btn" onclick="translatePost(\'' + p.id + '\', \'' + escapeHtml(p.data.caption).replace(/'/g, "\\'") + '\', this)"><i class="fas fa-language"></i> ترجمة</button>' +
+    '</div>' 
+: '') +
                 '<div class="post-date"><i class="fas fa-clock"></i> ' + dateStr + '</div>' +
                 mediaHtml +
                 '<div class="post-actions">' +
@@ -6646,6 +6911,363 @@ window.openChatWith = async function(partnerKey) {
         _originalOpenChatWith(partnerKey);
     }
 };
+</script>
+<script>
+/* ==================== 1. الترجمة وعرض المزيد للمنشورات ==================== */
+function enhancePosts() {
+    var posts = document.querySelectorAll('.post-card:not([data-enhanced="1"])');
+    
+    posts.forEach(function(card) {
+        var caption = card.querySelector('.post-caption');
+        if (!caption) return;
+        
+        var originalText = caption.textContent.trim();
+        if (!originalText) return;
+
+        card.setAttribute('data-enhanced', '1');
+        caption.style.display = 'none';
+        
+        var container = document.createElement('div');
+        container.className = 'post-text-container';
+        
+        var textContent = document.createElement('div');
+        textContent.className = 'post-text-content';
+        textContent.textContent = originalText;
+        
+        var linksRow = document.createElement('div');
+        linksRow.className = 'post-action-links';
+        
+        var moreBtn = document.createElement('button');
+        moreBtn.className = 'post-btn-link';
+        moreBtn.textContent = (localStorage.getItem('lang') === 'en') ? 'Show more...' : 'عرض المزيد...';
+        
+        var transBtn = document.createElement('button');
+        transBtn.className = 'post-btn-link translate';
+        transBtn.innerHTML = '<i class="fas fa-language"></i> ' + ((localStorage.getItem('lang') === 'en') ? 'Translate' : 'ترجمة');
+
+        linksRow.appendChild(moreBtn);
+        linksRow.appendChild(transBtn);
+        
+        container.appendChild(textContent);
+        container.appendChild(linksRow);
+        caption.parentNode.insertBefore(container, caption.nextSibling);
+
+        setTimeout(function() {
+            var lineH = parseFloat(window.getComputedStyle(textContent).lineHeight) || 22;
+            if (textContent.scrollHeight > (lineH * 3) + 4) {
+                moreBtn.classList.add('show');
+            }
+        }, 100);
+
+        moreBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (textContent.classList.contains('expanded')) {
+                textContent.classList.remove('expanded');
+                moreBtn.textContent = (localStorage.getItem('lang') === 'en') ? 'Show more...' : 'عرض المزيد...';
+            } else {
+                textContent.classList.add('expanded');
+                moreBtn.textContent = (localStorage.getItem('lang') === 'en') ? 'Show less' : 'عرض أقل';
+            }
+        });
+
+        // ==================== الترجمة ====================
+        transBtn.addEventListener('click', async function(e) {
+            e.stopPropagation();
+            
+            if (transBtn.getAttribute('data-translated') === '1') {
+                textContent.textContent = originalText;
+                transBtn.innerHTML = '<i class="fas fa-language"></i> ' + ((localStorage.getItem('lang') === 'en') ? 'Translate' : 'ترجمة');
+                transBtn.setAttribute('data-translated', '0');
+                return;
+            }
+
+            var oldHtml = transBtn.innerHTML;
+            transBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ...';
+            transBtn.disabled = true;
+
+            var isEn = (localStorage.getItem('lang') === 'en');
+            var targetLang = isEn ? 'ar' : 'en'; 
+
+            try {
+                var url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(originalText)}`;
+                var res = await fetch(url);
+                var data = await res.json();
+                
+                if (data && data[0]) {
+                    var translatedText = '';
+                    for (var i = 0; i < data[0].length; i++) {
+                        if (data[0][i][0]) {
+                            translatedText += data[0][i][0];
+                        }
+                    }
+                    if (translatedText.trim() !== '') {
+                        textContent.textContent = translatedText;
+                        transBtn.innerHTML = '<i class="fas fa-undo"></i> ' + (isEn ? 'Show Original' : 'إلغاء الترجمة');
+                        transBtn.setAttribute('data-translated', '1');
+                    } else {
+                        throw new Error('الترجمة فارغة');
+                    }
+                } else {
+                    throw new Error('فشل في قراءة الترجمة');
+                }
+            } catch (error) {
+                console.error('Translation Error:', error);
+                alert('حدث خطأ أثناء الترجمة، حاول مرة أخرى.');
+                transBtn.innerHTML = oldHtml;
+            } finally {
+                transBtn.disabled = false;
+            }
+        });
+    });
+}
+
+window.addEventListener('load', function() { setTimeout(enhancePosts, 1000); });
+var observer = new MutationObserver(function() { setTimeout(enhancePosts, 300); });
+document.addEventListener('DOMContentLoaded', function() {
+    var container = document.getElementById('publicPostsContainer');
+    if (container) observer.observe(container, { childList: true, subtree: true });
+});
+
+
+/* ==================== 2. تفعيل نسخ اسم المستخدم بالضغط ==================== */
+document.addEventListener('click', function(e) {
+    if (e.target && (e.target.id === 'pvUsername' || e.target.id === 'pubUsername')) {
+        var usernameText = e.target.textContent.trim();
+        var cleanUsername = usernameText.replace('@', '');
+        
+        var lang = localStorage.getItem('lang') || 'ar';
+        var successMsg = (lang === 'en') ? 'Username copied ✅' : 'تم نسخ اسم المستخدم ✅';
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(cleanUsername).then(function() {
+                toast(successMsg); 
+            }).catch(function(err) {
+                fallbackCopy(cleanUsername, successMsg);
+            });
+        } else {
+            fallbackCopy(cleanUsername, successMsg);
+        }
+    }
+});
+
+function fallbackCopy(text, message) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.opacity = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        toast(message); 
+    } catch (err) {
+        console.error('Fallback: unable to copy', err);
+    }
+    document.body.removeChild(textArea);
+}
+
+
+/* ==================== 3. إظهار أيقونات التواصل الاجتماعي ==================== */
+
+function renderSocialIcons(data, prefix) {
+    if (!data) return;
+    
+    var socials = [
+        { id: prefix + 'InstaLink', url: data.instagram },
+        { id: prefix + 'WhatsLink', url: data.whatsapp },
+        { id: prefix + 'FaceLink', url: data.facebook },
+        { id: prefix + 'TwitLink', url: data.twitter }
+    ];
+    var hasSocial = false;
+    
+    socials.forEach(function(s) {
+        var el = document.getElementById(s.id);
+        if (el) {
+            if (s.url && s.url.trim() !== '') {
+                el.href = s.url;
+                el.style.display = 'inline-block';
+                hasSocial = true;
+            } else {
+                el.style.display = 'none';
+            }
+        }
+    });
+    
+    var container = document.getElementById(prefix + 'SocialLinks');
+    if (container) {
+        container.style.display = hasSocial ? 'flex' : 'none';
+    }
+}
+
+// 1. تعديل دالة عرض البروفايل العام (لما تفتح بروفايل حد)
+var originalOpenPublicProfile = window.openPublicProfile;
+if (originalOpenPublicProfile) {
+    window.openPublicProfile = async function(targetKey) {
+        await originalOpenPublicProfile(targetKey);
+        try {
+            var fb = await getFB();
+            var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', targetKey));
+            if (snap.exists()) {
+                renderSocialIcons(snap.data(), 'pub'); 
+            }
+        } catch(e) { console.error(e); }
+    };
+}
+
+// 2. تعديل دالة عرض البروفايل الشخصي (لما تفتح حسابك)
+var originalRenderProfileView = window.renderProfileView;
+if (originalRenderProfileView) {
+    window.renderProfileView = function() {
+        originalRenderProfileView();
+        if (currentUserKey) {
+            getFB().then(function(fb) {
+                fb.getDoc(fb.doc(fb.db, 'profiles', currentUserKey)).then(function(snap) {
+                    if (snap.exists()) {
+                        renderSocialIcons(snap.data(), 'pv'); 
+                    }
+                });
+            });
+        }
+    };
+}
+// ✨ كود إظهار أيقونات السوشيال ميديا
+var pubSocials = [
+    { id: 'pubInstaLink', url: d.instagram },
+    { id: 'pubWhatsLink', url: d.whatsapp },
+    { id: 'pubFaceLink', url: d.facebook },
+    { id: 'pubTwitLink', url: d.twitter }
+];
+var pubHasSocial = false;
+pubSocials.forEach(function(s) {
+    var el = document.getElementById(s.id);
+    if (el) {
+        if (s.url && s.url.trim() !== '') {
+            el.href = s.url;
+            el.style.display = 'inline-block';
+            pubHasSocial = true;
+        } else {
+            el.style.display = 'none';
+        }
+    }
+});
+var pubContainer = document.getElementById('pubSocialLinks');
+if (pubContainer) pubContainer.style.display = pubHasSocial ? 'flex' : 'none';
+
+// ✨ كود إظهار أيقونات السوشيال ميديا في بروفايلك
+getFB().then(function(fb) {
+    fb.getDoc(fb.doc(fb.db, 'profiles', currentUserKey)).then(function(snap) {
+        if (snap.exists()) {
+            var myData = snap.data();
+            var pvSocials = [
+                { id: 'pvInstaLink', url: myData.instagram },
+                { id: 'pvWhatsLink', url: myData.whatsapp },
+                { id: 'pvFaceLink', url: myData.facebook },
+                { id: 'pvTwitLink', url: myData.twitter }
+            ];
+            var pvHasSocial = false;
+            pvSocials.forEach(function(s) {
+                var el = document.getElementById(s.id);
+                if (el) {
+                    if (s.url && s.url.trim() !== '') {
+                        el.href = s.url;
+                        el.style.display = 'inline-block';
+                        pvHasSocial = true;
+                    } else {
+                        el.style.display = 'none';
+                    }
+                }
+            });
+            var pvContainer = document.getElementById('pvSocialLinks');
+            if (pvContainer) pvContainer.style.display = pvHasSocial ? 'flex' : 'none';
+        }
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==================== 3. إظهار أيقونات التواصل الاجتماعي ==================== */
+
+// الدالة دي مسؤولة إنها تظهر الأيقونات في أي مكان بنبعتلها اسمه
+function renderSocialIcons(data, prefix) {
+    if (!data) return;
+    
+    var socials = [
+        { id: prefix + 'InstaLink', url: data.instagram },
+        { id: prefix + 'WhatsLink', url: data.whatsapp },
+        { id: prefix + 'FaceLink', url: data.facebook },
+        { id: prefix + 'TwitLink', url: data.twitter }
+    ];
+    var hasSocial = false;
+    
+    socials.forEach(function(s) {
+        var el = document.getElementById(s.id);
+        if (el) {
+            if (s.url && s.url.trim() !== '') {
+                el.href = s.url;
+                el.style.display = 'inline-block';
+                hasSocial = true;
+            } else {
+                el.style.display = 'none';
+            }
+        }
+    });
+    
+    var container = document.getElementById(prefix + 'SocialLinks');
+    if (container) {
+        container.style.display = hasSocial ? 'flex' : 'none';
+    }
+}
+
+// عشان نضمن إن الدالة بتتنفذ في الوقت الصح، هنربطها بزرار "حسابي"
+// أول ما المستخدم يدوس على "حسابي" وتفتح الصفحة، الأيقونات هتظهر
+document.addEventListener('DOMContentLoaded', function() {
+    // دالة مساعدة لمراقبة فتح صفحة الحساب
+    var observerProfile = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            // لو صفحة البروفايل الشخصي ظهرت
+            if (document.getElementById('profileView').style.display === 'block') {
+                if (currentUserKey) {
+                    getFB().then(function(fb) {
+                        fb.getDoc(fb.doc(fb.db, 'profiles', currentUserKey)).then(function(snap) {
+                            if (snap.exists()) {
+                                renderSocialIcons(snap.data(), 'pv');
+                            }
+                        });
+                    });
+                }
+            }
+            // لو صفحة بروفايل حد تاني ظهرت
+            if (document.getElementById('publicProfilePage').classList.contains('active')) {
+                if (currentViewingProfileKey) {
+                    getFB().then(function(fb) {
+                        fb.getDoc(fb.doc(fb.db, 'profiles', currentViewingProfileKey)).then(function(snap) {
+                            if (snap.exists()) {
+                                renderSocialIcons(snap.data(), 'pub');
+                            }
+                        });
+                    });
+                }
+            }
+        });
+    });
+
+    // نراقب التغييرات في الصفحة كلها
+    var targetNode = document.body; 
+    var config = { attributes: true, childList: false, subtree: false }; 
+    
+    // دي بنراقب فيها تغيير الـ style (اللي بيحصل لما الصفحة تفتح)
+    observerProfile.observe(targetNode, { attributes: true, attributeFilter: ['style', 'class'], subtree: true });
+});
 </script>
 </body>
 </html>
