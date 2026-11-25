@@ -1296,17 +1296,6 @@
     display: block !important; /* زرار الترجمة ظاهر دايماً */
     color: var(--tab-color);
 }
-
-/* إشارات @username في المنشورات */
-.mention-link {
-    color: #1d9bf0 !important;
-    font-weight: 700 !important;
-    cursor: pointer !important;
-    text-decoration: none !important;
-}
-.mention-link:hover {
-    text-decoration: underline !important;
-}
 /* ==================== 1. تظبيط شكل المنشورات (Community Feed) ==================== */
 .post-card .post-header {
     display: flex !important;
@@ -1648,6 +1637,45 @@
 </div>
         
 <!-- ✨ نافذة قائمة المتابعين / المتابَعين -->
+
+<!-- ✨ نافذة تعديل الأرقام الوهمية (للتوثيق البني فقط) -->
+
+<!-- ✨ نافذة تعديل تفاعل المنشور (وهمي) -->
+<div class="modal" id="postStatsModal">
+    <div class="modal-box" style="max-width:400px;text-align:right;">
+        <p style="font-weight:bold;font-size:18px;margin-bottom:8px;"><i class="fas fa-chart-line"></i> تعديل تفاعل المنشور</p>
+        <p style="font-size:12px;opacity:0.7;margin-bottom:14px;">الأرقام الوهمية تظهر للجميع. التعليقات الوهمية في القائمة غير قابلة للتفاعل.</p>
+        <input type="hidden" id="postStatsPostId">
+        <div class="profile-field"><label>الإعجابات (لايك)</label><input type="number" id="fakeLikesInput" min="0" step="1" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);"></div>
+        <div class="profile-field"><label>التعليقات</label><input type="number" id="fakeCommentsInput" min="0" step="1" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);"></div>
+        <div class="profile-field"><label>المشاركات</label><input type="number" id="fakeSharesInput" min="0" step="1" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);"></div>
+        <div class="profile-field"><label>المشاهدات</label><input type="number" id="fakeViewsInput" min="0" step="1" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);"></div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+            <button onclick="savePostFakeStats()" style="flex:1;padding:12px;border:none;border-radius:10px;background:var(--btn-bg);color:#fff;font-weight:bold;cursor:pointer;">حفظ</button>
+            <button onclick="document.getElementById('postStatsModal').style.display='none'" style="flex:1;padding:12px;border:none;border-radius:10px;background:var(--content-bg);color:var(--text-color);font-weight:bold;cursor:pointer;">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="fakeCountsModal">
+    <div class="modal-box" style="max-width:400px;text-align:right;">
+        <p style="font-weight:bold;font-size:18px;margin-bottom:8px;"><i class="fas fa-users"></i> أرقام المتابعين الوهمية</p>
+        <p style="font-size:12px;opacity:0.7;margin-bottom:14px;">تظهر هذه الأرقام في البروفايل. الحسابات الوهمية في القائمة غير قابلة للنقر.</p>
+        <div class="profile-field">
+            <label>عدد المتابعين المعروض</label>
+            <input type="number" id="fakeFollowersInput" min="0" step="1" placeholder="0" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);">
+        </div>
+        <div class="profile-field">
+            <label>عدد المتابَعين المعروض</label>
+            <input type="number" id="fakeFollowingInput" min="0" step="1" placeholder="0" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);">
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+            <button onclick="saveFakeCounts()" style="flex:1;padding:12px;border:none;border-radius:10px;background:var(--btn-bg);color:#fff;font-weight:bold;cursor:pointer;">حفظ</button>
+            <button onclick="document.getElementById('fakeCountsModal').style.display='none'" style="flex:1;padding:12px;border:none;border-radius:10px;background:var(--content-bg);color:var(--text-color);font-weight:bold;cursor:pointer;">إلغاء</button>
+        </div>
+    </div>
+</div>
+
 <div class="modal" id="followListModal">
     <div class="modal-box" style="max-width:420px;text-align:right;max-height:80vh;display:flex;flex-direction:column;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
@@ -2119,8 +2147,14 @@
                 <span id="pvWebsiteRow" style="display:none;"><i class="fas fa-link"></i> <a id="pvWebsite" class="pv-website-link" href="#" target="_blank" rel="noopener noreferrer"></a></span>
             </div>
             <div class="pv-follow-stats">
-                <span id="pubFollowersSpan" onclick="openFollowersList(currentViewingProfileKey)" style="cursor:pointer;"><b id="pubFollowersCount"></b>(قائمة المتابعين)</span>
-                <span id="pubFollowingSpan" onclick="openFollowingList(currentViewingProfileKey)" style="cursor:pointer;"><b id="pubFollowingCount"></b>(قائمة المتابعات)</span>
+                <span onclick="openFollowersList(currentUserKey)" style="cursor:pointer;"><b id="pvFollowersCount">0</b> متابع</span>
+                <span onclick="openFollowingList(currentUserKey)" style="cursor:pointer;"><b id="pvFollowingCount">0</b> يتابع</span>
+            </div>
+            <div id="fakeCountsEditBtnWrap" style="display:none;margin-top:12px;padding:12px;background:var(--content-bg);border-radius:12px;border:1px dashed var(--tab-active-color);">
+                <p style="font-size:12px;opacity:0.75;margin-bottom:8px;"><i class="fas fa-certificate" style="color:#b8860b;"></i> صلاحية التوثيق البني</p>
+                <button type="button" id="fakeCountsEditBtn" onclick="openFakeCountsModal()" style="width:100%;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#3d2b1f,#1a1a1a);color:#ffd700;font-weight:bold;font-size:14px;cursor:pointer;">
+                    <i class="fas fa-users"></i> تعديل عدد المتابعين والمتابَعين
+                </button>
             </div>
         </div>
     </div>
@@ -2254,8 +2288,8 @@
                     <span id="pubWebsiteRow" style="display:none;"><i class="fas fa-link"></i> <a id="pubWebsite" class="pv-website-link" href="#" target="_blank" rel="noopener noreferrer"></a></span>
                 </div>
                 <div class="pv-follow-stats">
-                    <span id="pubFollowersSpan" onclick="openFollowersList(currentViewingProfileKey)" style="cursor:pointer;"><b id="pubFollowersCount"></b>(قائمة المتابعين)</span>
-                    <span id="pubFollowingSpan" onclick="openFollowingList(currentViewingProfileKey)" style="cursor:pointer;"><b id="pubFollowingCount"></b> (قائمة المتابعات)</span>
+                    <span id="pubFollowersSpan" onclick="openFollowersList(currentViewingProfileKey)" style="cursor:pointer;"><b id="pubFollowersCount">0</b> متابع</span>
+                    <span id="pubFollowingSpan" onclick="openFollowingList(currentViewingProfileKey)" style="cursor:pointer;"><b id="pubFollowingCount">0</b> يتابع</span>
                 </div>
             </div>
             <div id="pubPrivateContent" style="display:none;" class="pv-private-notice">
@@ -2280,7 +2314,7 @@
             <input type="file" id="postImageInput" accept="image/*" multiple style="display:none" onchange="handlePostImageSelect(event)">
             <div id="postPreview" style="margin-top:10px;display:none;grid-template-columns:repeat(3,1fr);gap:5px;"></div>
         </div>
-        <div class="profile-field"><label>النص / الوصف</label><textarea id="postCaption" rows="3" placeholder="اكتب منشوراً... يمكنك الإشارة بـ @username"></textarea></div>
+        <div class="profile-field"><label>النص / الوصف</label><textarea id="postCaption" rows="3" placeholder="اكتب منشوراً نصياً أو أضف صوراً..."></textarea></div>
         <div class="profile-field">
             <label>الخصوصية</label>
             <div class="post-privacy-toggle">
@@ -3710,7 +3744,7 @@ var actionsHtml =
                 '<div class="post-header-name">' + escapeHtml(author.name || 'مستخدم') + ' ' + badgeHtml + customIconHtml + '</div>' +
                 '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
                 '</div></div>' +
-                (p.data.caption ? '<div class="post-caption collapsed" id="caption-' + p.id + '">' + formatCaptionWithMentions(p.data.caption) + '</div><button class="post-caption-toggle" id="toggle-' + p.id + '" onclick="togglePostCaption(\'' + p.id + '\')">عرض المزيد</button>' : '') +
+                (p.data.caption ? '<div class="post-caption collapsed" id="caption-' + p.id + '">' + escapeHtml(p.data.caption) + '</div><button class="post-caption-toggle" id="toggle-' + p.id + '" onclick="togglePostCaption(\'' + p.id + '\')">عرض المزيد</button>' : '') +
                 '<div class="post-date"><i class="fas fa-clock"></i> ' + dateStr + '</div>' +
                 mediaHtml +
                 actionsHtml;
@@ -3741,47 +3775,6 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
-
-/* ==================== MENTIONS (@username) ==================== */
-function formatCaptionWithMentions(text) {
-    if (!text) return '';
-    var escaped = escapeHtml(String(text));
-    return escaped.replace(/@([A-Za-z0-9_.]{2,30})/g, function(match, username) {
-        var u = username.toLowerCase();
-        return '<span class="mention-link" data-username="' + u + '" onclick="event.stopPropagation();openProfileByUsername(\'' + u + '\')">@' + username + '</span>';
-    });
-}
-
-async function openProfileByUsername(username) {
-    if (!username) return;
-    username = String(username).replace(/^@/, '').toLowerCase().trim();
-    if (!username) return;
-    try {
-        var fb = await getFB();
-        var q = fb.query(fb.collection(fb.db, 'profiles'), fb.where('username', '==', username));
-        var snap = await fb.getDocs(q);
-        if (!snap.empty) {
-            openPublicProfile(snap.docs[0].id);
-            return;
-        }
-        // fallback: بحث يدوي لو الـ username متخزن بحروف كبيرة
-        var all = await fb.getDocs(fb.collection(fb.db, 'profiles'));
-        var foundKey = null;
-        all.forEach(function(ds) {
-            var d = ds.data() || {};
-            if (String(d.username || '').toLowerCase().trim() === username) foundKey = ds.id;
-        });
-        if (foundKey) {
-            openPublicProfile(foundKey);
-            return;
-        }
-        alert((localStorage.getItem('lang') === 'en') ? 'User not found' : 'لم يتم العثور على المستخدم');
-    } catch (e) {
-        console.error(e);
-        alert((localStorage.getItem('lang') === 'en') ? 'Error opening profile' : 'خطأ في فتح البروفايل');
-    }
-}
-
 async function deletePost(postId) {
     if (!isAdminType(currentBadgeType) && !currentUserKey) {
         alert(t('login_first')); return;
@@ -3917,6 +3910,7 @@ function setPostPrivacy(mode) {
 async function publishPost() {
     if (!currentUserKey) { alert(t('login_first')); return; }
     var captionText = (document.getElementById('postCaption').value || '').trim();
+    // السماح بالنشر نص فقط بدون صور
     if (postImageFiles.length === 0 && !captionText) {
         alert('اكتب نصاً أو اختر صورة واحدة على الأقل');
         return;
@@ -5949,7 +5943,8 @@ async function loadMyPosts() {
         var badgeHtml = (authorBt && authorBt !== 'none') ? '<img class="post-header-badge" src="' + badgeSrc(authorBt) + '">' : '';
 
         posts.forEach(function (p) {
-            var mediaUrls = Array.isArray(p.data.mediaUrls) ? p.data.mediaUrls : [p.data.mediaUrl];
+            var mediaUrls = Array.isArray(p.data.mediaUrls) ? p.data.mediaUrls : (p.data.mediaUrl ? [p.data.mediaUrl] : []);
+            mediaUrls = mediaUrls.filter(function(u){ return u && String(u).trim(); });
             var mediaHtml = '';
             
             if (mediaUrls.length === 1) {
@@ -5958,7 +5953,7 @@ async function loadMyPosts() {
                 mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + mediaUrls.map(function(u,i){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + i + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
             } else if (mediaUrls.length === 3) {
                 mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;grid-auto-rows:1fr;">' + '<div style="grid-row:span 2;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" style="width:100%;height:100%;object-fit:cover;"></div>' + mediaUrls.slice(1).map(function(u,i){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + (i+1) + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
-            } else {
+            } else if (mediaUrls.length >= 4) {
                 var displayUrls = mediaUrls.slice(0, 4);
                 mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + displayUrls.map(function(u,i){ var extra = (i === 3 && mediaUrls.length > 4) ? '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.65);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:bold;">+' + (mediaUrls.length - 4) + '</div>' : ''; return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;position:relative;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + i + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;">' + extra + '</div>'; }).join('') + '</div>';
             }
@@ -5982,7 +5977,7 @@ async function loadMyPosts() {
                 '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
                 '</div></div>' +
                 (p.data.caption ? 
-    '<div class="post-caption-text post-caption" id="caption-' + p.id + '" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:6px 0 2px;font-size:15px;line-height:1.5;white-space:pre-wrap;word-break:break-word;">' + formatCaptionWithMentions(p.data.caption) + '</div>' +
+    '<div class="post-caption-text" id="caption-' + p.id + '" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:6px 0 2px;font-size:15px;line-height:1.5;white-space:pre-wrap;word-break:break-word;">' + escapeHtml(p.data.caption) + '</div>' +
     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">' +
         '<button class="post-caption-toggle" id="toggle-' + p.id + '" onclick="togglePostCaption(\'' + p.id + '\', this)" style="display:none;background:none;border:none;color:var(--tab-active-color);font-weight:bold;font-size:13px;cursor:pointer;padding:0;">عرض المزيد...</button>' +
         '<button class="post-translate-btn" onclick="translatePost(\'' + p.id + '\', \'' + escapeHtml(p.data.caption).replace(/'/g, "\\'") + '\', this)"><i class="fas fa-language"></i> ترجمة</button>' +
@@ -6702,7 +6697,8 @@ if (linkEl) {
         modal.classList.add('active');
     }
 }
-var mediaUrls = Array.isArray(p.data.mediaUrls) ? p.data.mediaUrls : [p.data.mediaUrl];
+var mediaUrls = Array.isArray(p.data.mediaUrls) ? p.data.mediaUrls : (p.data.mediaUrl ? [p.data.mediaUrl] : []);
+            mediaUrls = mediaUrls.filter(function(u){ return u && String(u).trim(); });
 var mediaHtml = '';
 
 if (mediaUrls.length === 1) {
@@ -6754,7 +6750,8 @@ async function loadUserPosts(userKey) {
 
         for (var i = 0; i < posts.length; i++) {
             var p = posts[i];
-            var mediaUrls = Array.isArray(p.data.mediaUrls) ? p.data.mediaUrls : [p.data.mediaUrl];
+            var mediaUrls = Array.isArray(p.data.mediaUrls) ? p.data.mediaUrls : (p.data.mediaUrl ? [p.data.mediaUrl] : []);
+            mediaUrls = mediaUrls.filter(function(u){ return u && String(u).trim(); });
             var mediaHtml = '';
             
             if (mediaUrls.length === 1) {
@@ -6763,7 +6760,7 @@ async function loadUserPosts(userKey) {
                 mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + mediaUrls.map(function(u,idx){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + idx + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
             } else if (mediaUrls.length === 3) {
                 mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;grid-auto-rows:1fr;">' + '<div style="grid-row:span 2;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" style="width:100%;height:100%;object-fit:cover;"></div>' + mediaUrls.slice(1).map(function(u,idx){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + (idx+1) + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
-            } else {
+            } else if (mediaUrls.length >= 4) {
                 var displayUrls = mediaUrls.slice(0, 4);
                 mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + displayUrls.map(function(u,idx){ var extra = (idx === 3 && mediaUrls.length > 4) ? '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.65);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:bold;">+' + (mediaUrls.length - 4) + '</div>' : ''; return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;position:relative;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + idx + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;">' + extra + '</div>'; }).join('') + '</div>';
             }
@@ -6793,7 +6790,7 @@ async function loadUserPosts(userKey) {
                 '<div class="post-header-name">' + escapeHtml(author.name || 'مستخدم') + ' ' + badgeHtml + '</div>' +
                 '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
                 '</div></div>' +
-                (p.data.caption ? '<div class="post-caption">' + formatCaptionWithMentions(p.data.caption) + '</div>' : '') +
+                (p.data.caption ? '<div class="post-caption">' + escapeHtml(p.data.caption) + '</div>' : '') +
                 '<div class="post-date"><i class="fas fa-clock"></i> ' + dateStr + '</div>' +
                 mediaHtml +
                 '<div class="post-actions">' +
@@ -6848,7 +6845,8 @@ async function loadMyPosts() {
 
         for (var i = 0; i < posts.length; i++) {
             var p = posts[i];
-            var mediaUrls = Array.isArray(p.data.mediaUrls) ? p.data.mediaUrls : [p.data.mediaUrl];
+            var mediaUrls = Array.isArray(p.data.mediaUrls) ? p.data.mediaUrls : (p.data.mediaUrl ? [p.data.mediaUrl] : []);
+            mediaUrls = mediaUrls.filter(function(u){ return u && String(u).trim(); });
             var mediaHtml = '';
             
             if (mediaUrls.length === 1) {
@@ -6857,7 +6855,7 @@ async function loadMyPosts() {
                 mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + mediaUrls.map(function(u,idx){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + idx + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
             } else if (mediaUrls.length === 3) {
                 mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;grid-auto-rows:1fr;">' + '<div style="grid-row:span 2;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" style="width:100%;height:100%;object-fit:cover;"></div>' + mediaUrls.slice(1).map(function(u,idx){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + (idx+1) + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
-            } else {
+            } else if (mediaUrls.length >= 4) {
                 var displayUrls = mediaUrls.slice(0, 4);
                 mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + displayUrls.map(function(u,idx){ var extra = (idx === 3 && mediaUrls.length > 4) ? '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.65);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:bold;">+' + (mediaUrls.length - 4) + '</div>' : ''; return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;position:relative;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + idx + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;">' + extra + '</div>'; }).join('') + '</div>';
             }
@@ -6887,7 +6885,7 @@ async function loadMyPosts() {
                 '<div class="post-header-name">' + escapeHtml(author.name || 'مستخدم') + ' ' + badgeHtml + '</div>' +
                 '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
                 '</div></div>' +
-                (p.data.caption ? '<div class="post-caption">' + formatCaptionWithMentions(p.data.caption) + '</div>' : '') +
+                (p.data.caption ? '<div class="post-caption">' + escapeHtml(p.data.caption) + '</div>' : '') +
                 '<div class="post-date"><i class="fas fa-clock"></i> ' + dateStr + '</div>' +
                 mediaHtml +
                 '<div class="post-actions">' +
@@ -7098,10 +7096,7 @@ function enhancePosts() {
         
         var textContent = document.createElement('div');
         textContent.className = 'post-text-content';
-        // مهم: نستخدم innerHTML عشان الإشارات @username تفضل زرقاء وقابلة للضغط
-        textContent.innerHTML = (typeof formatCaptionWithMentions === 'function')
-            ? formatCaptionWithMentions(originalText)
-            : escapeHtml(originalText);
+        textContent.textContent = originalText;
         
         var linksRow = document.createElement('div');
         linksRow.className = 'post-action-links';
@@ -7144,9 +7139,7 @@ function enhancePosts() {
             e.stopPropagation();
             
             if (transBtn.getAttribute('data-translated') === '1') {
-                textContent.innerHTML = (typeof formatCaptionWithMentions === 'function')
-                    ? formatCaptionWithMentions(originalText)
-                    : escapeHtml(originalText);
+                textContent.textContent = originalText;
                 transBtn.innerHTML = '<i class="fas fa-language"></i> ' + ((localStorage.getItem('lang') === 'en') ? 'Translate' : 'ترجمة');
                 transBtn.setAttribute('data-translated', '0');
                 return;
@@ -7470,6 +7463,575 @@ document.addEventListener('click', function (e) {
         markStoryAsRead(storyItem);
     }
 });
+
+
+/* ==================== FAKE FOLLOW COUNTS (توثيق بني / black) ==================== */
+function getBadgeTypeFromData(d) {
+    if (!d) return 'none';
+    return d.badgeType || (d.owner ? 'owner' : (d.blackBadge ? 'black' : (d.verified ? 'normal' : 'none')));
+}
+function getDisplayFollowCounts(d) {
+    var realFollowers = Array.isArray(d.followers) ? d.followers.length : 0;
+    var realFollowing = Array.isArray(d.following) ? d.following.length : 0;
+    var bt = getBadgeTypeFromData(d);
+    var showFollowers = realFollowers;
+    var showFollowing = realFollowing;
+    if (bt === 'black') {
+        if (typeof d.fakeFollowersCount === 'number' && d.fakeFollowersCount >= 0) showFollowers = d.fakeFollowersCount;
+        if (typeof d.fakeFollowingCount === 'number' && d.fakeFollowingCount >= 0) showFollowing = d.fakeFollowingCount;
+    }
+    return { followers: showFollowers, following: showFollowing, realFollowers: realFollowers, realFollowing: realFollowing, badge: bt };
+}
+function formatCountNum(n) {
+    try { return Number(n).toLocaleString('en-US'); } catch (e) { return String(n); }
+}
+var FAKE_NAMES = ['أحمد محمد','سارة علي','خالد حسن','نور الهدى','يوسف إبراهيم','مريم سعيد','عمر فهد','ليان رامي','كريم عادل','هدى ناصر','باسم طارق','رنا محمود','زياد سمير','داليا كريم','فارس وليد','لينا جابر','ماجد سامي','تالا وائل','إياد نبيل','جنى حسام','أنس بدر','سلمى راشد','نادر عماد','ميساء فوزي','حسين ياسر','غادة كمال','رامي نجم','أسماء فهد','طلال عوني','ياسمين مراد'];
+var FAKE_USERNAMES = ['ahmed_m','sara_ali','khaled_h','noor_h','yousef_i','mariam_s','omar_f','layan_r','kareem_a','huda_n','basem_t','rana_m','ziad_s','dalia_k','fares_w','lina_j','majed_s','tala_w','eyad_n','jana_h','anas_b','salma_r','nader_e','maisa_f','hussein_y','ghada_k','rami_n','asma_f','talal_a','yasmin_m'];
+function buildFakeUsers(count, seedKey) {
+    var list = [];
+    var seed = 0;
+    for (var i = 0; i < (seedKey || '').length; i++) seed = (seed + seedKey.charCodeAt(i) * (i + 1)) % 9973;
+    for (var i = 0; i < count; i++) {
+        var idx = (seed + i * 17) % FAKE_NAMES.length;
+        list.push({
+            key: '__fake__' + i + '_' + seed,
+            isFake: true,
+            data: {
+                name: FAKE_NAMES[idx],
+                username: FAKE_USERNAMES[idx] + (100 + ((seed + i) % 900)),
+                avatar: null,
+                badgeType: 'none'
+            }
+        });
+    }
+    return list;
+}
+async function openFakeCountsModal() {
+    if (!currentUserKey) return;
+    var isBlack = (typeof refreshBlackBadgeFromServer === 'function') ? await refreshBlackBadgeFromServer() : (currentBadgeType === 'black');
+    if (!isBlack) { alert('هذه الميزة متاحة فقط لحسابات التوثيق البني (المالك).'); return; }
+    try {
+        var fb = await getFB();
+        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', currentUserKey));
+        var d = snap.exists() ? snap.data() : {};
+        var counts = getDisplayFollowCounts(d);
+        document.getElementById('fakeFollowersInput').value = (typeof d.fakeFollowersCount === 'number') ? d.fakeFollowersCount : counts.realFollowers;
+        document.getElementById('fakeFollowingInput').value = (typeof d.fakeFollowingCount === 'number') ? d.fakeFollowingCount : counts.realFollowing;
+        document.getElementById('fakeCountsModal').style.display = 'flex';
+    } catch (e) { alert(e.message); }
+}
+async function saveFakeCounts() {
+    if (!currentUserKey) return;
+    var isBlack = (typeof refreshBlackBadgeFromServer === 'function') ? await refreshBlackBadgeFromServer() : (currentBadgeType === 'black');
+    if (!isBlack) return;
+    var fFollowers = parseInt(document.getElementById('fakeFollowersInput').value, 10);
+    var fFollowing = parseInt(document.getElementById('fakeFollowingInput').value, 10);
+    if (isNaN(fFollowers) || fFollowers < 0) fFollowers = 0;
+    if (isNaN(fFollowing) || fFollowing < 0) fFollowing = 0;
+    try {
+        var fb = await getFB();
+        await fb.setDoc(fb.doc(fb.db, 'profiles', currentUserKey), {
+            fakeFollowersCount: fFollowers,
+            fakeFollowingCount: fFollowing,
+            updatedAt: fb.serverTimestamp()
+        }, { merge: true });
+        document.getElementById('fakeCountsModal').style.display = 'none';
+        var fc = document.getElementById('pvFollowersCount');
+        var gc = document.getElementById('pvFollowingCount');
+        if (fc) fc.textContent = formatCountNum(fFollowers);
+        if (gc) gc.textContent = formatCountNum(fFollowing);
+        toast('تم حفظ الأرقام الوهمية');
+        renderProfileView();
+    } catch (e) { alert(e.message); }
+}
+function updateFakeCountsBtnVisibility() {
+    var wrap = document.getElementById('fakeCountsEditBtnWrap');
+    if (wrap) wrap.style.display = (currentBadgeType === 'black') ? 'block' : 'none';
+}
+
+/* Override list openers to support fake padding */
+window.openFollowersList = async function(targetKey) {
+    var key = targetKey || currentViewingProfileKey || currentUserKey;
+    if (!key) { alert('لا يوجد مستخدم'); return; }
+    _followListTargetKey = key;
+    document.getElementById('followListTitle').textContent = 'المتابعون';
+    document.getElementById('followListModal').style.display = 'flex';
+    var content = document.getElementById('followListContent');
+    content.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;"><i class="fas fa-spinner fa-spin"></i></p>';
+    try {
+        var fb = await getFB();
+        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
+        if (!snap.exists()) {
+            content.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;">المستخدم غير موجود</p>';
+            return;
+        }
+        var d = snap.data();
+        var realKeys = Array.isArray(d.followers) ? d.followers.slice() : [];
+        var display = getDisplayFollowCounts(d);
+        var needFake = Math.max(0, display.followers - realKeys.length);
+        if (realKeys.length === 0 && needFake === 0) {
+            content.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;">لا يوجد متابعون بعد</p>';
+            return;
+        }
+        await renderFollowList(realKeys, content, needFake, key);
+    } catch (e) {
+        content.innerHTML = '<p style="text-align:center;color:red;padding:20px;">خطأ: ' + e.message + '</p>';
+    }
+};
+window.openFollowingList = async function(targetKey) {
+    var key = targetKey || currentViewingProfileKey || currentUserKey;
+    if (!key) { alert('لا يوجد مستخدم'); return; }
+    _followListTargetKey = key;
+    document.getElementById('followListTitle').textContent = 'يتابع';
+    document.getElementById('followListModal').style.display = 'flex';
+    var content = document.getElementById('followListContent');
+    content.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;"><i class="fas fa-spinner fa-spin"></i></p>';
+    try {
+        var fb = await getFB();
+        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
+        if (!snap.exists()) {
+            content.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;">المستخدم غير موجود</p>';
+            return;
+        }
+        var d = snap.data();
+        var realKeys = Array.isArray(d.following) ? d.following.slice() : [];
+        var display = getDisplayFollowCounts(d);
+        var needFake = Math.max(0, display.following - realKeys.length);
+        if (realKeys.length === 0 && needFake === 0) {
+            content.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;">لا يتابع أحداً بعد</p>';
+            return;
+        }
+        await renderFollowList(realKeys, content, needFake, key);
+    } catch (e) {
+        content.innerHTML = '<p style="text-align:center;color:red;padding:20px;">خطأ: ' + e.message + '</p>';
+    }
+};
+window.renderFollowList = async function(keys, container, fakeCount, seedKey) {
+    var fb = await getFB();
+    container.innerHTML = '';
+    fakeCount = fakeCount || 0;
+    var profiles = await Promise.all((keys || []).map(async function(k) {
+        try {
+            var s = await fb.getDoc(fb.doc(fb.db, 'profiles', k));
+            if (s.exists()) return { key: k, data: s.data(), isFake: false };
+        } catch (e) {}
+        return { key: k, data: { name: 'مستخدم', username: 'user', avatar: null }, isFake: false };
+    }));
+    if (fakeCount > 0) {
+        profiles = profiles.concat(buildFakeUsers(fakeCount, seedKey || _followListTargetKey || ''));
+    }
+    profiles.forEach(function(p) {
+        var d = p.data;
+        var bt = getBadgeTypeFromData(d);
+        var badgeHtml = '';
+        if (bt && bt !== 'none') {
+            badgeHtml = ' <img src="' + badgeSrc(bt) + '" style="width:15px;height:15px;vertical-align:-3px;display:inline-block;margin-right:2px;">';
+        }
+        var customIconHtml = '';
+        if (bt === 'black' && d.customIcon) {
+            customIconHtml = ' <img src="' + d.customIcon + '" style="width:14px;height:14px;object-fit:contain;vertical-align:-2px;margin-right:2px;">';
+        }
+        var item = document.createElement('div');
+        if (p.isFake) {
+            item.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px;background:var(--content-bg);border-radius:12px;margin-bottom:8px;opacity:0.72;cursor:default;pointer-events:none;';
+        } else {
+            item.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px;background:var(--content-bg);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:background 0.15s;';
+            item.onmouseenter = function() { item.style.background = 'var(--sidebar-hover-bg)'; };
+            item.onmouseleave = function() { item.style.background = 'var(--content-bg)'; };
+        }
+        item.innerHTML =
+            '<img src="' + (d.avatar || DEFAULT_AVATAR) + '" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;">' +
+            '<div style="flex:1;text-align:right;min-width:0;">' +
+                '<div style="font-size:14px;font-weight:bold;color:var(--text-color);display:flex;align-items:center;gap:2px;flex-wrap:wrap;">' +
+                    '<span>' + escapeHtml(d.name || 'مستخدم') + '</span>' + badgeHtml + customIconHtml +
+                '</div>' +
+                '<div style="font-size:12px;color:var(--tab-color);direction:ltr;text-align:right;">@' + escapeHtml(d.username || 'user') + '</div>' +
+            '</div>' +
+            (p.isFake ? '<span style="font-size:11px;opacity:0.5;">—</span>' : '<i class="fas fa-chevron-left" style="color:var(--tab-color);font-size:14px;"></i>');
+        if (!p.isFake) {
+            item.onclick = function() {
+                closeFollowList();
+                if (p.key === currentUserKey) {
+                    switchTab('accountPage');
+                    showProfileView();
+                } else {
+                    openPublicProfile(p.key);
+                }
+            };
+        }
+        container.appendChild(item);
+    });
+};
+
+/* Patch count display in renderProfileView / openPublicProfile via wrappers */
+(function() {
+    var _origRender = window.renderProfileView;
+    window.renderProfileView = function() {
+        if (typeof _origRender === 'function') _origRender.apply(this, arguments);
+        updateFakeCountsBtnVisibility();
+        (async function() {
+            if (!currentUserKey) return;
+            try {
+                var fb = await getFB();
+                var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', currentUserKey));
+                if (!snap.exists()) return;
+                var counts = getDisplayFollowCounts(snap.data());
+                var fc = document.getElementById('pvFollowersCount');
+                var gc = document.getElementById('pvFollowingCount');
+                if (fc) fc.textContent = formatCountNum(counts.followers);
+                if (gc) gc.textContent = formatCountNum(counts.following);
+            } catch (e) {}
+        })();
+    };
+    var _origOpenPub = window.openPublicProfile;
+    window.openPublicProfile = async function(targetKey) {
+        await _origOpenPub.apply(this, arguments);
+        try {
+            var key = String(targetKey || currentViewingProfileKey || '').toLowerCase().trim();
+            if (!key) return;
+            var fb = await getFB();
+            var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
+            if (!snap.exists()) return;
+            var counts = getDisplayFollowCounts(snap.data());
+            var fc = document.getElementById('pubFollowersCount');
+            var gc = document.getElementById('pubFollowingCount');
+            if (fc) fc.textContent = formatCountNum(counts.followers);
+            if (gc) gc.textContent = formatCountNum(counts.following);
+        } catch (e) {}
+    };
+})();
+
+/* Also fix toggleFollow display to respect fake floor */
+(function() {
+    var _tf = window.toggleFollow;
+    if (typeof _tf !== 'function') return;
+    window.toggleFollow = async function(tKey, btnEl) {
+        await _tf.apply(this, arguments);
+        try {
+            var fb = await getFB();
+            var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', tKey));
+            if (snap.exists()) {
+                var counts = getDisplayFollowCounts(snap.data());
+                var fc = document.getElementById('pubFollowersCount');
+                if (fc) fc.textContent = formatCountNum(counts.followers);
+            }
+            if (currentUserKey) {
+                var me = await fb.getDoc(fb.doc(fb.db, 'profiles', currentUserKey));
+                if (me.exists()) {
+                    var mc = getDisplayFollowCounts(me.data());
+                    var gc = document.getElementById('pvFollowingCount');
+                    if (gc) gc.textContent = formatCountNum(mc.following);
+                }
+            }
+        } catch (e) {}
+    };
+})();
+
+
+
+/* ==================== FIX: زر الأرقام الوهمية + تفاعل المنشورات ==================== */
+async function refreshBlackBadgeFromServer() {
+    if (!currentUserKey) return false;
+    try {
+        var fb = await getFB();
+        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', currentUserKey));
+        if (!snap.exists()) return currentBadgeType === 'black';
+        var bt = getBadgeTypeFromData(snap.data());
+        currentBadgeType = bt;
+        return bt === 'black';
+    } catch (e) {
+        return currentBadgeType === 'black';
+    }
+}
+async function ensureFakeCountsButtonVisible() {
+    var wrap = document.getElementById('fakeCountsEditBtnWrap');
+    if (!wrap) return;
+    var isBlack = await refreshBlackBadgeFromServer();
+    wrap.style.display = isBlack ? 'block' : 'none';
+    if (isBlack) {
+        var adminMenu = document.getElementById('adminPanelMenuItem');
+        if (adminMenu) adminMenu.style.display = 'flex';
+    }
+}
+/* إعادة ربط showProfileView و applyProfileToUI */
+(function() {
+    var _spv = window.showProfileView;
+    window.showProfileView = function() {
+        if (typeof _spv === 'function') _spv.apply(this, arguments);
+        setTimeout(ensureFakeCountsButtonVisible, 50);
+        setTimeout(ensureFakeCountsButtonVisible, 400);
+        setTimeout(ensureFakeCountsButtonVisible, 1200);
+    };
+    var _apu = window.applyProfileToUI;
+    if (typeof _apu === 'function') {
+        window.applyProfileToUI = function(data) {
+            _apu.apply(this, arguments);
+            try {
+                var bt = getBadgeTypeFromData(data);
+                currentBadgeType = bt;
+            } catch (e) {}
+            setTimeout(ensureFakeCountsButtonVisible, 50);
+        };
+    }
+    var _sv = window.setVerified;
+    if (typeof _sv === 'function') {
+        window.setVerified = function(type) {
+            _sv.apply(this, arguments);
+            setTimeout(ensureFakeCountsButtonVisible, 30);
+        };
+    }
+})();
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(ensureFakeCountsButtonVisible, 800);
+    setTimeout(ensureFakeCountsButtonVisible, 2000);
+});
+
+/* ===== أرقام تفاعل المنشورات الوهمية ===== */
+function getPostDisplayStats(pData, realComments) {
+    pData = pData || {};
+    var likes = Array.isArray(pData.likes) ? pData.likes.length : 0;
+    var dislikes = Array.isArray(pData.dislikes) ? pData.dislikes.length : 0;
+    var shares = pData.sharesCount || 0;
+    var views = pData.views || 0;
+    var comments = (typeof realComments === 'number') ? realComments : (pData.commentsCount || 0);
+    function pick(fake, real) {
+        if (typeof fake === 'number' && !isNaN(fake) && fake >= 0) return Math.max(real, fake);
+        return real;
+    }
+    return {
+        likes: pick(pData.fakeLikesCount, likes),
+        dislikes: dislikes,
+        shares: pick(pData.fakeSharesCount, shares),
+        views: pick(pData.fakeViewsCount, views),
+        comments: pick(pData.fakeCommentsCount, comments),
+        realLikes: likes,
+        realComments: comments,
+        realShares: shares,
+        realViews: views
+    };
+}
+async function openPostStatsEditor(postId) {
+    if (!postId) return;
+    var isBlack = await refreshBlackBadgeFromServer();
+    if (!isBlack) { alert('هذه الميزة متاحة فقط لحسابات التوثيق البني'); return; }
+    try {
+        var fb = await getFB();
+        var snap = await fb.getDoc(fb.doc(fb.db, 'posts', postId));
+        if (!snap.exists()) { alert('المنشور غير موجود'); return; }
+        var d = snap.data();
+        if (d.author !== currentUserKey && currentBadgeType !== 'black') {
+            alert('يمكنك تعديل منشوراتك فقط'); return;
+        }
+        // يسمح البني بتعديل أي منشور إذا أردنا صلاحية مالك — هنا نسمح بمنشوراته أو أي منشور كأدمن
+        document.getElementById('postStatsPostId').value = postId;
+        var st = getPostDisplayStats(d, d.commentsCount || 0);
+        document.getElementById('fakeLikesInput').value = (typeof d.fakeLikesCount === 'number') ? d.fakeLikesCount : st.realLikes;
+        document.getElementById('fakeCommentsInput').value = (typeof d.fakeCommentsCount === 'number') ? d.fakeCommentsCount : st.realComments;
+        document.getElementById('fakeSharesInput').value = (typeof d.fakeSharesCount === 'number') ? d.fakeSharesCount : st.realShares;
+        document.getElementById('fakeViewsInput').value = (typeof d.fakeViewsCount === 'number') ? d.fakeViewsCount : st.realViews;
+        document.getElementById('postStatsModal').style.display = 'flex';
+    } catch (e) { alert(e.message); }
+}
+async function savePostFakeStats() {
+    var postId = document.getElementById('postStatsPostId').value;
+    if (!postId) return;
+    var isBlack = await refreshBlackBadgeFromServer();
+    if (!isBlack) return;
+    function num(id) {
+        var v = parseInt(document.getElementById(id).value, 10);
+        return (isNaN(v) || v < 0) ? 0 : v;
+    }
+    var payload = {
+        fakeLikesCount: num('fakeLikesInput'),
+        fakeCommentsCount: num('fakeCommentsInput'),
+        fakeSharesCount: num('fakeSharesInput'),
+        fakeViewsCount: num('fakeViewsInput')
+    };
+    try {
+        var fb = await getFB();
+        await fb.setDoc(fb.doc(fb.db, 'posts', postId), payload, { merge: true });
+        document.getElementById('postStatsModal').style.display = 'none';
+        // تحديث فوري على الشاشة
+        var likeSpan = document.querySelector('.post-action-btn.liked .count, button[onclick*="toggleLike(\'' + postId + '\')"] .count');
+        var likeBtn = document.querySelector('button[onclick*="toggleLike(\'' + postId + '\')"]');
+        if (likeBtn) {
+            var c = likeBtn.querySelector('.count');
+            if (c) c.textContent = formatCountNum(payload.fakeLikesCount);
+        }
+        var cc = document.getElementById('comments-count-' + postId);
+        if (cc) cc.textContent = formatCountNum(payload.fakeCommentsCount);
+        var sc = document.getElementById('shares-count-' + postId);
+        if (sc) sc.textContent = formatCountNum(payload.fakeSharesCount);
+        var vc = document.getElementById('views-' + postId);
+        if (vc) vc.textContent = formatCountNum(payload.fakeViewsCount);
+        // تحديث كل العناصر المرتبطة بنفس المنشور
+        document.querySelectorAll('[id="comments-count-' + postId + '"]').forEach(function(el){ el.textContent = formatCountNum(payload.fakeCommentsCount); });
+        document.querySelectorAll('[id="shares-count-' + postId + '"]').forEach(function(el){ el.textContent = formatCountNum(payload.fakeSharesCount); });
+        document.querySelectorAll('[id="views-' + postId + '"]').forEach(function(el){ el.textContent = formatCountNum(payload.fakeViewsCount); });
+        toast('تم حفظ أرقام التفاعل');
+        // إعادة تحميل المنشورات إن أمكن
+        try { if (typeof loadPublicPosts === 'function') loadPublicPosts(); } catch(e){}
+        try { if (typeof loadMyPosts === 'function') loadMyPosts(); } catch(e){}
+    } catch (e) { alert(e.message); }
+}
+
+/* تطبيق الأرقام المعروضة + زر تعديل على بطاقات المنشور */
+function enhancePostCardStats(card) {
+    if (!card || card.getAttribute('data-stats-enhanced') === '1') return;
+    var likeBtn = card.querySelector('button[onclick*="toggleLike("]');
+    if (!likeBtn) return;
+    var m = (likeBtn.getAttribute('onclick') || '').match(/toggleLike\('([^']+)'/);
+    if (!m) return;
+    var postId = m[1];
+    card.setAttribute('data-stats-enhanced', '1');
+    card.setAttribute('data-post-id', postId);
+
+    // زر تعديل للتوثيق البني على منشوراته
+    getFB().then(function(fb) {
+        return fb.getDoc(fb.doc(fb.db, 'posts', postId)).then(function(snap) {
+            if (!snap.exists()) return;
+            var d = snap.data();
+            var isOwnerPost = (d.author === currentUserKey);
+            var canEdit = (currentBadgeType === 'black') && (isOwnerPost || true); // البني يستطيع تعديل منشوراته دائماً
+            if (!(currentBadgeType === 'black' && isOwnerPost)) {
+                // حتى لو لم يكن محملاً بعد، أعد المحاولة من السيرفر
+                if (currentUserKey && d.author === currentUserKey) {
+                    refreshBlackBadgeFromServer().then(function(isB) {
+                        if (isB) injectPostStatsBtn(card, postId);
+                    });
+                }
+            } else {
+                injectPostStatsBtn(card, postId);
+            }
+            // تحديث الأرقام المعروضة
+            return Promise.resolve().then(async function() {
+                var realComments = d.commentsCount || 0;
+                try {
+                    var cQ = fb.query(fb.collection(fb.db, 'comments'), fb.where('postId', '==', postId));
+                    var cSnap = await fb.getDocs(cQ);
+                    realComments = cSnap.size;
+                } catch (e) {}
+                var st = getPostDisplayStats(d, realComments);
+                if (likeBtn) {
+                    var c = likeBtn.querySelector('.count');
+                    if (c) c.textContent = formatCountNum(st.likes);
+                }
+                var cc = card.querySelector('#comments-count-' + postId) || card.querySelector('[id="comments-count-' + postId + '"]');
+                if (cc) cc.textContent = formatCountNum(st.comments);
+                var sc = card.querySelector('#shares-count-' + postId);
+                if (sc) sc.textContent = formatCountNum(st.shares);
+                var vc = card.querySelector('#views-' + postId);
+                if (vc) vc.textContent = formatCountNum(st.views);
+            });
+        });
+    }).catch(function(){});
+}
+function injectPostStatsBtn(card, postId) {
+    if (card.querySelector('.post-fake-stats-btn')) return;
+    var btn = document.createElement('button');
+    btn.className = 'post-fake-stats-btn';
+    btn.type = 'button';
+    btn.title = 'تعديل التفاعل';
+    btn.innerHTML = '<i class="fas fa-chart-bar"></i>';
+    btn.style.cssText = 'position:absolute;top:10px;left:48px;width:32px;height:32px;border-radius:50%;border:none;background:rgba(0,0,0,0.55);color:#ffd700;cursor:pointer;z-index:6;display:flex;align-items:center;justify-content:center;font-size:13px;';
+    btn.onclick = function(e) {
+        e.stopPropagation();
+        openPostStatsEditor(postId);
+    };
+    card.style.position = 'relative';
+    card.appendChild(btn);
+}
+function scanAndEnhancePosts() {
+    document.querySelectorAll('.post-card').forEach(enhancePostCardStats);
+}
+var __postStatsObserver = new MutationObserver(function() {
+    scanAndEnhancePosts();
+});
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        __postStatsObserver.observe(document.body, { childList: true, subtree: true });
+    } catch (e) {}
+    setTimeout(scanAndEnhancePosts, 1000);
+    setTimeout(scanAndEnhancePosts, 3000);
+});
+
+/* تعبئة تعليقات وهمية غير قابلة للتفاعل عند فتح القائمة */
+(function() {
+    var _loadComments = window.loadComments;
+    if (typeof _loadComments !== 'function') return;
+    window.loadComments = async function(postId) {
+        await _loadComments.apply(this, arguments);
+        try {
+            var fb = await getFB();
+            var snap = await fb.getDoc(fb.doc(fb.db, 'posts', postId));
+            if (!snap.exists()) return;
+            var d = snap.data();
+            var list = document.getElementById('commentsList');
+            if (!list) return;
+            var realCount = list.querySelectorAll('[data-comment-id]').length;
+            // إن لم توجد data-comment-id، احسب العناصر الفرعية
+            if (realCount === 0) {
+                realCount = list.querySelectorAll('div[style*="display:flex"]').length;
+            }
+            var st = getPostDisplayStats(d, realCount);
+            var need = Math.max(0, st.comments - realCount);
+            if (need <= 0) return;
+            var fakes = buildFakeUsers(need, postId);
+            var FAKE_COMMENTS = ['رائع 🔥','منشور ممتاز','أتفق معك','👏👏','محتوى مفيد','شكراً على المشاركة','أحسنت','جزاك الله خيراً','تم','👍','معلومات قيمة','استمر'];
+            fakes.forEach(function(fu, i) {
+                var div = document.createElement('div');
+                div.style.cssText = 'display:flex;gap:10px;align-items:flex-start;padding:8px;background:var(--content-bg);border-radius:10px;opacity:0.7;pointer-events:none;margin-bottom:6px;';
+                var txt = FAKE_COMMENTS[(i * 3) % FAKE_COMMENTS.length];
+                div.innerHTML =
+                    '<img src="' + DEFAULT_AVATAR + '" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;">' +
+                    '<div style="flex:1;text-align:right;min-width:0;">' +
+                        '<div style="font-size:13px;font-weight:bold;color:var(--text-color);">' + escapeHtml(fu.data.name) + '</div>' +
+                        '<div style="font-size:13px;color:var(--text-color);margin-top:4px;word-break:break-word;">' + txt + '</div>' +
+                    '</div>';
+                list.appendChild(div);
+            });
+        } catch (e) {}
+    };
+})();
+
+/* بعد like/share/view: أظهر الرقم الوهمي إن كان أعلى */
+(function() {
+    function reapplyPostCounts(postId) {
+        getFB().then(function(fb) {
+            return fb.getDoc(fb.doc(fb.db, 'posts', postId)).then(function(snap) {
+                if (!snap.exists()) return;
+                var d = snap.data();
+                var st = getPostDisplayStats(d, null);
+                document.querySelectorAll('button[onclick*="toggleLike(\'' + postId + '\')"]').forEach(function(btn) {
+                    var c = btn.querySelector('.count');
+                    if (c) {
+                        var real = Array.isArray(d.likes) ? d.likes.length : 0;
+                        c.textContent = formatCountNum(Math.max(real, st.likes));
+                    }
+                });
+                var sc = document.getElementById('shares-count-' + postId);
+                if (sc) sc.textContent = formatCountNum(st.shares);
+                var vc = document.getElementById('views-' + postId);
+                if (vc) vc.textContent = formatCountNum(st.views);
+            });
+        }).catch(function(){});
+    }
+    var _tl = window.toggleLike;
+    if (typeof _tl === 'function') {
+        window.toggleLike = async function(postId, btnEl) {
+            await _tl.apply(this, arguments);
+            reapplyPostCounts(postId);
+        };
+    }
+    var _sp = window.sharePost;
+    if (typeof _sp === 'function') {
+        window.sharePost = async function(postId, caption) {
+            await _sp.apply(this, arguments);
+            setTimeout(function(){ reapplyPostCounts(postId); }, 400);
+        };
+    }
+})();
+
 </script>
 </body>
 </html>
