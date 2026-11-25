@@ -2220,31 +2220,34 @@
                 </label>
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                     <i class="fab fa-instagram" style="font-size: 20px; color: #E1306C; width: 24px; text-align: center;"></i>
-                    <input type="url" id="pfInstagram" placeholder="رابط حساب انستجرام..." style="flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--tab-color); background: var(--content-bg); color: var(--text-color); font-size: 15px; font-family: inherit;">
+                    <input type="text" id="pfInstagram" placeholder="اسم المستخدم فقط (بدون @)" dir="ltr" style="flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--tab-color); background: var(--content-bg); color: var(--text-color); font-size: 15px; font-family: inherit;">
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                     <i class="fab fa-whatsapp" style="font-size: 20px; color: #25D366; width: 24px; text-align: center;"></i>
-                    <input type="url" id="pfWhatsapp" placeholder="رابط محادثة واتساب..." style="flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--tab-color); background: var(--content-bg); color: var(--text-color); font-size: 15px; font-family: inherit;">
+                    <input type="text" id="pfWhatsapp" placeholder="رقم واتساب مع رمز الدولة مثل 9665..." dir="ltr" style="flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--tab-color); background: var(--content-bg); color: var(--text-color); font-size: 15px; font-family: inherit;">
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                     <i class="fab fa-facebook" style="font-size: 20px; color: #1877F2; width: 24px; text-align: center;"></i>
-                    <input type="url" id="pfFacebook" placeholder="رابط حساب فيسبوك..." style="flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--tab-color); background: var(--content-bg); color: var(--text-color); font-size: 15px; font-family: inherit;">
+                    <input type="text" id="pfFacebook" placeholder="اسم المستخدم فقط" dir="ltr" style="flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--tab-color); background: var(--content-bg); color: var(--text-color); font-size: 15px; font-family: inherit;">
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                     <i class="fab fa-twitter" style="font-size: 20px; color: #1DA1F2; width: 24px; text-align: center;"></i>
-                    <input type="url" id="pfTwitter" placeholder="رابط حساب تويتر (X)..." style="flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--tab-color); background: var(--content-bg); color: var(--text-color); font-size: 15px; font-family: inherit;">
+                    <input type="text" id="pfTwitter" placeholder="اسم المستخدم فقط (بدون @)" dir="ltr" style="flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--tab-color); background: var(--content-bg); color: var(--text-color); font-size: 15px; font-family: inherit;">
                 </div>
             </div>
             <!-- ✨ نهاية حقول التواصل -->
 
             <!-- ✨ أزرار الخصوصية الجديدة -->
             <div class="profile-field" style="display:flex; justify-content:space-between; align-items:center; background:var(--content-bg); padding:12px; border-radius:10px; margin-top:10px;">
-                <label style="margin:0; font-weight:bold; font-size:14px;">إخفاء الحساب من البحث</label>
-                <input type="checkbox" id="pfHideFromSearch" style="width:20px; height:20px; cursor:pointer; accent-color:var(--tab-active-color);">
-            </div>
-            <div class="profile-field" style="display:flex; justify-content:space-between; align-items:center; background:var(--content-bg); padding:12px; border-radius:10px; margin-top:10px;">
-                <label style="margin:0; font-weight:bold; font-size:14px;">منع استقبال الرسائل (الدردشة)</label>
+                <label style="margin:0; font-weight:bold; font-size:14px;">منع استقبال الرسائل (إخفاء زر المراسلة)</label>
                 <input type="checkbox" id="pfDisableChat" style="width:20px; height:20px; cursor:pointer; accent-color:var(--tab-active-color);">
+            </div>
+            <div id="fakeCountsEditFormWrap" style="display:none;margin-top:12px;padding:12px;background:var(--content-bg);border-radius:12px;border:1px dashed #b8860b;">
+                <p style="font-size:13px;font-weight:bold;margin-bottom:8px;color:#b8860b;"><i class="fas fa-certificate"></i> صلاحيات التوثيق البني فقط</p>
+                <button type="button" onclick="openFakeCountsModal()" style="width:100%;padding:12px;border:none;border-radius:10px;background:#1a1a1a;color:#ffd700;font-weight:bold;cursor:pointer;margin-bottom:8px;">
+                    <i class="fas fa-users"></i> تعديل عدد المتابعين / المتابَعين
+                </button>
+                <p style="font-size:11px;opacity:0.7;margin:0;">لتعديل لايكات/تعليقات منشور: افتح المنشور واضغط أيقونة الرسم البياني 📊</p>
             </div>
             <!-- ✨ نهاية الأزرار -->
 
@@ -4129,19 +4132,14 @@ actionsRow.style.zIndex = '5';
         actionsRow.appendChild(followBtn);
         updateFollowButtonState(tKey, followBtn);
 
-        // 2. زر المراسلة
-        var msgBtn = document.createElement('button');
-msgBtn.className = 'pv-action-btn message';
-msgBtn.innerHTML = '<i class="fas fa-comment"></i> ' + t('message');
-msgBtn.onclick = function() { 
-    // ✨ التحقق من إعدادات منع الدردشة قبل الفتح
-    if (d.disableChat === true && currentBadgeType !== 'black') {
-        alert('هذا المستخدم قام بتعطيل خاصية استقبال الرسائل.');
-        return;
-    }
-    openChatWith(tKey); 
-};
-actionsRow.appendChild(msgBtn);
+        // 2. زر المراسلة — يختفي تماماً إذا فعّل المستخدم منع الرسائل
+        if (d.disableChat !== true) {
+            var msgBtn = document.createElement('button');
+            msgBtn.className = 'pv-action-btn message';
+            msgBtn.innerHTML = '<i class="fas fa-comment"></i> ' + t('message');
+            msgBtn.onclick = function() { openChatWith(tKey); };
+            actionsRow.appendChild(msgBtn);
+        }
 
         // 3. زر المشاركة
         var shareBtn = document.createElement('button');
@@ -7295,54 +7293,10 @@ if (originalRenderProfileView) {
         }
     };
 }
-// ✨ كود إظهار أيقونات السوشيال ميديا
-var pubSocials = [
-    { id: 'pubInstaLink', url: d.instagram },
-    { id: 'pubWhatsLink', url: d.whatsapp },
-    { id: 'pubFaceLink', url: d.facebook },
-    { id: 'pubTwitLink', url: d.twitter }
-];
-var pubHasSocial = false;
-pubSocials.forEach(function(s) {
-    var el = document.getElementById(s.id);
-    if (el) {
-        if (s.url && s.url.trim() !== '') {
-            el.href = s.url;
-            el.style.display = 'inline-block';
-            pubHasSocial = true;
-        } else {
-            el.style.display = 'none';
-        }
-    }
-});
-var pubContainer = document.getElementById('pubSocialLinks');
-if (pubContainer) pubContainer.style.display = pubHasSocial ? 'flex' : 'none';
+/* removed broken orphan social block */
 
-// ✨ كود إظهار أيقونات السوشيال ميديا في بروفايلك
-getFB().then(function(fb) {
-    fb.getDoc(fb.doc(fb.db, 'profiles', currentUserKey)).then(function(snap) {
-        if (snap.exists()) {
-            var myData = snap.data();
-            var pvSocials = [
-                { id: 'pvInstaLink', url: myData.instagram },
-                { id: 'pvWhatsLink', url: myData.whatsapp },
-                { id: 'pvFaceLink', url: myData.facebook },
-                { id: 'pvTwitLink', url: myData.twitter }
-            ];
-            var pvHasSocial = false;
-            pvSocials.forEach(function(s) {
-                var el = document.getElementById(s.id);
-                if (el) {
-                    if (s.url && s.url.trim() !== '') {
-                        el.href = s.url;
-                        el.style.display = 'inline-block';
-                        pvHasSocial = true;
-                    } else {
-                        el.style.display = 'none';
-                    }
-                }
-            });
-            var pvContainer = document.getElementById('pvSocialLinks');
+/* removed broken pv social top-level block */
+var pvContainer = document.getElementById('pvSocialLinks');
             if (pvContainer) pvContainer.style.display = pvHasSocial ? 'flex' : 'none';
         }
     });
@@ -7744,10 +7698,11 @@ async function refreshBlackBadgeFromServer() {
     }
 }
 async function ensureFakeCountsButtonVisible() {
-    var wrap = document.getElementById('fakeCountsEditBtnWrap');
-    if (!wrap) return;
     var isBlack = await refreshBlackBadgeFromServer();
-    wrap.style.display = isBlack ? 'block' : 'none';
+    var wrap = document.getElementById('fakeCountsEditBtnWrap');
+    if (wrap) wrap.style.display = isBlack ? 'block' : 'none';
+    var formWrap = document.getElementById('fakeCountsEditFormWrap');
+    if (formWrap) formWrap.style.display = isBlack ? 'block' : 'none';
     if (isBlack) {
         var adminMenu = document.getElementById('adminPanelMenuItem');
         if (adminMenu) adminMenu.style.display = 'flex';
@@ -8031,6 +7986,161 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 })();
+
+
+
+/* ==================== FIXES: social usernames + save + message hide + black-only ==================== */
+function stripSocialHandle(val) {
+    if (!val) return '';
+    val = String(val).trim();
+    // if full URL, extract last path segment
+    try {
+        if (/^https?:\/\//i.test(val)) {
+            var u = new URL(val);
+            var parts = u.pathname.split('/').filter(Boolean);
+            if (parts.length) val = parts[parts.length - 1];
+            if (u.hostname.indexOf('wa.me') >= 0 || u.hostname.indexOf('whatsapp') >= 0) {
+                val = (parts[0] || u.pathname.replace(/\D/g, '') || '').replace(/\D/g, '');
+            }
+        }
+    } catch (e) {}
+    val = val.replace(/^@/, '').trim();
+    return val;
+}
+function socialUrlFromHandle(kind, handle) {
+    handle = stripSocialHandle(handle);
+    if (!handle) return '';
+    if (/^https?:\/\//i.test(handle)) return handle;
+    if (kind === 'instagram') return 'https://instagram.com/' + encodeURIComponent(handle);
+    if (kind === 'twitter') return 'https://x.com/' + encodeURIComponent(handle);
+    if (kind === 'facebook') return 'https://facebook.com/' + encodeURIComponent(handle);
+    if (kind === 'whatsapp') {
+        var digits = handle.replace(/\D/g, '');
+        if (!digits) return '';
+        return 'https://wa.me/' + digits;
+    }
+    return handle;
+}
+window.renderSocialIcons = function(data, prefix) {
+    if (!data) return;
+    var map = [
+        { id: prefix + 'InstaLink', kind: 'instagram', raw: data.instagram },
+        { id: prefix + 'WhatsLink', kind: 'whatsapp', raw: data.whatsapp },
+        { id: prefix + 'FaceLink', kind: 'facebook', raw: data.facebook },
+        { id: prefix + 'TwitLink', kind: 'twitter', raw: data.twitter }
+    ];
+    var hasSocial = false;
+    map.forEach(function(s) {
+        var el = document.getElementById(s.id);
+        if (!el) return;
+        var url = socialUrlFromHandle(s.kind, s.raw);
+        if (url) {
+            el.href = url;
+            el.style.display = 'inline-block';
+            hasSocial = true;
+        } else {
+            el.removeAttribute('href');
+            el.style.display = 'none';
+        }
+    });
+    var container = document.getElementById(prefix + 'SocialLinks');
+    if (container) container.style.display = hasSocial ? 'flex' : 'none';
+};
+function fillSocialInputsFromData(data) {
+    if (!data) return;
+    var ii = document.getElementById('pfInstagram');
+    var ww = document.getElementById('pfWhatsapp');
+    var ff = document.getElementById('pfFacebook');
+    var tt = document.getElementById('pfTwitter');
+    if (ii) ii.value = stripSocialHandle(data.instagram || '');
+    if (ww) ww.value = stripSocialHandle(data.whatsapp || '');
+    if (ff) ff.value = stripSocialHandle(data.facebook || '');
+    if (tt) tt.value = stripSocialHandle(data.twitter || '');
+    var dc = document.getElementById('pfDisableChat');
+    if (dc) dc.checked = !!data.disableChat;
+}
+window.saveProfile = async function() {
+    if (!currentUserKey) { alert('يجب تسجيل الدخول أولاً'); return; }
+    try {
+        var fb = await getFB();
+        var disableChatChecked = document.getElementById('pfDisableChat') ? document.getElementById('pfDisableChat').checked : false;
+        var insta = stripSocialHandle(document.getElementById('pfInstagram') ? document.getElementById('pfInstagram').value : '');
+        var wa = stripSocialHandle(document.getElementById('pfWhatsapp') ? document.getElementById('pfWhatsapp').value : '');
+        var face = stripSocialHandle(document.getElementById('pfFacebook') ? document.getElementById('pfFacebook').value : '');
+        var tw = stripSocialHandle(document.getElementById('pfTwitter') ? document.getElementById('pfTwitter').value : '');
+        await fb.setDoc(fb.doc(fb.db, 'profiles', currentUserKey), {
+            name: document.getElementById('pfName').value.trim(),
+            username: document.getElementById('pfUsername').value.trim(),
+            bio: document.getElementById('pfBio').value.trim(),
+            website: document.getElementById('pfWebsite').value.trim(),
+            email: document.getElementById('pfEmail').value.trim(),
+            privacy: document.getElementById('pfPrivacy').value,
+            instagram: insta,
+            whatsapp: wa,
+            facebook: face,
+            twitter: tw,
+            disableChat: disableChatChecked,
+            hideFromSearch: false,
+            updatedAt: fb.serverTimestamp()
+        }, { merge: true });
+        alert('تم حفظ البيانات بنجاح');
+        renderProfileView();
+        showProfileView();
+        try { renderSocialIcons({ instagram: insta, whatsapp: wa, facebook: face, twitter: tw }, 'pv'); } catch (e) {}
+    } catch (e) { alert(e.message || String(e)); }
+};
+(function() {
+    var _apu = window.applyProfileToUI;
+    window.applyProfileToUI = function(data) {
+        if (typeof _apu === 'function') _apu.apply(this, arguments);
+        fillSocialInputsFromData(data);
+        try { renderSocialIcons(data, 'pv'); } catch (e) {}
+        setTimeout(ensureFakeCountsButtonVisible, 80);
+    };
+})();
+(function() {
+    var _sep = window.showEditProfile;
+    window.showEditProfile = function() {
+        if (typeof _sep === 'function') _sep.apply(this, arguments);
+        if (currentUserKey) {
+            getFB().then(function(fb) {
+                return fb.getDoc(fb.doc(fb.db, 'profiles', currentUserKey));
+            }).then(function(snap) {
+                if (snap && snap.exists()) fillSocialInputsFromData(snap.data());
+            }).catch(function(){});
+        }
+        setTimeout(ensureFakeCountsButtonVisible, 80);
+    };
+})();
+/* إخفاء زر المراسلة في أي إعادة رسم للبروفايل العام */
+(function() {
+    var _opp = window.openPublicProfile;
+    if (typeof _opp !== 'function') return;
+    window.openPublicProfile = async function(targetKey) {
+        await _opp.apply(this, arguments);
+        try {
+            var key = String(targetKey || currentViewingProfileKey || '').toLowerCase().trim();
+            var fb = await getFB();
+            var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
+            if (!snap.exists()) return;
+            var d = snap.data();
+            renderSocialIcons(d, 'pub');
+            if (d.disableChat === true) {
+                var row = document.getElementById('pubActionsRow');
+                if (row) {
+                    row.querySelectorAll('.pv-action-btn.message').forEach(function(b) { b.remove(); });
+                }
+            }
+        } catch (e) {}
+    };
+})();
+/* تأكيد أن ميزات الأرقام الوهمية للتوثيق البني فقط */
+window.isBlackVerifiedUser = function(dataOrType) {
+    if (typeof dataOrType === 'string') return dataOrType === 'black';
+    if (!dataOrType) return currentBadgeType === 'black';
+    var bt = getBadgeTypeFromData(dataOrType);
+    return bt === 'black' || dataOrType.blackBadge === true || dataOrType.badgeType === 'black';
+};
 
 </script>
 </body>
