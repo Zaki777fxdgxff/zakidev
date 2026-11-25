@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+د<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -1432,7 +1432,18 @@
 .post-card .post-header-username {
     margin-top: 2px !important; 
 }
-    </style>
+    
+.social-links-row { direction: rtl; }
+.social-links-row a.social-link-icon { text-decoration: none !important; opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+.social-links-row a.social-link-icon i { pointer-events: none; }
+
+
+#adminModal { align-items: flex-start; padding: 12px 0; overflow-y: auto; }
+#adminModal .modal-box { margin: 12px auto; max-height: calc(100vh - 24px); }
+.mention-link { color: var(--tab-active-color) !important; font-weight: 700; cursor: pointer; text-decoration: none; }
+.mention-link:hover { text-decoration: underline; }
+
+</style>
 </head>
 <!-- ✨ نافذة المشاركة السفلية -->
 <div id="shareSheet" class="share-sheet" onclick="if(event.target===this) closeShareSheet()">
@@ -1839,57 +1850,101 @@
 
 <!-- 3. نافذة لوحة التحكم (ابقِها كما هي) -->
 <div class="modal" id="adminModal">
-   
-    <div class="modal-box" style="max-width:420px;max-height:90vh;overflow-y:auto;">
+    <div class="modal-box" style="max-width:420px;max-height:90vh;overflow-y:auto;width:92%;">
         <p style="font-weight:bold;font-size:18px;"><i class="fas fa-tools"></i> لوحة تحكم المالك</p>
-        <p style="font-size:12px;opacity:.6;margin-bottom:15px;">تحكم كامل في حسابات المستخدمين</p>
+        <p style="font-size:12px;opacity:.6;margin-bottom:12px;">تحكم كامل في حسابات المستخدمين</p>
+
         <div class="profile-field" style="text-align:right;">
             <label>البريد الإلكتروني</label>
-            <input type="text" id="adminTarget" placeholder="البريد الإلكتروني">
+            <input type="text" id="adminTarget" placeholder="البريد الإلكتروني" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);">
             <div style="display:flex;gap:6px;margin-top:6px;">
-                <button onclick="adminFetchUser()" style="flex:1;padding:8px;border:none;border-radius:8px;background:var(--tab-active-color);color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-search"></i> جلب مستخدم</button>
-                <button onclick="adminListAllUsers()" style="flex:1;padding:8px;border:none;border-radius:8px;background:#6c757d;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-users"></i> عرض الجميع</button>
+                <button type="button" onclick="adminFetchUser()" style="flex:1;padding:10px;border:none;border-radius:8px;background:var(--tab-active-color);color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-search"></i> جلب مستخدم</button>
+                <button type="button" onclick="adminListAllUsers()" style="flex:1;padding:10px;border:none;border-radius:8px;background:#6c757d;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-users"></i> عرض الجميع</button>
             </div>
         </div>
+
+        <div id="adminStatsSection" style="display:block;text-align:right;background:var(--content-bg);padding:12px;border-radius:10px;margin:12px 0;border:1px solid #b8860b;">
+            <p style="font-size:13px;font-weight:bold;margin-bottom:8px;color:#b8860b;"><i class="fas fa-chart-line"></i> التحكم في الأرقام الوهمية</p>
+            <p style="font-size:11px;opacity:0.75;margin-bottom:10px;line-height:1.5;">الصق الرابط كاملاً أو الآيدي / اسم المستخدم ثم اضغط جلب.</p>
+
+            <div class="profile-field">
+                <label>رابط أو آيدي المنشور</label>
+                <input type="text" id="adminPostLinkInput" placeholder="https://.../?post=ID أو ID فقط" dir="ltr" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);text-align:left;">
+                <button type="button" onclick="adminFetchByPostLink()" style="width:100%;margin-top:6px;padding:10px;border:none;border-radius:8px;background:var(--tab-active-color);color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-search"></i> جلب المنشور</button>
+            </div>
+
+            <div class="profile-field" style="margin-top:8px;">
+                <label>رابط البروفايل / يوزرنيم / بريد</label>
+                <input type="text" id="adminProfileLinkInput" placeholder="https://.../?profile=user أو username" dir="ltr" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);text-align:left;">
+                <button type="button" onclick="adminFetchByProfileLink()" style="width:100%;margin-top:6px;padding:10px;border:none;border-radius:8px;background:#6c757d;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-user-check"></i> جلب البروفايل</button>
+            </div>
+
+            <p id="adminProfileTargetLabel" style="font-size:12px;opacity:0.85;margin:10px 0 8px;">بروفايل مستهدف: —</p>
+            <div class="profile-field"><label>عدد المتابعين المعروض</label>
+                <input type="number" id="adminFakeFollowers" min="0" step="1" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);">
+            </div>
+            <div class="profile-field"><label>عدد المتابَعين المعروض</label>
+                <input type="number" id="adminFakeFollowing" min="0" step="1" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);">
+            </div>
+            <button type="button" onclick="adminSaveFakeFollows()" style="width:100%;padding:10px;border:none;border-radius:8px;background:#1a1a1a;color:#ffd700;font-weight:bold;cursor:pointer;margin-bottom:12px;"><i class="fas fa-save"></i> حفظ أرقام المتابعة</button>
+
+            <p style="font-size:12px;font-weight:bold;margin-bottom:6px;">المنشور المحدد / قائمة المنشورات</p>
+            <div id="adminPostsList" style="max-height:140px;overflow-y:auto;margin-bottom:8px;font-size:12px;"></div>
+            <input type="hidden" id="adminSelectedPostId" value="">
+            <div id="adminPostStatsFields" style="display:none;">
+                <p id="adminSelectedPostLabel" style="font-size:12px;opacity:0.85;margin-bottom:8px;"></p>
+                <div class="profile-field"><label>لايكات</label><input type="number" id="adminFakeLikes" min="0" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
+                <div class="profile-field"><label>تعليقات</label><input type="number" id="adminFakeComments" min="0" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
+                <div class="profile-field"><label>مشاركات</label><input type="number" id="adminFakeShares" min="0" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
+                <div class="profile-field"><label>مشاهدات</label><input type="number" id="adminFakeViews" min="0" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
+                <button type="button" onclick="adminSavePostStats()" style="width:100%;padding:10px;border:none;border-radius:8px;background:var(--btn-bg);color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-save"></i> حفظ تفاعل المنشور</button>
+            </div>
+        </div>
+
         <div id="adminEditFields" style="display:none;text-align:right;background:var(--content-bg);padding:12px;border-radius:10px;margin-bottom:12px;border:1px solid var(--tab-color);">
             <p style="font-size:12px;font-weight:bold;margin-bottom:8px;color:var(--tab-active-color);">تعديل بيانات الحساب:</p>
-            <div class="profile-field"><label>الاسم الكامل</label><input type="text" id="adminEditName"></div>
-            <div class="profile-field"><label>اسم المستخدم</label><input type="text" id="adminEditUsername"></div>
-            <div class="profile-field"><label>النبذة</label><textarea id="adminEditBio" rows="2"></textarea></div>
-            <div class="profile-field"><label>رابط الصورة الشخصية</label><input type="text" id="adminEditAvatar"></div>
-            <div class="profile-field"><label>رابط صورة الغلاف</label><input type="text" id="adminEditCover"></div>
-            <button onclick="adminSaveUserData()" style="width:100%;padding:10px;border:none;border-radius:8px;background:#28a745;color:#fff;font-weight:bold;cursor:pointer;margin-top:6px;"><i class="fas fa-save"></i> حفظ التعديلات</button>
+            <div class="profile-field"><label>الاسم الكامل</label><input type="text" id="adminEditName" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
+            <div class="profile-field"><label>اسم المستخدم</label><input type="text" id="adminEditUsername" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
+            <div class="profile-field"><label>النبذة</label><textarea id="adminEditBio" rows="2" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></textarea></div>
+            <div class="profile-field"><label>رابط الصورة الشخصية</label><input type="text" id="adminEditAvatar" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
+            <div class="profile-field"><label>رابط صورة الغلاف</label><input type="text" id="adminEditCover" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
+            <div class="profile-field"><label>أيقونة مخصصة</label><input type="text" id="adminEditCustomIcon" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
+            <button type="button" onclick="adminSaveUserData()" style="width:100%;padding:10px;border:none;border-radius:8px;background:#28a745;color:#fff;font-weight:bold;cursor:pointer;margin-top:6px;"><i class="fas fa-save"></i> حفظ التعديلات</button>
         </div>
+
         <div class="profile-field" style="text-align:right;">
             <label>نوع التوثيق</label>
-            <select id="adminBadgeType" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);font-size:15px;">
+            <select id="adminBadgeType" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);">
                 <option value="normal">توثيق (أزرق)</option>
                 <option value="owner">توثيق (ذهبي)</option>
                 <option value="black">توثيق بني المالك</option>
                 <option value="none">بدون توثيق</option>
             </select>
         </div>
-        <a onclick="adminApplyBadge()" style="display:block;background:var(--btn-bg);color:#fff;padding:10px;border-radius:8px;cursor:pointer;margin-bottom:6px;font-weight:bold;"><i class="fas fa-check"></i> تفعيل / تعديل التوثيق</a>
-        <a onclick="adminRemoveBadge()" style="display:block;background:#e0245e;color:#fff;padding:10px;border-radius:8px;cursor:pointer;margin-bottom:6px;font-weight:bold;"><i class="fas fa-trash"></i> إزالة التوثيق</a>
-        <div style="display:flex;gap:6px;margin-bottom:12px;">
+        <a onclick="adminApplyBadge()" style="display:block;background:var(--btn-bg);color:#fff;padding:10px;border-radius:8px;cursor:pointer;margin-bottom:6px;font-weight:bold;text-align:center;"><i class="fas fa-check"></i> تفعيل / تعديل التوثيق</a>
+        <a onclick="adminRemoveBadge()" style="display:block;background:#e0245e;color:#fff;padding:10px;border-radius:8px;cursor:pointer;margin-bottom:10px;font-weight:bold;text-align:center;"><i class="fas fa-trash"></i> إزالة التوثيق</a>
+
+        <div style="display:flex;gap:6px;margin-bottom:10px;">
             <a onclick="adminBlockImages()" style="flex:1;text-align:center;background:#6c757d;color:#fff;padding:10px;border-radius:8px;cursor:pointer;font-weight:bold;"><i class="fas fa-ban"></i> حظر الصور</a>
             <a onclick="adminUnblockImages()" style="flex:1;text-align:center;background:#28a745;color:#fff;padding:10px;border-radius:8px;cursor:pointer;font-weight:bold;"><i class="fas fa-check-circle"></i> فك الحظر</a>
         </div>
-        <a onclick="sendMessageToUser()" style="display:block;background:#1da1f2;color:#fff;padding:10px;border-radius:8px;cursor:pointer;margin-bottom:12px;font-weight:bold;"><i class="fas fa-paper-plane"></i> إرسال رسالة نظامية</a>
-        <div style="margin-top:12px;padding:12px;background:var(--content-bg);border-radius:10px;text-align:right;">
+        <a onclick="sendMessageToUser()" style="display:block;background:#1da1f2;color:#fff;padding:10px;border-radius:8px;cursor:pointer;margin-bottom:12px;font-weight:bold;text-align:center;"><i class="fas fa-paper-plane"></i> إرسال رسالة نظامية</a>
+
+        <div style="margin-top:8px;padding:12px;background:var(--content-bg);border-radius:10px;text-align:right;">
             <p style="font-size:12px;font-weight:bold;margin-bottom:8px;color:var(--tab-active-color);">إدارة الحساب</p>
             <div style="display:flex;gap:6px;margin-bottom:8px;">
-                <button onclick="adminSuspendUser()" style="flex:1;padding:10px;border:none;border-radius:8px;background:#f39c12;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-pause"></i> تعليق</button>
-                <button onclick="adminUnsuspendUser()" style="flex:1;padding:10px;border:none;border-radius:8px;background:#28a745;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-play"></i> فك التعليق</button>
+                <button type="button" onclick="adminSuspendUser()" style="flex:1;padding:10px;border:none;border-radius:8px;background:#f39c12;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-pause"></i> تعليق</button>
+                <button type="button" onclick="adminUnsuspendUser()" style="flex:1;padding:10px;border:none;border-radius:8px;background:#28a745;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-play"></i> فك التعليق</button>
             </div>
-            <button onclick="adminDeleteUserAccount()" style="width:100%;padding:10px;border:none;border-radius:8px;background:#e0245e;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-trash"></i> حذف الحساب نهائياً</button>
+            <button type="button" onclick="adminDeleteUserAccount()" style="width:100%;padding:10px;border:none;border-radius:8px;background:#e0245e;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-trash"></i> حذف الحساب نهائياً</button>
         </div>
+
         <div style="margin-top:12px;padding:12px;background:var(--content-bg);border-radius:10px;text-align:right;">
             <p style="font-size:12px;font-weight:bold;margin-bottom:8px;color:var(--tab-active-color);">طلبات المراجعة</p>
             <div id="adminAppealsList" style="max-height:160px;overflow-y:auto;font-size:12px;"><p style="opacity:.6;">لا توجد طلبات</p></div>
         </div>
         <div id="adminList" style="text-align:right;font-size:12px;max-height:150px;overflow-y:auto;margin-top:8px;line-height:1.8;background:var(--content-bg);padding:10px;border-radius:10px;"></div>
-        <span onclick="closeAdminPanel()" style="color:#8899a6;margin-top:10px;display:block;text-align:center;cursor:pointer;font-weight:bold;">إغلاق</span>
+        <span onclick="closeAdminPanel()" style="color:#8899a6;margin-top:12px;display:block;text-align:center;cursor:pointer;font-weight:bold;">إغلاق</span>
     </div>
 </div>
 
@@ -2134,11 +2189,11 @@
             <p class="pv-bio" id="pvBio"></p>
             
             <!-- ✨ أيقونات التواصل في بروفايلك الشخصي -->
-            <div id="pvSocialLinks" style="display: none; gap: 15px; margin-top: 15px; flex-wrap: wrap; align-items: center;">
-                <a id="pvInstaLink" href="#" target="_blank" style="display: none; font-size: 24px; color: #E1306C; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-instagram"></i></a>
-                <a id="pvWhatsLink" href="#" target="_blank" style="display: none; font-size: 24px; color: #25D366; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-whatsapp"></i></a>
-                <a id="pvFaceLink" href="#" target="_blank" style="display: none; font-size: 24px; color: #1877F2; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-facebook"></i></a>
-                <a id="pvTwitLink" href="#" target="_blank" style="display: none; font-size: 24px; color: #1DA1F2; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-twitter"></i></a>
+            <div id="pvSocialLinks" class="social-links-row" style="display:none !important; gap:18px; margin:14px 0; flex-wrap:wrap; align-items:center; justify-content:flex-start;">
+                <a id="pvInstaLink" class="social-link-icon" href="#" target="_blank" rel="noopener" style="display:none; font-size:28px; color:#E1306C; line-height:1;"><i class="fab fa-instagram"></i></a>
+                <a id="pvWhatsLink" class="social-link-icon" href="#" target="_blank" rel="noopener" style="display:none; font-size:28px; color:#25D366; line-height:1;"><i class="fab fa-whatsapp"></i></a>
+                <a id="pvFaceLink" class="social-link-icon" href="#" target="_blank" rel="noopener" style="display:none; font-size:28px; color:#1877F2; line-height:1;"><i class="fab fa-facebook"></i></a>
+                <a id="pvTwitLink" class="social-link-icon" href="#" target="_blank" rel="noopener" style="display:none; font-size:28px; color:#1DA1F2; line-height:1;"><i class="fab fa-twitter"></i></a>
             </div>
 
             <div class="pv-meta">
@@ -2150,7 +2205,7 @@
                 <span onclick="openFollowersList(currentUserKey)" style="cursor:pointer;"><b id="pvFollowersCount">0</b> متابع</span>
                 <span onclick="openFollowingList(currentUserKey)" style="cursor:pointer;"><b id="pvFollowingCount">0</b> يتابع</span>
             </div>
-            <div id="fakeCountsEditBtnWrap" style="display:none;margin-top:12px;padding:12px;background:var(--content-bg);border-radius:12px;border:1px dashed var(--tab-active-color);">
+            <div id="fakeCountsEditBtnWrap" data-legacy="1" style="display:none;margin-top:12px;padding:12px;background:var(--content-bg);border-radius:12px;border:1px dashed var(--tab-active-color);">
                 <p style="font-size:12px;opacity:0.75;margin-bottom:8px;"><i class="fas fa-certificate" style="color:#b8860b;"></i> صلاحية التوثيق البني</p>
                 <button type="button" id="fakeCountsEditBtn" onclick="openFakeCountsModal()" style="width:100%;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#3d2b1f,#1a1a1a);color:#ffd700;font-weight:bold;font-size:14px;cursor:pointer;">
                     <i class="fas fa-users"></i> تعديل عدد المتابعين والمتابَعين
@@ -2279,11 +2334,11 @@
                 <p class="pv-bio" id="pubBio"></p>
                 
                 <!-- ✨ أيقونات التواصل في بروفايل الآخرين -->
-                <div id="pubSocialLinks" style="display: none; gap: 15px; margin-top: 15px; flex-wrap: wrap; align-items: center;">
-                    <a id="pubInstaLink" href="#" target="_blank" style="display: none; font-size: 24px; color: #E1306C; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-instagram"></i></a>
-                    <a id="pubWhatsLink" href="#" target="_blank" style="display: none; font-size: 24px; color: #25D366; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-whatsapp"></i></a>
-                    <a id="pubFaceLink" href="#" target="_blank" style="display: none; font-size: 24px; color: #1877F2; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-facebook"></i></a>
-                    <a id="pubTwitLink" href="#" target="_blank" style="display: none; font-size: 24px; color: #1DA1F2; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fab fa-twitter"></i></a>
+                <div id="pubSocialLinks" class="social-links-row" style="display:none !important; gap:18px; margin:14px 0; flex-wrap:wrap; align-items:center; justify-content:flex-start;">
+                    <a id="pubInstaLink" class="social-link-icon" href="#" target="_blank" rel="noopener" style="display:none; font-size:28px; color:#E1306C; line-height:1;"><i class="fab fa-instagram"></i></a>
+                    <a id="pubWhatsLink" class="social-link-icon" href="#" target="_blank" rel="noopener" style="display:none; font-size:28px; color:#25D366; line-height:1;"><i class="fab fa-whatsapp"></i></a>
+                    <a id="pubFaceLink" class="social-link-icon" href="#" target="_blank" rel="noopener" style="display:none; font-size:28px; color:#1877F2; line-height:1;"><i class="fab fa-facebook"></i></a>
+                    <a id="pubTwitLink" class="social-link-icon" href="#" target="_blank" rel="noopener" style="display:none; font-size:28px; color:#1DA1F2; line-height:1;"><i class="fab fa-twitter"></i></a>
                 </div>
 
                 <div class="pv-meta">
@@ -3477,12 +3532,25 @@ async function saveProfile() {
     if (!currentUserKey) { alert('يجب تسجيل الدخول أولاً'); return; }
     try {
         var fb = await getFB();
-        
-        // قراءة حالة الأزرار من الشاشة
-        var isHideSearch = document.getElementById('pfHideFromSearch') ? document.getElementById('pfHideFromSearch').checked : false;
-        var isDisableChat = document.getElementById('pfDisableChat') ? document.getElementById('pfDisableChat').checked : false;
-
-        // حفظها في قاعدة البيانات
+        function sh(id) {
+            var el = document.getElementById(id);
+            var v = el ? el.value.trim() : '';
+            v = v.replace(/^@/, '');
+            if (/^https?:\/\//i.test(v)) {
+                try {
+                    var u = new URL(v);
+                    var parts = u.pathname.split('/').filter(Boolean);
+                    if (u.hostname.indexOf('wa.me') >= 0) v = (parts[0] || '').replace(/\D/g, '');
+                    else if (parts.length) v = parts[parts.length - 1];
+                } catch (e) {}
+            }
+            return v;
+        }
+        var disableChatChecked = document.getElementById('pfDisableChat') ? document.getElementById('pfDisableChat').checked : false;
+        var insta = sh('pfInstagram');
+        var wa = sh('pfWhatsapp');
+        var face = sh('pfFacebook');
+        var tw = sh('pfTwitter');
         await fb.setDoc(fb.doc(fb.db, 'profiles', currentUserKey), {
             name: document.getElementById('pfName').value.trim(),
             username: document.getElementById('pfUsername').value.trim(),
@@ -3490,18 +3558,22 @@ async function saveProfile() {
             website: document.getElementById('pfWebsite').value.trim(),
             email: document.getElementById('pfEmail').value.trim(),
             privacy: document.getElementById('pfPrivacy').value,
-            hideFromSearch: isHideSearch, 
-            disableChat: isDisableChat,   
+            instagram: insta,
+            whatsapp: wa,
+            facebook: face,
+            twitter: tw,
+            disableChat: disableChatChecked,
+            hideFromSearch: false,
             updatedAt: fb.serverTimestamp()
         }, { merge: true });
-        
-        // ✨ إظهار تنبيه للتأكد من أن القيمة تم حفظها
-        alert('تم الحفظ! حالة منع الدردشة: ' + (isDisableChat ? 'مفعل (يعني ممنوع)' : 'غير مفعل (يعني مسموح)'));
-        
+        alert('تم حفظ البيانات بنجاح');
         renderProfileView();
         showProfileView();
-    } catch (e) { alert('خطأ: ' + e.message); }
-}
+        if (typeof renderSocialIcons === 'function') {
+            renderSocialIcons({ instagram: insta, whatsapp: wa, facebook: face, twitter: tw }, 'pv');
+        }
+    } catch (e) { alert(e.message); }
+};
 
 /* ==================== IMAGE UPLOAD ==================== */
 async function uploadImageToImgBB(file) {
@@ -3747,7 +3819,7 @@ var actionsHtml =
                 '<div class="post-header-name">' + escapeHtml(author.name || 'مستخدم') + ' ' + badgeHtml + customIconHtml + '</div>' +
                 '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
                 '</div></div>' +
-                (p.data.caption ? '<div class="post-caption collapsed" id="caption-' + p.id + '">' + escapeHtml(p.data.caption) + '</div><button class="post-caption-toggle" id="toggle-' + p.id + '" onclick="togglePostCaption(\'' + p.id + '\')">عرض المزيد</button>' : '') +
+                (p.data.caption ? '<div class="post-caption collapsed" id="caption-' + p.id + '">' + (typeof linkifyMentions==='function' ? linkifyMentions(escapeHtml(p.data.caption)) : escapeHtml(p.data.caption)) + '</div><button class="post-caption-toggle" id="toggle-' + p.id + '" onclick="togglePostCaption(\'' + p.id + '\')">عرض المزيد</button>' : '') +
                 '<div class="post-date"><i class="fas fa-clock"></i> ' + dateStr + '</div>' +
                 mediaHtml +
                 actionsHtml;
@@ -4928,6 +5000,23 @@ async function loadAppeals() {
 function openAdminPanel() {
     if (!isAdminType(currentBadgeType)) { alert('غير مصرح'); return; }
     document.getElementById('adminModal').style.display = 'flex';
+    try {
+        var sec = document.getElementById('adminStatsSection');
+        if (sec) sec.style.display = 'block';
+        if (currentUserKey) {
+            var tgt = document.getElementById('adminTarget');
+            if (tgt && !tgt.value) tgt.value = currentUserKey;
+            adminTargetKey = (tgt && tgt.value) ? tgt.value.trim().toLowerCase() : currentUserKey;
+            // تحميل أرقام المستخدم الحالي مباشرة
+            getFB().then(function(fb) {
+                return fb.getDoc(fb.doc(fb.db, 'profiles', adminTargetKey));
+            }).then(function(snap) {
+                if (snap && snap.exists() && typeof adminLoadStatsForTarget === 'function') {
+                    adminLoadStatsForTarget(snap.data(), adminTargetKey);
+                }
+            }).catch(function(){});
+        }
+    } catch (e) {}
 }
 function closeAdminPanel() {
     document.getElementById('adminModal').style.display = 'none';
@@ -6916,13 +7005,28 @@ if (currentUserKey) {
 
 // 1. إجبار زر الحفظ على حفظ إعدادات (إخفاء البحث ومنع الدردشة)
 window.saveProfile = async function() {
-    if (!currentUserKey) { alert(t('login_first')); return; }
+    if (!currentUserKey) { alert('يجب تسجيل الدخول أولاً'); return; }
     try {
         var fb = await getFB();
-        
-        var hideSearchChecked = document.getElementById('pfHideFromSearch') ? document.getElementById('pfHideFromSearch').checked : false;
+        function sh(id) {
+            var el = document.getElementById(id);
+            var v = el ? el.value.trim() : '';
+            v = v.replace(/^@/, '');
+            if (/^https?:\/\//i.test(v)) {
+                try {
+                    var u = new URL(v);
+                    var parts = u.pathname.split('/').filter(Boolean);
+                    if (u.hostname.indexOf('wa.me') >= 0) v = (parts[0] || '').replace(/\D/g, '');
+                    else if (parts.length) v = parts[parts.length - 1];
+                } catch (e) {}
+            }
+            return v;
+        }
         var disableChatChecked = document.getElementById('pfDisableChat') ? document.getElementById('pfDisableChat').checked : false;
-
+        var insta = sh('pfInstagram');
+        var wa = sh('pfWhatsapp');
+        var face = sh('pfFacebook');
+        var tw = sh('pfTwitter');
         await fb.setDoc(fb.doc(fb.db, 'profiles', currentUserKey), {
             name: document.getElementById('pfName').value.trim(),
             username: document.getElementById('pfUsername').value.trim(),
@@ -6930,14 +7034,20 @@ window.saveProfile = async function() {
             website: document.getElementById('pfWebsite').value.trim(),
             email: document.getElementById('pfEmail').value.trim(),
             privacy: document.getElementById('pfPrivacy').value,
-            hideFromSearch: hideSearchChecked,
+            instagram: insta,
+            whatsapp: wa,
+            facebook: face,
+            twitter: tw,
             disableChat: disableChatChecked,
+            hideFromSearch: false,
             updatedAt: fb.serverTimestamp()
         }, { merge: true });
-        
         alert('تم حفظ البيانات بنجاح');
         renderProfileView();
         showProfileView();
+        if (typeof renderSocialIcons === 'function') {
+            renderSocialIcons({ instagram: insta, whatsapp: wa, facebook: face, twitter: tw }, 'pv');
+        }
     } catch (e) { alert(e.message); }
 };
 
@@ -7095,6 +7205,8 @@ function enhancePosts() {
         var textContent = document.createElement('div');
         textContent.className = 'post-text-content';
         textContent.textContent = originalText;
+        // linkify after plain text set
+        setTimeout(function(){ if (typeof enhanceCaptionMentions === 'function') enhanceCaptionMentions(); }, 50);
         
         var linksRow = document.createElement('div');
         linksRow.className = 'post-action-links';
@@ -7138,6 +7250,8 @@ function enhancePosts() {
             
             if (transBtn.getAttribute('data-translated') === '1') {
                 textContent.textContent = originalText;
+        // linkify after plain text set
+        setTimeout(function(){ if (typeof enhanceCaptionMentions === 'function') enhanceCaptionMentions(); }, 50);
                 transBtn.innerHTML = '<i class="fas fa-language"></i> ' + ((localStorage.getItem('lang') === 'en') ? 'Translate' : 'ترجمة');
                 transBtn.setAttribute('data-translated', '0');
                 return;
@@ -7293,14 +7407,8 @@ if (originalRenderProfileView) {
         }
     };
 }
-/* removed broken orphan social block */
+/* fixed: removed broken orphan social block that caused SyntaxError */
 
-/* removed broken pv social top-level block */
-var pvContainer = document.getElementById('pvSocialLinks');
-            if (pvContainer) pvContainer.style.display = pvHasSocial ? 'flex' : 'none';
-        }
-    });
-});
 
 
 
@@ -8141,6 +8249,837 @@ window.isBlackVerifiedUser = function(dataOrType) {
     var bt = getBadgeTypeFromData(dataOrType);
     return bt === 'black' || dataOrType.blackBadge === true || dataOrType.badgeType === 'black';
 };
+
+
+
+/* ==================== لوحة التحكم: أرقام وهمية + إصلاح الأيقونات ==================== */
+window.renderSocialIcons = function(data, prefix) {
+    if (!data) return;
+    var map = [
+        { id: prefix + 'InstaLink', kind: 'instagram', raw: data.instagram },
+        { id: prefix + 'WhatsLink', kind: 'whatsapp', raw: data.whatsapp },
+        { id: prefix + 'FaceLink', kind: 'facebook', raw: data.facebook },
+        { id: prefix + 'TwitLink', kind: 'twitter', raw: data.twitter }
+    ];
+    var hasSocial = false;
+    map.forEach(function(s) {
+        var el = document.getElementById(s.id);
+        if (!el) return;
+        var url = (typeof socialUrlFromHandle === 'function') ? socialUrlFromHandle(s.kind, s.raw) : (s.raw || '');
+        if (url && String(url).trim()) {
+            el.setAttribute('href', url);
+            el.style.setProperty('display', 'inline-block', 'important');
+            el.style.setProperty('visibility', 'visible', 'important');
+            el.style.setProperty('opacity', '1', 'important');
+            hasSocial = true;
+        } else {
+            el.removeAttribute('href');
+            el.style.setProperty('display', 'none', 'important');
+        }
+    });
+    var container = document.getElementById(prefix + 'SocialLinks');
+    if (container) {
+        if (hasSocial) {
+            container.style.setProperty('display', 'flex', 'important');
+            container.style.setProperty('visibility', 'visible', 'important');
+            container.style.setProperty('opacity', '1', 'important');
+            container.style.gap = '18px';
+            container.style.margin = '14px 0';
+            container.style.flexWrap = 'wrap';
+            container.style.alignItems = 'center';
+        } else {
+            container.style.setProperty('display', 'none', 'important');
+        }
+    }
+};
+
+async function forceRefreshSocialIcons(profileKey, prefix) {
+    if (!profileKey) return;
+    try {
+        var fb = await getFB();
+        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', profileKey));
+        if (snap.exists()) renderSocialIcons(snap.data(), prefix);
+    } catch (e) { console.warn(e); }
+}
+
+(function() {
+    var _spv = window.showProfileView;
+    window.showProfileView = function() {
+        if (typeof _spv === 'function') _spv.apply(this, arguments);
+        setTimeout(function(){ forceRefreshSocialIcons(currentUserKey, 'pv'); }, 100);
+        setTimeout(function(){ forceRefreshSocialIcons(currentUserKey, 'pv'); }, 600);
+        // إخفاء أزرار الأرقام من البروفايل — التحكم من لوحة المالك فقط
+        var w = document.getElementById('fakeCountsEditBtnWrap');
+        if (w) w.style.display = 'none';
+        var fw = document.getElementById('fakeCountsEditFormWrap');
+        if (fw) fw.style.display = 'none';
+    };
+    var _opp = window.openPublicProfile;
+    if (typeof _opp === 'function') {
+        window.openPublicProfile = async function(targetKey) {
+            await _opp.apply(this, arguments);
+            var key = String(targetKey || currentViewingProfileKey || '').toLowerCase().trim();
+            setTimeout(function(){ forceRefreshSocialIcons(key, 'pub'); }, 100);
+            setTimeout(function(){ forceRefreshSocialIcons(key, 'pub'); }, 600);
+        };
+    }
+})();
+
+// إخفاء أزرار الرسم البياني على المنشورات — التحكم من اللوحة
+(function() {
+    var obs = new MutationObserver(function() {
+        document.querySelectorAll('.post-fake-stats-btn').forEach(function(b){ b.style.display = 'none'; });
+    });
+    try { obs.observe(document.body, { childList: true, subtree: true }); } catch(e){}
+})();
+
+async function adminLoadStatsForTarget(d, key) {
+    var sec = document.getElementById('adminStatsSection');
+    if (!sec) return;
+    sec.style.display = 'block';
+    var realF = Array.isArray(d.followers) ? d.followers.length : 0;
+    var realG = Array.isArray(d.following) ? d.following.length : 0;
+    document.getElementById('adminFakeFollowers').value =
+        (typeof d.fakeFollowersCount === 'number') ? d.fakeFollowersCount : realF;
+    document.getElementById('adminFakeFollowing').value =
+        (typeof d.fakeFollowingCount === 'number') ? d.fakeFollowingCount : realG;
+    document.getElementById('adminSelectedPostId').value = '';
+    document.getElementById('adminPostStatsFields').style.display = 'none';
+    var list = document.getElementById('adminPostsList');
+    list.innerHTML = '<p style="opacity:.6;padding:8px;"><i class="fas fa-spinner fa-spin"></i> جاري جلب المنشورات...</p>';
+    try {
+        var fb = await getFB();
+        var q = fb.query(fb.collection(fb.db, 'posts'), fb.where('author', '==', key));
+        var snap = await fb.getDocs(q);
+        if (snap.empty) {
+            list.innerHTML = '<p style="opacity:.6;padding:8px;">لا توجد منشورات لهذا المستخدم</p>';
+            return;
+        }
+        var posts = [];
+        snap.forEach(function(ds){ posts.push({ id: ds.id, data: ds.data() }); });
+        posts.sort(function(a,b){ return new Date(b.data.createdAt||0) - new Date(a.data.createdAt||0); });
+        list.innerHTML = '';
+        posts.forEach(function(p) {
+            var cap = (p.data.caption || 'منشور بدون نص').slice(0, 40);
+            var st = (typeof getPostDisplayStats === 'function') ? getPostDisplayStats(p.data, p.data.commentsCount||0) : {};
+            var row = document.createElement('div');
+            row.style.cssText = 'padding:8px 10px;margin-bottom:6px;background:var(--card-bg);border-radius:8px;cursor:pointer;border:1px solid var(--border-color);';
+            row.innerHTML = '<b>' + escapeHtml(cap) + '</b><br><span style="opacity:.7;font-size:11px;">❤ ' + (st.likes||0) + ' · 💬 ' + (st.comments||0) + ' · ↗ ' + (st.shares||0) + ' · 👁 ' + (st.views||0) + '</span>';
+            row.onclick = function() {
+                document.getElementById('adminSelectedPostId').value = p.id;
+                document.getElementById('adminSelectedPostLabel').textContent = 'تعديل: ' + cap;
+                document.getElementById('adminFakeLikes').value = (typeof p.data.fakeLikesCount === 'number') ? p.data.fakeLikesCount : (Array.isArray(p.data.likes)?p.data.likes.length:0);
+                document.getElementById('adminFakeComments').value = (typeof p.data.fakeCommentsCount === 'number') ? p.data.fakeCommentsCount : (p.data.commentsCount||0);
+                document.getElementById('adminFakeShares').value = (typeof p.data.fakeSharesCount === 'number') ? p.data.fakeSharesCount : (p.data.sharesCount||0);
+                document.getElementById('adminFakeViews').value = (typeof p.data.fakeViewsCount === 'number') ? p.data.fakeViewsCount : (p.data.views||0);
+                document.getElementById('adminPostStatsFields').style.display = 'block';
+                list.querySelectorAll('div').forEach(function(x){ x.style.borderColor = 'var(--border-color)'; });
+                row.style.borderColor = 'var(--tab-active-color)';
+            };
+            list.appendChild(row);
+        });
+    } catch (e) {
+        list.innerHTML = '<p style="color:red;padding:8px;">خطأ: ' + e.message + '</p>';
+    }
+}
+
+window.adminSaveFakeFollows = async function() {
+    if (!isAdminType(currentBadgeType) || !adminTargetKey) { alert('اجلب مستخدماً أولاً'); return; }
+    var f = parseInt(document.getElementById('adminFakeFollowers').value, 10);
+    var g = parseInt(document.getElementById('adminFakeFollowing').value, 10);
+    if (isNaN(f) || f < 0) f = 0;
+    if (isNaN(g) || g < 0) g = 0;
+    try {
+        var fb = await getFB();
+        await fb.setDoc(fb.doc(fb.db, 'profiles', adminTargetKey), {
+            fakeFollowersCount: f,
+            fakeFollowingCount: g,
+            updatedAt: fb.serverTimestamp()
+        }, { merge: true });
+        alert('تم حفظ أرقام المتابعة: ' + f + ' متابع / ' + g + ' يتابع');
+        if (adminTargetKey === currentUserKey) {
+            var fc = document.getElementById('pvFollowersCount');
+            var gc = document.getElementById('pvFollowingCount');
+            if (fc) fc.textContent = (typeof formatCountNum === 'function') ? formatCountNum(f) : f;
+            if (gc) gc.textContent = (typeof formatCountNum === 'function') ? formatCountNum(g) : g;
+        }
+    } catch (e) { alert(e.message); }
+};
+
+window.adminSavePostStats = async function() {
+    if (!isAdminType(currentBadgeType) || !adminTargetKey) { alert('اجلب مستخدماً أولاً'); return; }
+    var postId = document.getElementById('adminSelectedPostId').value;
+    if (!postId) { alert('اختر منشوراً من القائمة'); return; }
+    function n(id){ var v = parseInt(document.getElementById(id).value,10); return (isNaN(v)||v<0)?0:v; }
+    var payload = {
+        fakeLikesCount: n('adminFakeLikes'),
+        fakeCommentsCount: n('adminFakeComments'),
+        fakeSharesCount: n('adminFakeShares'),
+        fakeViewsCount: n('adminFakeViews')
+    };
+    try {
+        var fb = await getFB();
+        await fb.setDoc(fb.doc(fb.db, 'posts', postId), payload, { merge: true });
+        alert('تم حفظ تفاعل المنشور');
+        // refresh list numbers
+        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', adminTargetKey));
+        if (snap.exists()) adminLoadStatsForTarget(snap.data(), adminTargetKey);
+        try { if (typeof loadPublicPosts === 'function') loadPublicPosts(); } catch(e){}
+    } catch (e) { alert(e.message); }
+};
+
+(function() {
+    var _af = window.adminFetchUser;
+    window.adminFetchUser = async function() {
+        if (typeof _af === 'function') await _af.apply(this, arguments);
+        if (!adminTargetKey) return;
+        try {
+            var fb = await getFB();
+            var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', adminTargetKey));
+            if (snap.exists()) await adminLoadStatsForTarget(snap.data(), adminTargetKey);
+        } catch (e) { console.warn(e); }
+    };
+})();
+
+
+
+/* ===== FIX FINAL: admin section visible + social load/save + message hide ===== */
+(function() {
+  var _open = window.openAdminPanel;
+  window.openAdminPanel = function() {
+    if (typeof _open === 'function') _open.apply(this, arguments);
+    else {
+      if (!isAdminType(currentBadgeType)) { alert('غير مصرح'); return; }
+      document.getElementById('adminModal').style.display = 'flex';
+    }
+    var sec = document.getElementById('adminStatsSection');
+    if (sec) {
+      sec.style.display = 'block';
+      sec.style.visibility = 'visible';
+    }
+    if (currentUserKey) {
+      var tgt = document.getElementById('adminTarget');
+      if (tgt && !String(tgt.value||'').trim()) tgt.value = currentUserKey;
+      adminTargetKey = String((tgt && tgt.value) || currentUserKey).trim().toLowerCase();
+      getFB().then(function(fb){ return fb.getDoc(fb.doc(fb.db, 'profiles', adminTargetKey)); })
+        .then(function(snap){
+          if (snap && snap.exists() && typeof adminLoadStatsForTarget === 'function') {
+            adminLoadStatsForTarget(snap.data(), adminTargetKey);
+          }
+        }).catch(function(){});
+    }
+  };
+})();
+
+(function() {
+  var _sep = window.showEditProfile;
+  window.showEditProfile = function() {
+    if (typeof _sep === 'function') _sep.apply(this, arguments);
+    if (!currentUserKey) return;
+    getFB().then(function(fb){ return fb.getDoc(fb.doc(fb.db, 'profiles', currentUserKey)); })
+      .then(function(snap){
+        if (!snap || !snap.exists()) return;
+        var d = snap.data();
+        function setVal(id, v){ var el=document.getElementById(id); if(el) el.value = v || ''; }
+        function strip(v){
+          if(!v) return '';
+          v = String(v).trim().replace(/^@/,'');
+          try {
+            if(/^https?:\/\//i.test(v)) {
+              var u = new URL(v);
+              var parts = u.pathname.split('/').filter(Boolean);
+              if (u.hostname.indexOf('wa.me')>=0) return (parts[0]||'').replace(/\D/g,'');
+              if (parts.length) return parts[parts.length-1];
+            }
+          } catch(e){}
+          return v;
+        }
+        setVal('pfInstagram', strip(d.instagram));
+        setVal('pfWhatsapp', strip(d.whatsapp));
+        setVal('pfFacebook', strip(d.facebook));
+        setVal('pfTwitter', strip(d.twitter));
+        var dc = document.getElementById('pfDisableChat');
+        if (dc) dc.checked = !!d.disableChat;
+      }).catch(function(){});
+  };
+})();
+
+(function() {
+  var _spv = window.showProfileView;
+  window.showProfileView = function() {
+    if (typeof _spv === 'function') _spv.apply(this, arguments);
+    if (!currentUserKey) return;
+    setTimeout(function(){
+      if (typeof forceRefreshSocialIcons === 'function') forceRefreshSocialIcons(currentUserKey, 'pv');
+    }, 200);
+    setTimeout(function(){
+      if (typeof forceRefreshSocialIcons === 'function') forceRefreshSocialIcons(currentUserKey, 'pv');
+    }, 800);
+  };
+})();
+
+(function() {
+  var _opp = window.openPublicProfile;
+  if (typeof _opp !== 'function') return;
+  window.openPublicProfile = async function(targetKey) {
+    await _opp.apply(this, arguments);
+    try {
+      var key = String(targetKey || currentViewingProfileKey || '').toLowerCase().trim();
+      var fb = await getFB();
+      var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
+      if (!snap.exists()) return;
+      var d = snap.data();
+      if (typeof renderSocialIcons === 'function') renderSocialIcons(d, 'pub');
+      var row = document.getElementById('pubActionsRow');
+      if (row && d.disableChat === true) {
+        row.querySelectorAll('button').forEach(function(btn) {
+          var t = (btn.textContent || '') + (btn.innerHTML || '');
+          if (btn.classList.contains('message') || t.indexOf('fa-comment') >= 0 || t.indexOf('مراسل') >= 0 || t.indexOf('Message') >= 0) {
+            btn.remove();
+          }
+        });
+      }
+    } catch (e) {}
+  };
+})();
+
+
+
+/* ==================== جلب بالرابط: منشور أو بروفايل ==================== */
+function adminParsePostIdFromInput(raw) {
+    raw = String(raw || '').trim();
+    if (!raw) return '';
+    try {
+        if (raw.indexOf('http') === 0 || raw.indexOf('?') >= 0 || raw.indexOf('post=') >= 0) {
+            var q = raw;
+            if (raw.indexOf('http') === 0) {
+                var u = new URL(raw);
+                q = u.search || '';
+                // also hash
+                if (!q && u.hash) q = u.hash.replace(/^#/, '?');
+            }
+            var params = new URLSearchParams(q.indexOf('?') === 0 ? q.slice(1) : q);
+            if (params.get('post')) return params.get('post').trim();
+            var m = raw.match(/[?&]post=([^&]+)/i);
+            if (m) return decodeURIComponent(m[1]).trim();
+        }
+    } catch (e) {}
+    // plain id
+    if (/^[A-Za-z0-9_-]{8,}$/.test(raw)) return raw;
+    return raw;
+}
+async function adminResolveProfileKey(raw) {
+    raw = String(raw || '').trim();
+    if (!raw) return null;
+    var ident = raw;
+    try {
+        if (raw.indexOf('http') === 0 || raw.indexOf('profile=') >= 0 || raw.indexOf('?') >= 0) {
+            var q = raw;
+            if (raw.indexOf('http') === 0) {
+                var u = new URL(raw);
+                q = u.search || '';
+            }
+            var params = new URLSearchParams(q.indexOf('?') === 0 ? q.slice(1) : q);
+            if (params.get('profile')) ident = params.get('profile').trim();
+            else {
+                var m = raw.match(/[?&]profile=([^&]+)/i);
+                if (m) ident = decodeURIComponent(m[1]).trim();
+            }
+        }
+    } catch (e) {}
+    ident = ident.replace(/^@/, '').trim();
+    if (!ident) return null;
+    // email as key
+    if (ident.indexOf('@') >= 0) {
+        return (typeof profileKeyFrom === 'function') ? profileKeyFrom(ident) : ident.toLowerCase();
+    }
+    // try as profile doc id first
+    var fb = await getFB();
+    var byId = await fb.getDoc(fb.doc(fb.db, 'profiles', ident.toLowerCase()));
+    if (byId.exists()) return byId.id;
+    // search by username
+    try {
+        var q = fb.query(fb.collection(fb.db, 'profiles'), fb.where('username', '==', ident.toLowerCase()));
+        var snap = await fb.getDocs(q);
+        if (!snap.empty) return snap.docs[0].id;
+        // case-insensitive fallback scan limited
+        var all = await fb.getDocs(fb.collection(fb.db, 'profiles'));
+        var found = null;
+        all.forEach(function(ds) {
+            var u = (ds.data().username || '').toLowerCase();
+            if (u === ident.toLowerCase()) found = ds.id;
+        });
+        if (found) return found;
+    } catch (e) {}
+    return null;
+}
+window.adminFetchByPostLink = async function() {
+    if (!isAdminType(currentBadgeType)) { alert('غير مصرح'); return; }
+    var raw = document.getElementById('adminPostLinkInput').value;
+    var postId = adminParsePostIdFromInput(raw);
+    if (!postId) { alert('أدخل رابط المنشور أو الآيدي'); return; }
+    try {
+        var fb = await getFB();
+        var snap = await fb.getDoc(fb.doc(fb.db, 'posts', postId));
+        if (!snap.exists()) { alert('المنشور غير موجود: ' + postId); return; }
+        var d = snap.data();
+        document.getElementById('adminSelectedPostId').value = postId;
+        var cap = (d.caption || 'منشور').slice(0, 60);
+        document.getElementById('adminSelectedPostLabel').textContent = 'منشور: ' + cap + ' (' + postId + ')';
+        document.getElementById('adminFakeLikes').value = (typeof d.fakeLikesCount === 'number') ? d.fakeLikesCount : (Array.isArray(d.likes) ? d.likes.length : 0);
+        document.getElementById('adminFakeComments').value = (typeof d.fakeCommentsCount === 'number') ? d.fakeCommentsCount : (d.commentsCount || 0);
+        document.getElementById('adminFakeShares').value = (typeof d.fakeSharesCount === 'number') ? d.fakeSharesCount : (d.sharesCount || 0);
+        document.getElementById('adminFakeViews').value = (typeof d.fakeViewsCount === 'number') ? d.fakeViewsCount : (d.views || 0);
+        document.getElementById('adminPostStatsFields').style.display = 'block';
+        // highlight in list if present
+        var list = document.getElementById('adminPostsList');
+        if (list) {
+            list.innerHTML = '<div style="padding:8px 10px;background:var(--card-bg);border-radius:8px;border:1px solid var(--tab-active-color);"><b>' + (typeof escapeHtml==='function'?escapeHtml(cap):cap) + '</b><br><span style="opacity:.7;font-size:11px;">ID: ' + postId + '</span></div>';
+        }
+        // also load author profile counts for convenience
+        if (d.author) {
+            adminTargetKey = d.author;
+            var t = document.getElementById('adminTarget');
+            if (t) t.value = d.author;
+            var pSnap = await fb.getDoc(fb.doc(fb.db, 'profiles', d.author));
+            if (pSnap.exists() && typeof adminLoadStatsForTarget === 'function') {
+                await adminLoadStatsForTarget(pSnap.data(), d.author);
+                // restore selected post fields after load (load clears selection)
+                document.getElementById('adminSelectedPostId').value = postId;
+                document.getElementById('adminSelectedPostLabel').textContent = 'منشور: ' + cap + ' (' + postId + ')';
+                document.getElementById('adminFakeLikes').value = (typeof d.fakeLikesCount === 'number') ? d.fakeLikesCount : (Array.isArray(d.likes) ? d.likes.length : 0);
+                document.getElementById('adminFakeComments').value = (typeof d.fakeCommentsCount === 'number') ? d.fakeCommentsCount : (d.commentsCount || 0);
+                document.getElementById('adminFakeShares').value = (typeof d.fakeSharesCount === 'number') ? d.fakeSharesCount : (d.sharesCount || 0);
+                document.getElementById('adminFakeViews').value = (typeof d.fakeViewsCount === 'number') ? d.fakeViewsCount : (d.views || 0);
+                document.getElementById('adminPostStatsFields').style.display = 'block';
+            }
+        }
+        alert('تم جلب المنشور');
+    } catch (e) { alert('خطأ: ' + e.message); }
+};
+window.adminFetchByProfileLink = async function() {
+    if (!isAdminType(currentBadgeType)) { alert('غير مصرح'); return; }
+    var raw = document.getElementById('adminProfileLinkInput').value;
+    if (!String(raw||'').trim()) { alert('أدخل رابط البروفايل أو اسم المستخدم أو البريد'); return; }
+    try {
+        var key = await adminResolveProfileKey(raw);
+        if (!key) { alert('لم يتم العثور على هذا البروفايل'); return; }
+        adminTargetKey = key;
+        var t = document.getElementById('adminTarget');
+        if (t) t.value = key;
+        var fb = await getFB();
+        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
+        if (!snap.exists()) { alert('البروفايل غير موجود'); return; }
+        var d = snap.data();
+        var label = document.getElementById('adminProfileTargetLabel');
+        if (label) label.textContent = 'بروفايل مستهدف: ' + (d.name || '') + ' @' + (d.username || key);
+        if (typeof adminLoadStatsForTarget === 'function') await adminLoadStatsForTarget(d, key);
+        // also fill edit fields if present
+        try {
+            var ef = document.getElementById('adminEditFields');
+            if (ef) ef.style.display = 'block';
+            if (document.getElementById('adminEditName')) document.getElementById('adminEditName').value = d.name || '';
+            if (document.getElementById('adminEditUsername')) document.getElementById('adminEditUsername').value = d.username || '';
+            if (document.getElementById('adminEditBio')) document.getElementById('adminEditBio').value = d.bio || '';
+            if (document.getElementById('adminEditAvatar')) document.getElementById('adminEditAvatar').value = d.avatar || '';
+            if (document.getElementById('adminEditCover')) document.getElementById('adminEditCover').value = d.cover || '';
+        } catch (e) {}
+        alert('تم جلب البروفايل: ' + (d.username || key));
+    } catch (e) { alert('خطأ: ' + e.message); }
+};
+// update adminLoadStatsForTarget label if exists
+(function() {
+    var _load = window.adminLoadStatsForTarget;
+    if (typeof _load !== 'function') return;
+    window.adminLoadStatsForTarget = async function(d, key) {
+        await _load.apply(this, arguments);
+        var label = document.getElementById('adminProfileTargetLabel');
+        if (label && d) label.textContent = 'بروفايل مستهدف: ' + (d.name || '') + ' @' + (d.username || key || '');
+    };
+})();
+
+
+
+/* ===== FIX: جلب روابط قوي + منشن قابل للنقر + لوحة نظيفة ===== */
+function adminParsePostIdFromInput(raw) {
+    raw = String(raw || '').trim();
+    if (!raw) return '';
+    try {
+        // full URL
+        if (/^https?:\/\//i.test(raw) || raw.indexOf('?') >= 0 || raw.indexOf('post=') >= 0) {
+            var str = raw;
+            var m = str.match(/[?&#]post=([^&#]+)/i);
+            if (m && m[1]) return decodeURIComponent(m[1]).trim();
+            try {
+                var u = new URL(str, window.location.href);
+                if (u.searchParams.get('post')) return u.searchParams.get('post').trim();
+            } catch (e) {}
+        }
+    } catch (e) {}
+    // plain id (firestore ids can be various lengths)
+    return raw.replace(/^#/, '').trim();
+}
+
+window.adminFetchByPostLink = async function() {
+    try {
+        if (typeof isAdminType === 'function' && !isAdminType(currentBadgeType)) {
+            alert('غير مصرح'); return;
+        }
+        var raw = (document.getElementById('adminPostLinkInput') || {}).value || '';
+        var postId = adminParsePostIdFromInput(raw);
+        if (!postId) { alert('أدخل رابط المنشور أو الآيدي'); return; }
+        var fb = await getFB();
+        var snap = await fb.getDoc(fb.doc(fb.db, 'posts', postId));
+        if (!snap.exists()) {
+            alert('المنشور غير موجود\nID: ' + postId + '\nتأكد أن الرابط يحتوي post= ثم آيدي كامل');
+            return;
+        }
+        var d = snap.data();
+        var cap = (d.caption || 'منشور بدون نص').slice(0, 80);
+        var elId = document.getElementById('adminSelectedPostId');
+        if (elId) elId.value = postId;
+        var fields = document.getElementById('adminPostStatsFields');
+        if (fields) fields.style.display = 'block';
+        var lab = document.getElementById('adminSelectedPostLabel');
+        if (lab) lab.textContent = 'منشور: ' + cap;
+        function setN(id, v){ var el=document.getElementById(id); if(el) el.value = v; }
+        setN('adminFakeLikes', (typeof d.fakeLikesCount === 'number') ? d.fakeLikesCount : (Array.isArray(d.likes)?d.likes.length:0));
+        setN('adminFakeComments', (typeof d.fakeCommentsCount === 'number') ? d.fakeCommentsCount : (d.commentsCount||0));
+        setN('adminFakeShares', (typeof d.fakeSharesCount === 'number') ? d.fakeSharesCount : (d.sharesCount||0));
+        setN('adminFakeViews', (typeof d.fakeViewsCount === 'number') ? d.fakeViewsCount : (d.views||0));
+        var list = document.getElementById('adminPostsList');
+        if (list) list.innerHTML = '<div style="padding:8px;border:1px solid var(--tab-active-color);border-radius:8px;background:var(--card-bg);"><b>' + (typeof escapeHtml==='function'?escapeHtml(cap):cap) + '</b><div style="font-size:11px;opacity:.7;direction:ltr;">' + postId + '</div></div>';
+        if (d.author) {
+            adminTargetKey = d.author;
+            var t = document.getElementById('adminTarget'); if (t) t.value = d.author;
+            var pSnap = await fb.getDoc(fb.doc(fb.db, 'profiles', d.author));
+            if (pSnap.exists()) {
+                var pd = pSnap.data();
+                var pl = document.getElementById('adminProfileTargetLabel');
+                if (pl) pl.textContent = 'بروفايل مستهدف: ' + (pd.name||'') + ' @' + (pd.username||d.author);
+                setN('adminFakeFollowers', (typeof pd.fakeFollowersCount==='number')?pd.fakeFollowersCount:(Array.isArray(pd.followers)?pd.followers.length:0));
+                setN('adminFakeFollowing', (typeof pd.fakeFollowingCount==='number')?pd.fakeFollowingCount:(Array.isArray(pd.following)?pd.following.length:0));
+            }
+        }
+        alert('تم جلب المنشور بنجاح');
+    } catch (e) {
+        alert('خطأ جلب المنشور: ' + (e && e.message ? e.message : e));
+        console.error(e);
+    }
+};
+
+window.adminFetchByProfileLink = async function() {
+    try {
+        if (typeof isAdminType === 'function' && !isAdminType(currentBadgeType)) {
+            alert('غير مصرح'); return;
+        }
+        var raw = String((document.getElementById('adminProfileLinkInput')||{}).value || '').trim();
+        if (!raw) { alert('أدخل رابط البروفايل أو اسم المستخدم أو البريد'); return; }
+        var ident = raw;
+        var m = raw.match(/[?&#]profile=([^&#]+)/i);
+        if (m && m[1]) ident = decodeURIComponent(m[1]).trim();
+        else {
+            try {
+                if (/^https?:\/\//i.test(raw)) {
+                    var u = new URL(raw);
+                    if (u.searchParams.get('profile')) ident = u.searchParams.get('profile').trim();
+                }
+            } catch (e) {}
+        }
+        ident = ident.replace(/^@/, '').trim();
+        var fb = await getFB();
+        var key = null;
+        if (ident.indexOf('@') > 0) {
+            key = (typeof profileKeyFrom === 'function') ? profileKeyFrom(ident) : ident.toLowerCase();
+            var s1 = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
+            if (!s1.exists()) key = null;
+        }
+        if (!key) {
+            var s2 = await fb.getDoc(fb.doc(fb.db, 'profiles', ident.toLowerCase()));
+            if (s2.exists()) key = s2.id;
+        }
+        if (!key) {
+            try {
+                var q = fb.query(fb.collection(fb.db, 'profiles'), fb.where('username', '==', ident.toLowerCase()));
+                var qs = await fb.getDocs(q);
+                if (!qs.empty) key = qs.docs[0].id;
+            } catch (e) {}
+        }
+        if (!key) {
+            var all = await fb.getDocs(fb.collection(fb.db, 'profiles'));
+            all.forEach(function(ds){
+                var u = (ds.data().username || '').toLowerCase();
+                if (u === ident.toLowerCase()) key = ds.id;
+            });
+        }
+        if (!key) { alert('لم يتم العثور على البروفايل: ' + ident); return; }
+        adminTargetKey = key;
+        var t = document.getElementById('adminTarget'); if (t) t.value = key;
+        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
+        var d = snap.data();
+        var pl = document.getElementById('adminProfileTargetLabel');
+        if (pl) pl.textContent = 'بروفايل مستهدف: ' + (d.name||'') + ' @' + (d.username||key);
+        function setN(id, v){ var el=document.getElementById(id); if(el) el.value = v; }
+        setN('adminFakeFollowers', (typeof d.fakeFollowersCount==='number')?d.fakeFollowersCount:(Array.isArray(d.followers)?d.followers.length:0));
+        setN('adminFakeFollowing', (typeof d.fakeFollowingCount==='number')?d.fakeFollowingCount:(Array.isArray(d.following)?d.following.length:0));
+        var ef = document.getElementById('adminEditFields');
+        if (ef) ef.style.display = 'block';
+        if (document.getElementById('adminEditName')) document.getElementById('adminEditName').value = d.name || '';
+        if (document.getElementById('adminEditUsername')) document.getElementById('adminEditUsername').value = d.username || '';
+        if (document.getElementById('adminEditBio')) document.getElementById('adminEditBio').value = d.bio || '';
+        if (document.getElementById('adminEditAvatar')) document.getElementById('adminEditAvatar').value = d.avatar || '';
+        if (document.getElementById('adminEditCover')) document.getElementById('adminEditCover').value = d.cover || '';
+        if (typeof adminLoadStatsForTarget === 'function') {
+            try { await adminLoadStatsForTarget(d, key); } catch(e){}
+        }
+        alert('تم جلب البروفايل: @' + (d.username || key));
+    } catch (e) {
+        alert('خطأ جلب البروفايل: ' + (e && e.message ? e.message : e));
+        console.error(e);
+    }
+};
+
+/* منشن @username قابل للنقر — إصدار مُصلَّح */
+function linkifyMentions(escapedText) {
+    if (!escapedText) return '';
+    return String(escapedText).replace(/@([A-Za-z0-9_\.\u0600-\u06FF]+)/g, function(m, user) {
+        var safe = String(user).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        return '<a href="#" class="mention-link" data-username="' + safe + '" onclick="event.preventDefault();event.stopPropagation();openProfileByUsername(\'' + safe + '\');return false;">@' + user + '</a>';
+    });
+}
+window.openProfileByUsername = async function(username) {
+    username = String(username || '').replace(/^@/, '').trim();
+    if (!username) return;
+    try {
+        if (typeof toast === 'function') toast('جاري فتح @' + username + '...');
+        var fb = await getFB();
+        var lower = username.toLowerCase();
+        var found = null;
+        try {
+            var q = fb.query(fb.collection(fb.db, 'profiles'), fb.where('username', '==', lower));
+            var snap = await fb.getDocs(q);
+            if (!snap.empty) found = snap.docs[0].id;
+        } catch (e1) { console.warn(e1); }
+        if (!found) {
+            try {
+                var q2 = fb.query(fb.collection(fb.db, 'profiles'), fb.where('username', '==', username));
+                var snap2 = await fb.getDocs(q2);
+                if (!snap2.empty) found = snap2.docs[0].id;
+            } catch (e2) { console.warn(e2); }
+        }
+        if (!found) {
+            var all = await fb.getDocs(fb.collection(fb.db, 'profiles'));
+            all.forEach(function(ds) {
+                var u = (ds.data().username || '');
+                if (u.toLowerCase() === lower) found = ds.id;
+            });
+        }
+        if (found) {
+            if (typeof openPublicProfile === 'function') openPublicProfile(found);
+            else alert('فتح البروفايل غير متاح');
+        } else {
+            alert('المستخدم غير موجود: @' + username);
+        }
+    } catch (e) {
+        console.error(e);
+        alert('خطأ: ' + (e && e.message ? e.message : e));
+    }
+};
+function enhanceCaptionMentions() {
+    document.querySelectorAll('.post-caption, .post-caption-text, .post-text-content').forEach(function(el) {
+        if (el.getAttribute('data-mentions') === '1') return;
+        var txt = el.textContent || '';
+        if (txt.indexOf('@') < 0) return;
+        el.setAttribute('data-mentions', '1');
+        var esc = (typeof escapeHtml === 'function') ? escapeHtml(txt) : txt.replace(/[&<>"']/g, function(c) {
+            return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);
+        });
+        el.innerHTML = linkifyMentions(esc);
+    });
+}
+window.enhanceCaptionMentions = enhanceCaptionMentions;
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(enhanceCaptionMentions, 600);
+    setTimeout(enhanceCaptionMentions, 1500);
+    setTimeout(enhanceCaptionMentions, 3500);
+});
+try {
+    if (!window.__mentionObserver) {
+        window.__mentionObserver = new MutationObserver(function() {
+            clearTimeout(window.__mentionTimer);
+            window.__mentionTimer = setTimeout(enhanceCaptionMentions, 200);
+        });
+        window.__mentionObserver.observe(document.body, { childList: true, subtree: true });
+    }
+} catch (e) {}
+
+
+
+/* ===== HARD FIX: أزرار جلب المنشور والبروفايل في لوحة التحكم ===== */
+(function() {
+  function parsePostId(raw) {
+    raw = String(raw || '').trim();
+    if (!raw) return '';
+    var m = raw.match(/[?&#]post=([^&#]+)/i);
+    if (m && m[1]) { try { return decodeURIComponent(m[1]).trim(); } catch(e){ return m[1].trim(); } }
+    try {
+      if (/^https?:\/\//i.test(raw)) {
+        var u = new URL(raw);
+        if (u.searchParams.get('post')) return u.searchParams.get('post').trim();
+      }
+    } catch(e){}
+    return raw.replace(/^#/, '').trim();
+  }
+  function setVal(id, v) {
+    var el = document.getElementById(id);
+    if (el) el.value = (v === undefined || v === null) ? '' : v;
+  }
+  window.adminFetchByPostLink = async function() {
+    try {
+      if (typeof isAdminType === 'function' && !isAdminType(currentBadgeType) && currentBadgeType !== 'black') {
+        alert('هذه الميزة للتوثيق البني فقط. نوعك الحالي: ' + (currentBadgeType || 'none'));
+        return;
+      }
+      var input = document.getElementById('adminPostLinkInput');
+      if (!input) { alert('حقل رابط المنشور غير موجود في الصفحة'); return; }
+      var postId = parsePostId(input.value);
+      if (!postId) { alert('أدخل رابط المنشور أو الآيدي'); return; }
+      var fb = await getFB();
+      var snap = await fb.getDoc(fb.doc(fb.db, 'posts', postId));
+      if (!snap.exists()) {
+        alert('المنشور غير موجود\nID: ' + postId);
+        return;
+      }
+      var d = snap.data();
+      var cap = (d.caption || 'منشور بدون نص').slice(0, 80);
+      setVal('adminSelectedPostId', postId);
+      var fields = document.getElementById('adminPostStatsFields');
+      if (fields) fields.style.display = 'block';
+      var lab = document.getElementById('adminSelectedPostLabel');
+      if (lab) lab.textContent = 'منشور: ' + cap;
+      setVal('adminFakeLikes', (typeof d.fakeLikesCount === 'number') ? d.fakeLikesCount : (Array.isArray(d.likes) ? d.likes.length : 0));
+      setVal('adminFakeComments', (typeof d.fakeCommentsCount === 'number') ? d.fakeCommentsCount : (d.commentsCount || 0));
+      setVal('adminFakeShares', (typeof d.fakeSharesCount === 'number') ? d.fakeSharesCount : (d.sharesCount || 0));
+      setVal('adminFakeViews', (typeof d.fakeViewsCount === 'number') ? d.fakeViewsCount : (d.views || 0));
+      var list = document.getElementById('adminPostsList');
+      if (list) {
+        list.innerHTML = '<div style="padding:8px;border:1px solid var(--tab-active-color);border-radius:8px;background:var(--card-bg);"><b>' +
+          (typeof escapeHtml === 'function' ? escapeHtml(cap) : cap) +
+          '</b><div style="font-size:11px;opacity:.7;direction:ltr;">' + postId + '</div></div>';
+      }
+      if (d.author) {
+        window.adminTargetKey = d.author;
+        setVal('adminTarget', d.author);
+        var pSnap = await fb.getDoc(fb.doc(fb.db, 'profiles', d.author));
+        if (pSnap.exists()) {
+          var pd = pSnap.data();
+          var pl = document.getElementById('adminProfileTargetLabel');
+          if (pl) pl.textContent = 'بروفايل مستهدف: ' + (pd.name || '') + ' @' + (pd.username || d.author);
+          setVal('adminFakeFollowers', (typeof pd.fakeFollowersCount === 'number') ? pd.fakeFollowersCount : (Array.isArray(pd.followers) ? pd.followers.length : 0));
+          setVal('adminFakeFollowing', (typeof pd.fakeFollowingCount === 'number') ? pd.fakeFollowingCount : (Array.isArray(pd.following) ? pd.following.length : 0));
+          if (typeof adminLoadStatsForTarget === 'function') {
+            try { await adminLoadStatsForTarget(pd, d.author); } catch(e){}
+            // restore post selection after load
+            setVal('adminSelectedPostId', postId);
+            if (lab) lab.textContent = 'منشور: ' + cap;
+            if (fields) fields.style.display = 'block';
+            setVal('adminFakeLikes', (typeof d.fakeLikesCount === 'number') ? d.fakeLikesCount : (Array.isArray(d.likes) ? d.likes.length : 0));
+            setVal('adminFakeComments', (typeof d.fakeCommentsCount === 'number') ? d.fakeCommentsCount : (d.commentsCount || 0));
+            setVal('adminFakeShares', (typeof d.fakeSharesCount === 'number') ? d.fakeSharesCount : (d.sharesCount || 0));
+            setVal('adminFakeViews', (typeof d.fakeViewsCount === 'number') ? d.fakeViewsCount : (d.views || 0));
+          }
+        }
+      }
+      alert('تم جلب المنشور بنجاح');
+    } catch (e) {
+      console.error(e);
+      alert('خطأ جلب المنشور: ' + (e && e.message ? e.message : e));
+    }
+  };
+
+  window.adminFetchByProfileLink = async function() {
+    try {
+      if (typeof isAdminType === 'function' && !isAdminType(currentBadgeType) && currentBadgeType !== 'black') {
+        alert('هذه الميزة للتوثيق البني فقط. نوعك الحالي: ' + (currentBadgeType || 'none'));
+        return;
+      }
+      var input = document.getElementById('adminProfileLinkInput');
+      if (!input) { alert('حقل رابط البروفايل غير موجود'); return; }
+      var raw = String(input.value || '').trim();
+      if (!raw) { alert('أدخل رابط البروفايل أو اسم المستخدم أو البريد'); return; }
+      var ident = raw;
+      var m = raw.match(/[?&#]profile=([^&#]+)/i);
+      if (m && m[1]) {
+        try { ident = decodeURIComponent(m[1]).trim(); } catch(e){ ident = m[1].trim(); }
+      } else {
+        try {
+          if (/^https?:\/\//i.test(raw)) {
+            var u = new URL(raw);
+            if (u.searchParams.get('profile')) ident = u.searchParams.get('profile').trim();
+          }
+        } catch(e){}
+      }
+      ident = ident.replace(/^@/, '').trim();
+      var fb = await getFB();
+      var key = null;
+      if (ident.indexOf('@') > 0) {
+        key = (typeof profileKeyFrom === 'function') ? profileKeyFrom(ident) : ident.toLowerCase();
+        var s1 = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
+        if (!s1.exists()) key = null;
+      }
+      if (!key) {
+        var s2 = await fb.getDoc(fb.doc(fb.db, 'profiles', ident.toLowerCase()));
+        if (s2.exists()) key = s2.id;
+      }
+      if (!key) {
+        try {
+          var q = fb.query(fb.collection(fb.db, 'profiles'), fb.where('username', '==', ident.toLowerCase()));
+          var qs = await fb.getDocs(q);
+          if (!qs.empty) key = qs.docs[0].id;
+        } catch(e){}
+      }
+      if (!key) {
+        try {
+          var q3 = fb.query(fb.collection(fb.db, 'profiles'), fb.where('username', '==', ident));
+          var qs3 = await fb.getDocs(q3);
+          if (!qs3.empty) key = qs3.docs[0].id;
+        } catch(e){}
+      }
+      if (!key) {
+        var all = await fb.getDocs(fb.collection(fb.db, 'profiles'));
+        all.forEach(function(ds) {
+          var u = (ds.data().username || '');
+          if (u.toLowerCase() === ident.toLowerCase()) key = ds.id;
+        });
+      }
+      if (!key) { alert('لم يتم العثور على البروفايل: ' + ident); return; }
+      window.adminTargetKey = key;
+      setVal('adminTarget', key);
+      var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
+      var d = snap.data();
+      var pl = document.getElementById('adminProfileTargetLabel');
+      if (pl) pl.textContent = 'بروفايل مستهدف: ' + (d.name || '') + ' @' + (d.username || key);
+      setVal('adminFakeFollowers', (typeof d.fakeFollowersCount === 'number') ? d.fakeFollowersCount : (Array.isArray(d.followers) ? d.followers.length : 0));
+      setVal('adminFakeFollowing', (typeof d.fakeFollowingCount === 'number') ? d.fakeFollowingCount : (Array.isArray(d.following) ? d.following.length : 0));
+      var sec = document.getElementById('adminStatsSection');
+      if (sec) { sec.style.display = 'block'; sec.style.visibility = 'visible'; }
+      var ef = document.getElementById('adminEditFields');
+      if (ef) ef.style.display = 'block';
+      setVal('adminEditName', d.name || '');
+      setVal('adminEditUsername', d.username || '');
+      setVal('adminEditBio', d.bio || '');
+      setVal('adminEditAvatar', d.avatar || '');
+      setVal('adminEditCover', d.cover || '');
+      if (typeof adminLoadStatsForTarget === 'function') {
+        try { await adminLoadStatsForTarget(d, key); } catch(e){ console.warn(e); }
+      }
+      alert('تم جلب البروفايل: @' + (d.username || key));
+    } catch (e) {
+      console.error(e);
+      alert('خطأ جلب البروفايل: ' + (e && e.message ? e.message : e));
+    }
+  };
+})();
 
 </script>
 </body>
