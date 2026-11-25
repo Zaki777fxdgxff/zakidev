@@ -453,7 +453,13 @@
         #storyProgressContainer { position: absolute; top: 20px; left: 20px; display: flex; gap: 6px; z-index: 10; }
         #storyAuthorName { position: absolute; top: 40px; left: 20px; color: #fff; font-weight: bold; font-size: 14px; z-index: 10; }
 
-/* ============ 4. شريط الستوري (إطار دائري ثابت + اكتمال واضح + إخفاء بعد القراءة) ============ */
+/* ============ 4. شريط الستوري (إطار دائري هادئ + اكتمال عند الإضافة + إخفاء اللون بعد القراءة) ============ */
+@property --story-angle {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 360deg;
+}
+
 #moreStoriesWrapper {
     background: var(--card-bg) !important;
     border-bottom: 1px solid var(--tw-border) !important;
@@ -474,36 +480,59 @@
     margin-bottom: 4px !important;
 }
 
-/* الإطار الدائري الخارجي بألوان تويتر */
+/* دائرة الاستوري الجديدة: هادئة بثبات مع اكتمال الدائرة حول الصورة */
 .story-ring {
     width: 64px !important;
     height: 64px !important;
     border-radius: 50% !important;
     padding: 3px !important;
-    background: conic-gradient(from 0deg, #1da1f2, #4ab3f4, #71c9f8, #1da1f2) !important;
+    background: transparent !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     margin: 0 auto !important;
     position: relative !important;
     box-sizing: border-box !important;
-    transition: transform 0.15s ease;
+    overflow: visible !important;
+    transition: opacity 0.25s ease, transform 0.15s ease;
 }
 
-/* تأثير اكتمال الدائرة عند وضع ستوري جديدة */
-.story-ring.new-story-animate,
-.story-item.new-story .story-ring {
-    animation: storyRingComplete 0.85s ease-out forwards !important;
+/* طبقة الإطار الدائري بتدرج تويتر واكتمال الزاوية حول الصورة */
+.story-ring::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    border-radius: 50% !important;
+    padding: 3px !important;
+    background: conic-gradient(
+        from -90deg,
+        #1da1f2 0deg,
+        #4ab3f4 calc(var(--story-angle) * 0.55),
+        #71c9f8 var(--story-angle),
+        transparent var(--story-angle)
+    ) !important;
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0) !important;
+    -webkit-mask-composite: xor !important;
+    mask-composite: exclude !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
 }
 
-@keyframes storyRingComplete {
-    0% {
-        transform: scale(0.85) rotate(-180deg);
-        opacity: 0.35;
+/* تفعيل حركة اكتمال الدائرة عند إضافة ستوري جديدة */
+.story-ring.new-story-animate::before,
+.story-item.new-story .story-ring::before {
+    --story-angle: 0deg;
+    animation: fillStoryRing 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+}
+
+@keyframes fillStoryRing {
+    from {
+        --story-angle: 0deg;
     }
-    100% {
-        transform: scale(1) rotate(0deg);
-        opacity: 1;
+    to {
+        --story-angle: 360deg;
     }
 }
 
@@ -511,12 +540,18 @@
     transform: scale(0.95) !important;
 }
 
-/* عند قراءة / النقر على الاستوري: يختفي اللون بالكامل */
+/* بعد قراءة / النقر على الاستوري: يختفي لون الإطار بالكامل */
 .story-ring.seen,
 .story-item.seen .story-ring {
     background: transparent !important;
+    box-shadow: none !important;
+}
+
+.story-ring.seen::before,
+.story-item.seen .story-ring::before {
+    display: none !important;
     animation: none !important;
-    transform: none !important;
+    --story-angle: 0deg;
 }
 
 .story-ring.seen .story-avatar,
@@ -1260,6 +1295,17 @@
 .post-btn-link.translate {
     display: block !important; /* زرار الترجمة ظاهر دايماً */
     color: var(--tab-color);
+}
+
+/* إشارات @username في المنشورات */
+.mention-link {
+    color: #1d9bf0 !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+}
+.mention-link:hover {
+    text-decoration: underline !important;
 }
 /* ==================== 1. تظبيط شكل المنشورات (Community Feed) ==================== */
 .post-card .post-header {
@@ -2234,7 +2280,7 @@
             <input type="file" id="postImageInput" accept="image/*" multiple style="display:none" onchange="handlePostImageSelect(event)">
             <div id="postPreview" style="margin-top:10px;display:none;grid-template-columns:repeat(3,1fr);gap:5px;"></div>
         </div>
-        <div class="profile-field"><label>الوصف (اختياري)</label><textarea id="postCaption" rows="2" placeholder="اكتب وصفاً..."></textarea></div>
+        <div class="profile-field"><label>النص / الوصف</label><textarea id="postCaption" rows="3" placeholder="اكتب منشوراً... يمكنك الإشارة بـ @username"></textarea></div>
         <div class="profile-field">
             <label>الخصوصية</label>
             <div class="post-privacy-toggle">
@@ -3588,10 +3634,13 @@ async function loadPublicPosts() {
                 badgeHtml = '<img class="post-header-badge" src="' + badgeSrc(authorBt) + '">';
             }
 
-            var mediaUrls = Array.isArray(p.data.mediaUrls) ? p.data.mediaUrls : [p.data.mediaUrl];
+            var mediaUrls = Array.isArray(p.data.mediaUrls) ? p.data.mediaUrls : (p.data.mediaUrl ? [p.data.mediaUrl] : []);
+            mediaUrls = mediaUrls.filter(function(u){ return u && String(u).trim(); });
             var mediaHtml = '';
             if (author.imagesBlocked === true && authorKey !== currentUserKey && currentBadgeType !== 'black') {
                 mediaHtml = '<div style="padding:30px;text-align:center;background:var(--content-bg);opacity:0.6;"><i class="fas fa-ban" style="font-size:30px;margin-bottom:8px;"></i><p>الصور محجوبة من قِبل الإدارة</p></div>';
+            } else if (mediaUrls.length === 0) {
+                mediaHtml = '';
             } else if (mediaUrls.length === 1) {
                 mediaHtml = '<div class="post-image-wrap" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" alt=""></div>';
             } else if (mediaUrls.length === 2) {
@@ -3603,7 +3652,7 @@ async function loadPublicPosts() {
                     '<div style="grid-row:span 2;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" style="width:100%;height:100%;object-fit:cover;"></div>' +
                     mediaUrls.slice(1).map(function(u,i){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + (i+1) + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') +
                     '</div>';
-            } else {
+            } else if (mediaUrls.length >= 4) {
                 var displayUrls = mediaUrls.slice(0, 4);
                 mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' +
                     displayUrls.map(function(u,i){
@@ -3661,7 +3710,7 @@ var actionsHtml =
                 '<div class="post-header-name">' + escapeHtml(author.name || 'مستخدم') + ' ' + badgeHtml + customIconHtml + '</div>' +
                 '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
                 '</div></div>' +
-                (p.data.caption ? '<div class="post-caption collapsed" id="caption-' + p.id + '">' + escapeHtml(p.data.caption) + '</div><button class="post-caption-toggle" id="toggle-' + p.id + '" onclick="togglePostCaption(\'' + p.id + '\')">عرض المزيد</button>' : '') +
+                (p.data.caption ? '<div class="post-caption collapsed" id="caption-' + p.id + '">' + formatCaptionWithMentions(p.data.caption) + '</div><button class="post-caption-toggle" id="toggle-' + p.id + '" onclick="togglePostCaption(\'' + p.id + '\')">عرض المزيد</button>' : '') +
                 '<div class="post-date"><i class="fas fa-clock"></i> ' + dateStr + '</div>' +
                 mediaHtml +
                 actionsHtml;
@@ -3692,6 +3741,47 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
+
+/* ==================== MENTIONS (@username) ==================== */
+function formatCaptionWithMentions(text) {
+    if (!text) return '';
+    var escaped = escapeHtml(String(text));
+    return escaped.replace(/@([A-Za-z0-9_.]{2,30})/g, function(match, username) {
+        var u = username.toLowerCase();
+        return '<span class="mention-link" data-username="' + u + '" onclick="event.stopPropagation();openProfileByUsername(\'' + u + '\')">@' + username + '</span>';
+    });
+}
+
+async function openProfileByUsername(username) {
+    if (!username) return;
+    username = String(username).replace(/^@/, '').toLowerCase().trim();
+    if (!username) return;
+    try {
+        var fb = await getFB();
+        var q = fb.query(fb.collection(fb.db, 'profiles'), fb.where('username', '==', username));
+        var snap = await fb.getDocs(q);
+        if (!snap.empty) {
+            openPublicProfile(snap.docs[0].id);
+            return;
+        }
+        // fallback: بحث يدوي لو الـ username متخزن بحروف كبيرة
+        var all = await fb.getDocs(fb.collection(fb.db, 'profiles'));
+        var foundKey = null;
+        all.forEach(function(ds) {
+            var d = ds.data() || {};
+            if (String(d.username || '').toLowerCase().trim() === username) foundKey = ds.id;
+        });
+        if (foundKey) {
+            openPublicProfile(foundKey);
+            return;
+        }
+        alert((localStorage.getItem('lang') === 'en') ? 'User not found' : 'لم يتم العثور على المستخدم');
+    } catch (e) {
+        console.error(e);
+        alert((localStorage.getItem('lang') === 'en') ? 'Error opening profile' : 'خطأ في فتح البروفايل');
+    }
+}
+
 async function deletePost(postId) {
     if (!isAdminType(currentBadgeType) && !currentUserKey) {
         alert(t('login_first')); return;
@@ -3826,7 +3916,11 @@ function setPostPrivacy(mode) {
 }
 async function publishPost() {
     if (!currentUserKey) { alert(t('login_first')); return; }
-    if (postImageFiles.length === 0) { alert('اختر صورة واحدة على الأقل'); return; }
+    var captionText = (document.getElementById('postCaption').value || '').trim();
+    if (postImageFiles.length === 0 && !captionText) {
+        alert('اكتب نصاً أو اختر صورة واحدة على الأقل');
+        return;
+    }
 
     var btn = document.getElementById('publishPostBtn');
     var originalText = btn.textContent;
@@ -3843,8 +3937,8 @@ async function publishPost() {
         await fb.addDoc(fb.collection(fb.db, 'posts'), {
             author: currentUserKey,
             mediaUrls: mediaUrls,
-            mediaUrl: mediaUrls[0],
-            caption: document.getElementById('postCaption').value.trim(),
+            mediaUrl: mediaUrls.length > 0 ? mediaUrls[0] : null,
+            caption: captionText,
             privacy: postPrivacy,
             likes: [],
             dislikes: [],
@@ -5888,7 +5982,7 @@ async function loadMyPosts() {
                 '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
                 '</div></div>' +
                 (p.data.caption ? 
-    '<div class="post-caption-text" id="caption-' + p.id + '" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:6px 0 2px;font-size:15px;line-height:1.5;white-space:pre-wrap;word-break:break-word;">' + escapeHtml(p.data.caption) + '</div>' +
+    '<div class="post-caption-text post-caption" id="caption-' + p.id + '" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:6px 0 2px;font-size:15px;line-height:1.5;white-space:pre-wrap;word-break:break-word;">' + formatCaptionWithMentions(p.data.caption) + '</div>' +
     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">' +
         '<button class="post-caption-toggle" id="toggle-' + p.id + '" onclick="togglePostCaption(\'' + p.id + '\', this)" style="display:none;background:none;border:none;color:var(--tab-active-color);font-weight:bold;font-size:13px;cursor:pointer;padding:0;">عرض المزيد...</button>' +
         '<button class="post-translate-btn" onclick="translatePost(\'' + p.id + '\', \'' + escapeHtml(p.data.caption).replace(/'/g, "\\'") + '\', this)"><i class="fas fa-language"></i> ترجمة</button>' +
@@ -6699,7 +6793,7 @@ async function loadUserPosts(userKey) {
                 '<div class="post-header-name">' + escapeHtml(author.name || 'مستخدم') + ' ' + badgeHtml + '</div>' +
                 '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
                 '</div></div>' +
-                (p.data.caption ? '<div class="post-caption">' + escapeHtml(p.data.caption) + '</div>' : '') +
+                (p.data.caption ? '<div class="post-caption">' + formatCaptionWithMentions(p.data.caption) + '</div>' : '') +
                 '<div class="post-date"><i class="fas fa-clock"></i> ' + dateStr + '</div>' +
                 mediaHtml +
                 '<div class="post-actions">' +
@@ -6793,7 +6887,7 @@ async function loadMyPosts() {
                 '<div class="post-header-name">' + escapeHtml(author.name || 'مستخدم') + ' ' + badgeHtml + '</div>' +
                 '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
                 '</div></div>' +
-                (p.data.caption ? '<div class="post-caption">' + escapeHtml(p.data.caption) + '</div>' : '') +
+                (p.data.caption ? '<div class="post-caption">' + formatCaptionWithMentions(p.data.caption) + '</div>' : '') +
                 '<div class="post-date"><i class="fas fa-clock"></i> ' + dateStr + '</div>' +
                 mediaHtml +
                 '<div class="post-actions">' +
@@ -7004,7 +7098,10 @@ function enhancePosts() {
         
         var textContent = document.createElement('div');
         textContent.className = 'post-text-content';
-        textContent.textContent = originalText;
+        // مهم: نستخدم innerHTML عشان الإشارات @username تفضل زرقاء وقابلة للضغط
+        textContent.innerHTML = (typeof formatCaptionWithMentions === 'function')
+            ? formatCaptionWithMentions(originalText)
+            : escapeHtml(originalText);
         
         var linksRow = document.createElement('div');
         linksRow.className = 'post-action-links';
@@ -7047,7 +7144,9 @@ function enhancePosts() {
             e.stopPropagation();
             
             if (transBtn.getAttribute('data-translated') === '1') {
-                textContent.textContent = originalText;
+                textContent.innerHTML = (typeof formatCaptionWithMentions === 'function')
+                    ? formatCaptionWithMentions(originalText)
+                    : escapeHtml(originalText);
                 transBtn.innerHTML = '<i class="fas fa-language"></i> ' + ((localStorage.getItem('lang') === 'en') ? 'Translate' : 'ترجمة');
                 transBtn.setAttribute('data-translated', '0');
                 return;
