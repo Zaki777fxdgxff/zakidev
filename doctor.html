@@ -453,36 +453,108 @@
         #storyProgressContainer { position: absolute; top: 20px; left: 20px; display: flex; gap: 6px; z-index: 10; }
         #storyAuthorName { position: absolute; top: 40px; left: 20px; color: #fff; font-weight: bold; font-size: 14px; z-index: 10; }
 
-        #moreStoriesWrapper {
-            position: sticky;
-            top: 118px;
-            z-index: 50;
-            background: var(--content-bg);
-            padding: 4px 0;
-            margin: -4px 0 8px;
-            border-radius: 12px;
-        }
+/* ============ 4. شريط الستوري (إطار دائري ثابت + اكتمال واضح + إخفاء بعد القراءة) ============ */
+#moreStoriesWrapper {
+    background: var(--card-bg) !important;
+    border-bottom: 1px solid var(--tw-border) !important;
+    border-radius: 0 !important;
+    margin: 0 auto 0 !important;
+    padding: 10px 0 !important;
+    max-width: 600px;
+    position: sticky;
+    top: 118px;
+    z-index: 50;
+}
+#storiesBar {
+    gap: 14px !important;
+    padding: 2px 14px !important;
+}
+.story-item {
+    width: 72px !important;
+    margin-bottom: 4px !important;
+}
 
-        #storyContent img, #storyContent iframe {
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-touch-callout: none;
-            pointer-events: auto;
-        }
-        .story-paused-indicator {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.6);
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-            pointer-events: none;
-            z-index: 20;
-        }
+/* الإطار الدائري الخارجي بألوان تويتر */
+.story-ring {
+    width: 64px !important;
+    height: 64px !important;
+    border-radius: 50% !important;
+    padding: 3px !important;
+    background: conic-gradient(from 0deg, #1da1f2, #4ab3f4, #71c9f8, #1da1f2) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 auto !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+    transition: transform 0.15s ease;
+}
+
+/* تأثير اكتمال الدائرة عند وضع ستوري جديدة */
+.story-ring.new-story-animate,
+.story-item.new-story .story-ring {
+    animation: storyRingComplete 0.85s ease-out forwards !important;
+}
+
+@keyframes storyRingComplete {
+    0% {
+        transform: scale(0.85) rotate(-180deg);
+        opacity: 0.35;
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+.story-item:active .story-ring {
+    transform: scale(0.95) !important;
+}
+
+/* عند قراءة / النقر على الاستوري: يختفي اللون بالكامل */
+.story-ring.seen,
+.story-item.seen .story-ring {
+    background: transparent !important;
+    animation: none !important;
+    transform: none !important;
+}
+
+.story-ring.seen .story-avatar,
+.story-item.seen .story-ring .story-avatar {
+    border: 2px solid var(--tw-border) !important;
+}
+
+/* صورة البروفايل داخل الحلقة الدائرية */
+.story-avatar {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    border: 2.5px solid var(--card-bg) !important;
+    background: var(--card-bg) !important;
+    display: block !important;
+    position: relative !important;
+    z-index: 2 !important;
+    box-sizing: border-box !important;
+}
+
+.story-username-label {
+    font-size: 11px !important;
+    color: var(--tw-text) !important;
+    max-width: 72px !important;
+    margin-top: 5px !important;
+    opacity: 0.9 !important;
+}
+
+.story-live-badge {
+    background: #f91880 !important;
+    bottom: -2px !important;
+    font-size: 8px !important;
+    padding: 1px 6px !important;
+    border-radius: 10px !important;
+    z-index: 3 !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
 
         @keyframes slideUp {
             from { transform: translateY(100%); }
@@ -729,12 +801,12 @@
     width: 64px !important;
     height: 64px !important;
     padding: 2.5px !important;
-    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%) !important;
+    background: linear-gradient(135deg, #1da1f2 0%, #4ab3f4 55%, #71c9f8 100%) !important;
     transition: transform 0.15s;
 }
 .story-item:active .story-ring { transform: scale(0.94); }
-.story-ring.seen {
-    background: var(--tw-border) !important;
+.story-ring { width: 50px; height: 50px; border-radius: 50%; padding: 2.5px; background: linear-gradient(135deg, #1da1f2 0%, #4ab3f4 55%, #71c9f8 100%); margin: 0 auto; position: relative; }
+
 }
 .story-avatar {
     width: 57px !important;
@@ -7267,6 +7339,37 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // دي بنراقب فيها تغيير الـ style (اللي بيحصل لما الصفحة تفتح)
     observerProfile.observe(targetNode, { attributes: true, attributeFilter: ['style', 'class'], subtree: true });
+});
+storyItem.querySelector('.story-ring')?.classList.add('seen');
+// استدعِ هذه الدالة فور إضافة ستوري جديدة لعنصر الاستوري الخاص بالمستخدم
+function triggerNewStoryRingAnimation(storyItemElement) {
+    const ring = storyItemElement?.querySelector('.story-ring');
+    if (!ring) return;
+    storyItemElement.classList.remove('seen');
+    ring.classList.remove('seen', 'new-story-animate');
+    void ring.offsetWidth; // إعادة ضبط الأنيميشن ليعمل من 0 إلى 360 درجة
+    ring.classList.add('new-story-animate');
+}
+
+// استدعِ هذه الدالة عند النقر على الاستوري أو عند الخروج من عارض الاستوري
+function markStoryAsRead(storyItemOrRing) {
+    if (!storyItemOrRing) return;
+    const item = storyItemOrRing.closest ? storyItemOrRing.closest('.story-item') : storyItemOrRing;
+    const ring = item ? item.querySelector('.story-ring') : storyItemOrRing;
+
+    if (item) item.classList.add('seen');
+    if (ring) {
+        ring.classList.remove('new-story-animate');
+        ring.classList.add('seen');
+    }
+}
+
+// ربط النقر مباشرة على عناصر الاستوري الحالية والمستقبلية
+document.addEventListener('click', function (e) {
+    const storyItem = e.target.closest('.story-item');
+    if (storyItem) {
+        markStoryAsRead(storyItem);
+    }
 });
 </script>
 </body>
