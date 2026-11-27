@@ -3767,7 +3767,7 @@ function renderProfileView() {
     document.getElementById('pvBio').textContent = bio;
     document.getElementById('pvEmail').textContent = email;
     if (currentJoinedDate) {
-        try { document.getElementById('pvJoined').textContent = new Date(currentJoinedDate).toLocaleDateString(localStorage.getItem('lang') === 'en' ? 'en-US' : 'ar-EG'); }
+        try { document.getElementById('pvJoined').textContent = new Date(currentJoinedDate).toLocaleDateString(localStorage.getItem('lang') === 'en' ? 'en-US' : 'ar-EG-u-nu-latn'); }
         catch (e) { document.getElementById('pvJoined').textContent = currentJoinedDate; }
     }
     if (website) {
@@ -4027,7 +4027,7 @@ async function loadPublicPosts() {
                 mediaHtml = buildPostMediaHtml(Object.assign({}, p.data, { mediaType: 'image', mediaUrls: mediaUrls }));
             }
 
-            var dateStr = p.data.createdAt ? new Date(p.data.createdAt).toLocaleString(lang === 'en' ? 'en-US' : 'ar-EG') : '';
+            var dateStr = p.data.createdAt ? new Date(p.data.createdAt).toLocaleString(lang === 'en' ? 'en-US' : 'ar-EG-u-nu-latn') : '';
             var likes = Array.isArray(p.data.likes) ? p.data.likes : [];
             var dislikes = Array.isArray(p.data.dislikes) ? p.data.dislikes : [];
             var views = p.data.views || 0;
@@ -4889,7 +4889,7 @@ function buildVideoPlayerHtml(playSrc) {
     if (!playSrc) return '';
     var src = String(playSrc).trim();
     if (!src) return '';
-    var safe = escapeAttr(src);
+    var safe = escapeAttr(isHlsUrl(src) || src.indexOf('#') > -1 ? src : src + '#t=0.1'); // إظهار أول إطار بدل الشاشة السوداء
     var id = 'plyr_' + Math.random().toString(36).slice(2, 11);
     // video element — Plyr will enhance it after insert
     return '<div class="post-video-wrap">' +
@@ -5189,7 +5189,7 @@ async function openPublicProfile(targetKey) {
 
     if (d.joined) {
         var lang = localStorage.getItem('lang') || 'ar';
-        try { document.getElementById('pubJoined').textContent = new Date(d.joined).toLocaleDateString(lang === 'en' ? 'en-US' : 'ar-EG'); }
+        try { document.getElementById('pubJoined').textContent = new Date(d.joined).toLocaleDateString(lang === 'en' ? 'en-US' : 'ar-EG-u-nu-latn'); }
         catch(e) { document.getElementById('pubJoined').textContent = d.joined; }
     }
 
@@ -5571,7 +5571,7 @@ async function openChatWith(partnerKey) {
                     bubble.className = 'chat-msg ' + (isMe ? 'me' : 'other');
                     var timeStr = '';
                     if (m.createdAt) {
-                        try { timeStr = new Date(m.createdAt).toLocaleTimeString(localStorage.getItem('lang') === 'en' ? 'en-US' : 'ar-EG', {hour:'2-digit', minute:'2-digit'}); } catch(e){}
+                        try { timeStr = new Date(m.createdAt).toLocaleTimeString(localStorage.getItem('lang') === 'en' ? 'en-US' : 'ar-EG-u-nu-latn', {hour:'2-digit', minute:'2-digit'}); } catch(e){}
                     }
                     bubble.innerHTML = escapeHtml(m.text || '') + (timeStr ? '<span class="msg-time">' + timeStr + '</span>' : '');
 
@@ -6260,7 +6260,7 @@ async function loadStories() {
             var createdAt = d.createdAt ? new Date(d.createdAt).getTime() : 0;
             var ageHours = (now - createdAt) / (1000 * 60 * 60);
 
-            if (ageHours >= 24) {
+            if (ageHours >= 24 && !d.permanent) {
                 deletePromises.push(
                     fb.deleteDoc(fb.doc(fb.db, 'stories', ds.id)).catch(function(){})
                 );
@@ -6288,6 +6288,7 @@ async function loadStories() {
                     '<img class="story-avatar" src="' + (s.data.avatar || DEFAULT_AVATAR) + '">' +
                     (isLive ? '<span class="story-live-badge">LIVE</span>' : '') +
                 '</div>';
+            item.zxStory = s;
             item.onclick = function(){ openStoryViewer(idx); };
             bar.appendChild(item);
         });
@@ -6503,7 +6504,6 @@ function openCreateStory() {
     if (!currentUserKey) { alert(t('login_first')); return; }
     document.getElementById('createStoryModal').style.display = 'flex';
     switchStoryCreateTab('story');
-    document.getElementById('storyImageUrl').value = '';
     document.getElementById('storyLiveUrl').value = '';
     document.getElementById('storyImageFile').value = '';
     document.getElementById('storyImagePreview').style.display = 'none';
@@ -7113,7 +7113,7 @@ async function loadMyPosts() {
                 mediaHtml = '<div class="post-image-wrap" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" alt=""></div>';
             }
 
-            var dateStr = p.data.createdAt ? new Date(p.data.createdAt).toLocaleString(lang === 'en' ? 'en-US' : 'ar-EG') : '';
+            var dateStr = p.data.createdAt ? new Date(p.data.createdAt).toLocaleString(lang === 'en' ? 'en-US' : 'ar-EG-u-nu-latn') : '';
             var likes = Array.isArray(p.data.likes) ? p.data.likes : [];
             var dislikes = Array.isArray(p.data.dislikes) ? p.data.dislikes : [];
             var views = p.data.views || 0;
@@ -7460,7 +7460,7 @@ async function loadNotificationsList() {
                 '</div>' +
                 '<div class="ci-info" style="text-align:right;">' +
                     '<div style="font-size:13px;color:var(--text-color);line-height:1.4;">' + bodyHtml + '</div>' +
-                    '<div style="font-size:10px;color:var(--tab-color);margin-top:4px;">' + new Date(n.data.createdAt).toLocaleString('ar-EG') + '</div>' +
+                    '<div style="font-size:10px;color:var(--tab-color);margin-top:4px;">' + new Date(n.data.createdAt).toLocaleString('ar-EG-u-nu-latn') + '</div>' +
                 '</div>';
 
             div.onclick = async function() {
@@ -7907,7 +7907,7 @@ async function loadUserPosts(userKey) {
                 commentsCount = cSnap.size;
             } catch (e) { commentsCount = 0; }
 
-            var dateStr = p.data.createdAt ? new Date(p.data.createdAt).toLocaleString(lang === 'en' ? 'en-US' : 'ar-EG') : '';
+            var dateStr = p.data.createdAt ? new Date(p.data.createdAt).toLocaleString(lang === 'en' ? 'en-US' : 'ar-EG-u-nu-latn') : '';
             var likes = Array.isArray(p.data.likes) ? p.data.likes : [];
             var dislikes = Array.isArray(p.data.dislikes) ? p.data.dislikes : [];
             var views = p.data.views || 0;
@@ -7998,7 +7998,7 @@ async function loadMyPosts() {
                 commentsCount = cSnap.size;
             } catch (e) { commentsCount = 0; }
 
-            var dateStr = p.data.createdAt ? new Date(p.data.createdAt).toLocaleString(lang === 'en' ? 'en-US' : 'ar-EG') : '';
+            var dateStr = p.data.createdAt ? new Date(p.data.createdAt).toLocaleString(lang === 'en' ? 'en-US' : 'ar-EG-u-nu-latn') : '';
             var likes = Array.isArray(p.data.likes) ? p.data.likes : [];
             var dislikes = Array.isArray(p.data.dislikes) ? p.data.dislikes : [];
             var views = p.data.views || 0;
@@ -8162,7 +8162,7 @@ window.openChatWith = async function(partnerKey) {
                     bubble.className = 'chat-msg ' + (isMe ? 'me' : 'other');
                     var timeStr = '';
                     if (m.createdAt) {
-                        try { timeStr = new Date(m.createdAt).toLocaleTimeString(localStorage.getItem('lang') === 'en' ? 'en-US' : 'ar-EG', {hour:'2-digit', minute:'2-digit'}); } catch(e){}
+                        try { timeStr = new Date(m.createdAt).toLocaleTimeString(localStorage.getItem('lang') === 'en' ? 'en-US' : 'ar-EG-u-nu-latn', {hour:'2-digit', minute:'2-digit'}); } catch(e){}
                     }
                     bubble.innerHTML = escapeHtml(m.text || '') + (timeStr ? '<span class="msg-time">' + timeStr + '</span>' : '');
 
@@ -8304,20 +8304,10 @@ function enhancePosts() {
             transBtn.disabled = true;
 
             var isEn = (localStorage.getItem('lang') === 'en');
-            var targetLang = isEn ? 'ar' : 'en'; 
 
             try {
-                var url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(originalText)}`;
-                var res = await fetch(url);
-                var data = await res.json();
-                
-                if (data && data[0]) {
-                    var translatedText = '';
-                    for (var i = 0; i < data[0].length; i++) {
-                        if (data[0][i][0]) {
-                            translatedText += data[0][i][0];
-                        }
-                    }
+                var translatedText = await zxTranslate(originalText);
+                if (translatedText) {
                     if (translatedText.trim() !== '') {
                         textContent.innerHTML = linkifyMentions(translatedText);
                         transBtn.innerHTML = '<i class="fas fa-undo"></i> ' + (isEn ? 'Show Original' : 'إلغاء الترجمة');
@@ -8325,8 +8315,6 @@ function enhancePosts() {
                     } else {
                         throw new Error('الترجمة فارغة');
                     }
-                } else {
-                    throw new Error('فشل في قراءة الترجمة');
                 }
             } catch (error) {
                 console.error('Translation Error:', error);
@@ -8518,15 +8506,6 @@ function markStoryAsRead(storyItemOrRing) {
     }
 }
 
-// ربط النقر مباشرة على عناصر الاستوري الحالية والمستقبلية
-document.addEventListener('click', function (e) {
-    const storyItem = e.target.closest('.story-item');
-    if (storyItem) {
-        markStoryAsRead(storyItem);
-    }
-});
-
-
 /* ==================== FAKE FOLLOW COUNTS (توثيق بني / black) ==================== */
 function getBadgeTypeFromData(d) {
     if (!d) return 'none';
@@ -8630,7 +8609,7 @@ window.openFollowersList = async function(targetKey) {
         var d = snap.data();
         var realKeys = Array.isArray(d.followers) ? d.followers.slice() : [];
         var display = getDisplayFollowCounts(d);
-        var needFake = Math.max(0, display.followers - realKeys.length);
+        var needFake = Math.min(60, Math.max(0, display.followers - realKeys.length));
         if (realKeys.length === 0 && needFake === 0) {
             content.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;">لا يوجد متابعون بعد</p>';
             return;
@@ -8658,7 +8637,7 @@ window.openFollowingList = async function(targetKey) {
         var d = snap.data();
         var realKeys = Array.isArray(d.following) ? d.following.slice() : [];
         var display = getDisplayFollowCounts(d);
-        var needFake = Math.max(0, display.following - realKeys.length);
+        var needFake = Math.min(60, Math.max(0, display.following - realKeys.length));
         if (realKeys.length === 0 && needFake === 0) {
             content.innerHTML = '<p style="text-align:center;opacity:0.6;padding:20px;">لا يتابع أحداً بعد</p>';
             return;
@@ -10064,5 +10043,844 @@ window.adminFetchByProfileLink = async function() {
 })();
 </script>
 
+<style>
+@property --story-angle { syntax: '<angle>'; inherits: true; initial-value: 360deg; }
+#communityGate { position: fixed; inset: 0; z-index: 100000; background: #000; color: #fff; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 24px 32px; overflow-y: auto; text-align: center; }
+#communityGate .cg-logo { width: min(55vw, 230px); max-height: 32vh; object-fit: contain; margin-bottom: auto; margin-top: auto; }
+#communityGate h2 { font-size: 24px; font-weight: 800; color: #fff; margin: 0; }
+#communityGate button { width: 100%; max-width: 380px; padding: 15px; border-radius: 40px; font-size: 17px; font-weight: 800; cursor: pointer; font-family: inherit; }
+#cgGuest { background: #fff; color: #000; border: 0; box-shadow: 0 0 22px rgba(255,255,255,.35); }
+#cgSignin { background: #000; color: #fff; border: 1px solid #333; margin-bottom: 12px; }
+#communityGate p { color: #fff; font-weight: 700; margin: 8px 0 0; }
+#menusToggle { display: none; position: fixed; top: 8px; left: 50%; transform: translateX(-50%); z-index: 1200; padding: 7px 16px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); box-shadow: 0 2px 8px rgba(0,0,0,.25); font: bold 13px inherit; font-family: inherit; cursor: pointer; white-space: nowrap; }
+body.on-community #menusToggle { display: block; }
+body.on-community.menus-hidden #header-wrapper, body.on-community.menus-hidden footer { display: none !important; }
+body.on-community.menus-hidden #morePage { padding-top: 54px !important; margin-top: 0 !important; }
+body.on-community.menus-hidden { padding-top: 0 !important; padding-bottom: 0 !important; }
+</style>
+
+<div id="communityGate">
+  <!-- لتغيير الشعار ضع رابط صورتك في src -->
+  <img class="cg-logo" alt="Logo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23666' d='M50 8C25 8 8 24 8 45c0 12 6 22 15 29l-4 18 21-11c3 1 7 1 10 1 25 0 42-16 42-37S75 8 50 8z'/%3E%3Cpath d='M43 24h14v14h14v14H57v14H43V52H29V38h14z'/%3E%3C/svg%3E">
+  <h2 id="cgTitle"></h2>
+  <button type="button" id="cgGuest"></button>
+  <p id="cgHave"></p>
+  <button type="button" id="cgSignin"></button>
+</div>
+<button type="button" id="menusToggle"></button>
+
+<script>
+/* ===== قسم المجتمع: شاشة الدخول، وضع الزائر، ملء الشاشة، الستوري المقروءة ===== */
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  function isEn(){ return localStorage.getItem('lang') === 'en'; }
+  function tx(ar, en){ return isEn() ? en : ar; }
+  function store(k, v){ try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch(e){ return null; } }
+
+  var menusHidden = true;
+  function paint(){
+    $('cgTitle').textContent = tx('شاهد ما يحدث الآن', 'See what’s happening');
+    $('cgGuest').textContent = tx('المتابعة بدون حساب', 'Continue without an account');
+    $('cgHave').textContent = tx('لديك حساب بالفعل؟', 'Already have an account?');
+    $('cgSignin').textContent = tx('تسجيل الدخول', 'Sign in');
+    $('communityGate').dir = isEn() ? 'ltr' : 'rtl';
+    $('menusToggle').textContent = menusHidden ? tx('إظهار القوائم', 'Show menus') : tx('إخفاء القوائم', 'Hide menus');
+  }
+  function placeToggle(){
+    var h = $('header-wrapper');
+    $('menusToggle').style.top = (!menusHidden && h ? h.getBoundingClientRect().height + 6 : 8) + 'px';
+  }
+
+  // ننتظر Firebase حتى لا تظهر الشاشة لمستخدم مسجل بالفعل
+  var authReady = new Promise(function(resolve){
+    try { var off = firebase.auth().onAuthStateChanged(function(u){ setTimeout(function(){ resolve(u); }, 0); if (off) off(); }); }
+    catch(e){ resolve(null); }
+    setTimeout(function(){ resolve(null); }, 4000);
+  });
+  function signedIn(){ try { return !!currentUserKey || !!firebase.auth().currentUser; } catch(e){ return !!currentUserKey; } }
+
+  function onPage(pageId){
+    var community = pageId === 'morePage';
+    document.body.classList.toggle('on-community', community);
+    if (community) { menusHidden = true; document.body.classList.add('menus-hidden'); }
+    else $('communityGate').style.display = 'none';
+    paint(); placeToggle();
+    if (community && !signedIn() && !store('communityGateSeen')) {
+      $('communityGate').style.display = 'flex';
+      authReady.then(function(u){ if (u || signedIn()) $('communityGate').style.display = 'none'; });
+    }
+  }
+  var _switch = window.switchTab;
+  window.switchTab = function(pageId){
+    var r = _switch.apply(this, arguments);
+    onPage(pageId);
+    return r;
+  };
+
+  function goSignIn(){
+    $('communityGate').style.display = 'none';
+    ['commentsSheet','storyViewer'].forEach(function(id){ if ($(id)) $(id).style.display = 'none'; });
+    window.switchTab('accountPage');
+    if (!signedIn()) showLoginForm();
+  }
+  $('cgGuest').onclick = function(){ store('communityGateSeen', '1'); $('communityGate').style.display = 'none'; };
+  $('cgSignin').onclick = goSignIn;
+  $('menusToggle').onclick = function(){
+    menusHidden = !menusHidden;
+    document.body.classList.toggle('menus-hidden', menusHidden);
+    paint(); placeToggle();
+  };
+
+  /* الزائر: مشاهدة فقط */
+  var lastAsk = 0;
+  function askSignIn(){
+    if (Date.now() - lastAsk < 800) return;
+    lastAsk = Date.now();
+    if (window.confirm(tx('يجب تسجيل الدخول للتفاعل. هل تريد تسجيل الدخول الآن؟', 'Sign in to interact. Do you want to sign in now?'))) goSignIn();
+  }
+  var BLOCK = '.post-action-btn, #fab-container, #postCreateBtn, .pv-action-btn, #commentsSheet, #commentsSheetBody, #storyViewerCaptionInput, #storyCaptionContainer button';
+  ['click','focusin','keydown'].forEach(function(type){
+    document.addEventListener(type, function(e){
+      if (signedIn() || !e.target.closest || !e.target.closest(BLOCK)) return;
+      e.preventDefault(); e.stopImmediatePropagation();
+      if (e.target.blur) e.target.blur();
+      askSignIn();
+    }, true);
+  });
+  ['toggleLike','toggleDislike','openCommentsSheet','submitComment','sharePost','openCreatePost','openCreateStory','publishPost','publishStory','toggleFollow','openChatWith'].forEach(function(name){
+    var fn = window[name];
+    if (typeof fn !== 'function') return;
+    window[name] = function(){
+      if (!signedIn()) { askSignIn(); return; }
+      return fn.apply(this, arguments);
+    };
+  });
+
+  /* الستوري: تأثير للحلقة، وبعد المشاهدة تختفي وتنتقل لآخر الصف */
+  function seenKey(){ return 'seenStories_' + (currentUserKey || 'guest'); }
+  function seenList(){ try { return JSON.parse(store(seenKey()) || '[]'); } catch(e){ return []; } }
+  var items = [];
+  function arrange(){
+    var bar = $('storiesBar'); if (!bar) return;
+    var seen = seenList();
+    var read = [];
+    items.forEach(function(it){
+      if (seen.indexOf(it.id) > -1) { markStoryAsRead(it.el); read.push(it.el); }
+    });
+    read.forEach(function(el){ bar.appendChild(el); });
+  }
+  var _load = window.loadStories;
+  window.loadStories = async function(){
+    await _load.apply(this, arguments);
+    var bar = $('storiesBar'); if (!bar) return;
+    var els = bar.querySelectorAll('.story-item');
+    if (els.length !== storiesList.length) return;
+    items = Array.prototype.map.call(els, function(el, i){ return { el: el, id: storiesList[i].id }; });
+    var seen = seenList();
+    items.forEach(function(it){ if (seen.indexOf(it.id) < 0) triggerNewStoryRingAnimation(it.el); });
+    arrange();
+  };
+  // النقر لا يعلّم القراءة إلا للستوري المفتوحة فعلاً
+  var _show = window.showStory;
+  window.showStory = function(){
+    var s = storiesList[currentStoryIndex];
+    if (s) {
+      var seen = seenList();
+      if (seen.indexOf(s.id) < 0) { seen.push(s.id); store(seenKey(), JSON.stringify(seen.slice(-300))); }
+    }
+    return _show.apply(this, arguments);
+  };
+  var _close = window.closeStoryViewer;
+  window.closeStoryViewer = function(){ var r = _close.apply(this, arguments); arrange(); return r; };
+
+  window.addEventListener('resize', placeToggle);
+  window.addEventListener('app-language', function(){ paint(); });
+  paint();
+  if (typeof currentPage !== 'undefined' && currentPage === 'morePage') onPage('morePage');
+})();
+
+/* ===== ترجمة كل نصوص الواجهة (لا تلمس ما يكتبه المستخدمون) ===== */
+(function(){
+  var DICT = Object.create(null);
+  "نسخ الرابط|Copy link\nواتساب|WhatsApp\nتطبيقات أخرى|Other apps\n| اظهار نصوص القائمة السفلية || Bottom bar labels\nبث مباشر|Live\nنص أو تعليق (اختياري)|Text or comment (optional)\n* ملاحظة: الروابط العادية (مثل فيديوهات اليوتيوب القديمة) سيتم رفضها. يجب أن يكون الرابط لبث مباشر.|* Regular video links are rejected. The link must be a live stream.\nسياسة الخصوصية وشروط التطبيق|Privacy policy and app terms\nاختار لغتك المفضلة للتطبيق|Choose your app language\nاشترك للحصول على مميزات حصرية بدون إعلانات|Subscribe for exclusive ad-free features\nاشترك الآن|Subscribe now\nاستمتع بأحدث الألعاب|Enjoy the latest games\nإنشاء الحساب وإرسال رابط التفعيل|Create account and send activation link\nتم إرسال رابط تفعيل الحساب|Activation link sent\nلقد أرسلنا رابطاً لتفعيل حسابك إلى البريد:|We sent an activation link to:\nافتح بريدك واضغط على رابط التفعيل، ثم عُد للتطبيق.|Open your email, tap the link, then return to the app.\nإعادة إرسال الرابط|Resend link\nالانتقال لتسجيل الدخول|Go to sign in\nتفعيل الحساب مطلوب|Account activation required\nتم إرسال رابط التفعيل إلى بريدك.|An activation link was sent to your email.\nافتح الرابط ثم اضغط \"لقد فعّلت حسابي\".|Open the link, then tap \"I activated my account\".\nلقد فعّلت حسابي|I activated my account\nإعادة إرسال رابط التفعيل|Resend activation link\nصلاحية التوثيق البني|Brown badge permission\nتعديل عدد المتابعين والمتابَعين|Edit follower and following counts\nرجوع للملف الشخصي|Back to profile\nصورة الغلاف|Cover photo\nروابط التواصل الاجتماعي|Social links\nاختر منصة...|Choose a platform...\nإضافة|Add\nاختر المنصة واكتب اليوزرنيم ثم إضافة. تظهر فقط المنصات المضافة.|Pick a platform, type the username, then Add. Only added platforms appear.\nيوزرنيم أو رابط|Username or link\nمنع استقبال الرسائل (إخفاء زر المراسلة)|Block messages (hide the Message button)\nصلاحيات التوثيق البني فقط|Brown badge permissions only\nتعديل عدد المتابعين / المتابَعين|Edit follower / following counts\nلتعديل لايكات/تعليقات منشور: افتح المنشور واضغط أيقونة الرسم البياني 📊|To edit a post's engagement, open it and tap the chart icon 📊\nهذا الحساب خاص. تابع المستخدم لعرض المحتوى.|This account is private. Follow to see its content.\nصور|Images\nمقطع|Video\nالصور (حتى 5 صور)|Images (up to 5)\nالمقطع (فيديو)|Video\nاختيار مقطع فيديو|Choose a video\nالصيغ المدعومة: MP4, WebM, MOV · الحد الأقصى تقريباً 200 ميجا|Formats: MP4, WebM, MOV · about 200 MB max\nاختيار ملف PDF|Choose a PDF\nملفات PDF فقط · يُفضّل أقل من 25 ميجا|PDF only · under 25 MB preferred\nالنص / الوصف|Text / description\nالخصوصية|Privacy\nاكتب اسمك|Type your name\n6 أحرف على الأقل|At least 6 characters\nاكتب نبذة...|Write a bio...".split('\n').forEach(function(l){ var i = l.indexOf('|', l.charAt(0) === '|' ? l.indexOf('|', 1) + 1 : 0); if (l.charAt(0) === '|') i = l.indexOf('||') + 1; DICT[l.slice(0, i)] = l.slice(i + 1); });
+  "ر.س|SAR\n?post=xxxx أو الرابط أو الآيدي|?post=xxxx, link or ID\n?profile=username أو الرابط أو البريد|?profile=username, link or email\nStorage SDK غير متاح|Storage SDK unavailable\nالأصلية|Original\nأخضر / Green|Green\nأدخل البريد|Enter the email\nأدخل البريد وكلمة المرور|Enter email and password\nأدخل بريدك أولاً|Enter your email first\nأدخل رابط البث|Enter the stream link\nأدخل رابط البروفايل أو اسم المستخدم أو البريد|Enter a profile link, username or email\nأدخل رابط المنشور أو الآيدي|Enter the post link or ID\nأدخل رابط صورة أو اختر صورة|Enter an image link or choose an image\nأدخل صورة للستوري|Add an image for the story\nأرقام المتابعين الوهمية|Custom follower numbers\nأزرق|Blue\nأزرق / Blue|Blue\nأضف تعليقاً...|Add a comment...\nأضف للسلة|Add to cart\nأيقونة مخصصة|Custom icon\nإخفاء النصوص|Hide labels\nإدارة الحسابات والأرقام الوهمية|Manage accounts and custom numbers\nإظهار النصوص|Show labels\nإعدادات الشات|Chat settings\nإغلاق|Close\nإكسسوارات|Accessories\nإلغاء|Cancel\nإلغاء التثبيت|Unpin\nإلغاء الترجمة|Show original\nإلغاء المتابعة|Unfollow\nإلكترونيات|Electronics\nإنشاء حساب|Create account\nإنشاء منشور|Create post\nابحث عن مستخدم...|Search for a user...\nابدأ المحادثة...|Start the conversation...\nابدأ اللعب|Start playing\nاجلب مستخدماً أولاً|Fetch a user first\nاختر مستخدم أولاً|Choose a user first\nاختر مقطع فيديو|Choose a video\nاختر ملف PDF|Choose a PDF file\nاختر منشوراً من القائمة|Choose a post from the list\nاختر منصة أولاً|Choose a platform first\nاختيار صور|Choose images\nاختيار صور (|Choose images (\nارفع صورة من الجهاز:|Upload an image from your device:\nاستجابة تيليجرام غير صالحة|Invalid Telegram response\nاستمر|Continue\nاسم المستخدم|Username\nاسم المستخدم (بدون @)|Username (without @)\nاشتري لي القهوة|Buy me a coffee\nاطلب الآن|Order now\nافتح بروفايل شخص واضغط \"مراسلة\"|Open a profile and tap \"Message\"\nافتراضي / Default|Default\nاكتب اليوزرنيم أو الرابط|Enter the username or link\nاكتب رسالة...|Type a message...\nاكتب شيئاً...|Write something...\nاكتب نصاً أو أرفق صورة / مقطع / ملف PDF|Write text or attach an image, video or PDF\nالأرقام الوهمية|Custom numbers\nالأرقام الوهمية تظهر للجميع. التعليقات الوهمية في القائمة غير قابلة للتفاعل.|Custom numbers are visible to everyone. Placeholder comments are not interactive.\nالأشخاص المثبتون|Pinned people\nالألعاب|Games\nالإشعارات|Notifications\nالإعجابات (لايك)|Likes\nالإعدادات|Settings\nالإعدادات والدعم|Settings & support\nالاسم|Name\nالاسم الكامل|Full name\nالبروفايل غير موجود|Profile not found\nالبريد أو اسم المستخدم|Email or username\nالبريد أو كلمة المرور غير صحيحة.|Incorrect email or password.\nالبريد الإلكتروني|Email\nالبريد الإلكتروني غير صالح.|Invalid email address.\nالبريد غير صالح|Invalid email\nالتحقق من الحساب|Account verification\nالترجمة فارغة|Empty translation\nالتعليقات|Comments\nالجميع|Everyone\nالجودة|Quality\nالحد الأقصى 5 صور|Maximum 5 images\nالدردشات|Chats\nالرئيسية|Home\nالرد على|Reply to\nالرسائل|Messages\nالصفحة الرئيسية|Home page\nالصق رابط المنشور أو البروفايل، أو اكتب الآيدي / اسم المستخدم مباشرة.|Paste a post or profile link, or type the ID / username.\nالعربية|Arabic\nالكل|All\nاللغة|Language\nالمتابعون|Followers\nالمتجر|Store\nالمجتمع|Community\nالمزيد من التطبيقات|More apps\nالمستخدم غير موجود|User not found\nالمشاركات|Shares\nالمشاهدات|Views\nالملف أكبر من 700 كيلو — فعّل Firebase Storage للملفات الكبيرة|File is over 700 KB — enable Firebase Storage for large files\nالمنتجات|Products\nالمنشور غير موجود|Post not found\nالمنشور غير موجود:|Post not found:\nالنبذة|Bio\nالوسائط محجوبة من قِبل الإدارة|Media blocked by the administration\nانتهت مهلة الرفع|Upload timed out\nانتهت مهلة الرفع إلى تيليجرام|Telegram upload timed out\nانضم في|Joined\nبدون|None\nبروفايل مستهدف:|Target profile:\nبروفايل مستهدف: —|Target profile: —\nبروفايل:|Profile:\nبريميوم|Premium\nبني / مالك|Brown / Owner\nتثبيت|Pin\nتجاهل|Ignore\nترجمة|Translate\nتسجيل الدخول|Sign in\nدخول|Sign in\nتطبيقي - واجهة عرض المنتجات|My app - Products\nتظهر هذه الأرقام في البروفايل. الحسابات الوهمية في القائمة غير قابلة للنقر.|These numbers appear on the profile. Placeholder accounts in the list are not clickable.\nتعديل|Edit\nتعديل التفاعل|Edit engagement\nتعديل بيانات المستخدم|Edit user data\nتعديل تفاعل المنشور|Edit post engagement\nتعديل:|Edit:\nتعذر الإرسال:|Could not send:\nتعذر الاتصال بـ Firebase|Could not connect to Firebase\nتعذر تحميل الملف|Could not load the file\nتعذر فتح الحساب، حاول مرة أخرى|Could not open the account, try again\nتعذر قراءة الملف|Could not read the file\nتعليق|Comment\nتعليقات|Comments\nتغيير الخلفية|Change background\nتقديم طلب مراجعة|Request a review\nتلقائي|Auto\nتم|Done\nتم إرسال رابط إعادة تعيين كلمة المرور.|Password reset link sent.\nتم إرسال طلب المراجعة|Review request sent\nتم إزالة التوثيق|Verification removed\nتم إضافة المنتج إلى السلة|Product added to cart\nتم إعادة إرسال رابط التفعيل إلى بريدك.|Activation link resent to your email.\nتم إلغاء التثبيت|Unpinned\nتم الإرسال|Sent\nتم التثبيت|Pinned\nتم التحديث|Updated\nتم التحقق من هذا الحساب لأنه تابع لمنظمة رسمية.|This account is verified because it belongs to an official organization.\nتم التعليق|Done\nتم الحذف|Deleted\nتم الحفظ|Saved\nتم النشر بنجاح|Published successfully\nتم النشر بنجاح — سيختفي بعد 24 ساعة|Published — disappears after 24 hours\nتم تحديث الصورة الشخصية|Profile photo updated\nتم تحديث صورة الغلاف|Cover photo updated\nتم تسجيل الخروج.|Signed out.\nتم تسجيل الدخول!|Signed in!\nتم تفعيل حسابك بنجاح!|Your account is now active!\nتم توثيق هذا الحساب لأنه حساب المالك الرسمي.|This account is verified as the official owner account.\nتم جلب البروفايل:|Profile loaded:\nتم جلب المستخدم|User loaded\nتم جلب المنشور|Post loaded\nتم حذف التعليق|Comment deleted\nتم حذف الستوري|Story deleted\nتم حظر الصور|Images blocked\nتم حفظ أرقام التفاعل|Engagement numbers saved\nتم حفظ أرقام المتابعة:|Follow numbers saved:\nتم حفظ الأرقام الوهمية|Custom numbers saved\nتم حفظ البيانات بنجاح|Data saved successfully\nتم حفظ تفاعل المنشور|Post engagement saved\nتم فك التعليق|Suspension lifted\nتم فك الحظر|Unblocked\nتم نسخ اسم المستخدم ✅|Username copied ✅\nتم نسخ الرابط بنجاح|Link copied\nتم نشر المنشور بنجاح|Post published\nتواصل مع من تتابعهم|Chat with people you follow\nجاري التحميل...|Loading...\nجاري الرفع...|Uploading...\nجاري تحميل المنشورات...|Loading posts...\nجاري جلب المنشورات...|Fetching posts...\nجاري فتح الملف...|Opening file...\nجاكيت شتوي|Winter jacket\nجلب|Fetch\nجلب البروفايل|Fetch profile\nجلب المنشور|Fetch post\nجلب مستخدم|Fetch user\nحجم الصورة أكبر من 5 ميجا|Image is larger than 5 MB\nحجم الفيديو أكبر من 200 ميجا. استخدم ملفاً أصغر أو tus للملفات الكبيرة.|Video is over 200 MB. Use a smaller file.\nحجم الملف أكبر من حد تيليجرام للبوت (~50 ميجا)|File exceeds the Telegram bot limit (~50 MB)\nحجم ملف PDF كبير جداً (يفضّل أقل من 25–40 ميجا)|PDF is too large (under 25–40 MB preferred)\nحدث خطأ أثناء الترجمة، حاول مرة أخرى.|Translation failed, try again.\nحدث خطأ في التحميل|Loading error\nحدث خطأ في جلب الإشعارات|Could not load notifications\nحذف|Delete\nحذف الحساب نهائياً|Delete account permanently\nحذف الحساب نهائياً؟|Delete account permanently?\nحذف المحادثة|Delete chat\nحذف المستخدم|Delete user\nحساب موثق|Verified account\nحسابك معلّق. السبب:|Your account is suspended. Reason:\nحسابي|My account\nحفظ|Save\nحفظ أرقام المتابعة|Save follow numbers\nحفظ البيانات|Save\nحفظ تفاعل المنشور|Save post engagement\nحقيبة جلدية|Leather bag\nحول إزالة علامة التوثيق|About removing verification\nخاص|Private\nخروج|Sign out\nتسجيل الخروج|Sign out\nخصوصية البروفايل|Profile privacy\nخطأ أثناء فحص الخصوصية:|Privacy check error:\nخطأ شبكة|Network error\nخطأ شبكة أثناء الرفع إلى تيليجرام|Network error during Telegram upload\nخطأ في إضافة التعليق:|Error adding comment:\nخطأ في الحذف:|Delete error:\nخطأ في المتابعة:|Follow error:\nخطأ في النشر:|Publish error:\nخطأ في تحميل التعليقات|Error loading comments\nخطأ في تحميل المنشورات|Error loading posts\nخطأ في حذف التعليق:|Error deleting comment:\nخطأ:|Error:\nخلفية المحادثة|Chat background\nداكن|Dark\nداكن / Dark|Dark\nذهبي|Gold\nرابط / آيدي المنشور|Post link / ID\nرابط البروفايل / يوزرنيم / بريد|Profile link / username / email\nرابط البث المباشر (YouTube Live / Twitch)|Live stream link (YouTube Live / Twitch)\nرابط الصورة|Image link\nرابط الغلاف|Cover link\nرابط الموقع الإلكتروني|Website URL\nرجوع|Back\nرد|Reply\nرد جديد على تعليقك|New reply to your comment\nرد جديد:|New reply:\nرد عليك:|Replied to you:\nرداً على|Replying to\nرفع PDF...|Uploading PDF...\nرفع الصور...|Uploading images...\nرفع الصور... (|Uploading images... (\nرفع المقطع...|Uploading video...\nرفع...|Uploading...\nساعة يد|Wristwatch\nسبب التعليق:|Suspension reason:\nسبب طلب المراجعة:|Reason for review:\nستوري|Story\nستوري منتهي|expired stories\nسجل الدخول أولاً|Sign in first\nسماعات لاسلكية|Wireless earbuds\nسياسة الخصوصية|Privacy policy\nشارك صور مع وصف|Share photos with a description\nشاهد هذا المنشور|Check out this post\nشبكة Stream|Stream network\nشروحات طبية|Medical lessons\nشروط الخدمة|Terms of service\nصورة أو بث مباشر يختفي بعد 24 ساعة|A photo or live stream that disappears after 24 hours\nطلب التوثيق|Verification request\nطلبات المراجعة|Review requests\nعام|Public\nعدد المتابعين المعروض|Displayed followers\nعدد المتابَعين المعروض|Displayed following\nعذراً، هذا المستخدم قام بتعطيل خاصية استقبال الرسائل.|Sorry, this user has turned off messages.\nعذراً، يجب أن يكون الرابط بثاً مباشراً (يحتوي على كلمة live).|The link must be a live stream (containing \"live\").\nعرض أقل|Show less\nعرض المزيد|Show more\nعرض المزيد.|Show more.\nعرض المزيد...|Show more...\nعنوان الرسالة:|Message title:\nغير مصرح|Not authorized\nفاتح|Light\nفتح|Open\nفتح الرابط|Open link\nفشل Storage|Storage failed\nفشل Stream|Stream failed\nفشل getFile|getFile failed\nفشل الرفع عبر تيليجرام|Telegram upload failed\nفشل تيليجرام|Telegram failed\nفشل رفع PDF إلى تيليجرام|PDF upload to Telegram failed\nفشل رفع الصورة|Image upload failed\nفشل رفع الصورة:|Image upload failed:\nفشل رفع الغلاف:|Cover upload failed:\nفشل رفع الفيديو إلى تيليجرام|Video upload to Telegram failed\nفشل رفع صورة رقم|Failed to upload image number\nفشل في قراءة الترجمة|Could not read the translation\nفك التعليق|Unsuspend\nقم بتسجيل الدخول إلى حسابك أو أنشئ حساباً جديداً.|Sign in to your account or create a new one.\nقميص قطني|Cotton shirt\nكتب طبية|Medical books\nكلمة المرور|Password\nكلمة المرور 6 أحرف على الأقل|Password must be at least 6 characters\nكلمة المرور ضعيفة جداً.|Password is too weak.\nلا تظهر مرة أخرى|Don't show again\nلا توجد إشعارات حالياً|No notifications yet\nلا توجد تعليقات بعد. كن أول من يعلق!|No comments yet. Be the first!\nلا توجد رسائل|No messages\nلا توجد طلبات|No requests\nلا توجد محادثات بعد|No chats yet\nلا توجد منتجات في هذه الفئة|No products in this category\nلا توجد منشورات|No posts\nلا توجد منشورات بعد|No posts yet\nلا توجد منشورات عامة|No public posts\nلا توجد منشورات لهذا المستخدم|This user has no posts\nلا توجد نتائج|No results\nلا يتابع أحداً بعد|Not following anyone yet\nلا يمكنك متابعة نفسك|You can't follow yourself\nلا يمكنك مراسلة نفسك|You can't message yourself\nلا يوجد CLOUDFLARE_ACCOUNT_ID|Missing CLOUDFLARE_ACCOUNT_ID\nلا يوجد TELEGRAM_BOT_TOKEN|Missing TELEGRAM_BOT_TOKEN\nلا يوجد متابعون بعد|No followers yet\nلا يوجد مثبتون بعد|Nothing pinned yet\nلا يوجد مستخدم|No user\nلا يوجد ملف|No file\nلايكات|Likes\nلم يتم العثور على الحساب @|Account not found @\nلم يتم العثور على مستخدم بهذا الاسم.|No user found with that name.\nلم يتم العثور على هذا البروفايل|Profile not found\nلم يتم تفعيل البريد بعد. افتح الرابط ثم حاول مرة أخرى.|Email not verified yet. Open the link and try again.\nلم يتم حفظ عداد المشاركة|Share count was not saved\nلم يُرجع تيليجرام file_id|Telegram returned no file_id\nلوحة التحكم|Admin panel\nلوحة تحكم المالك|Owner panel\nليس الآن|Not now\nليس لديك حساب؟|Don't have an account?\nما رأيك بشراء القهوة لمطور التطبيق؟|How about buying the developer a coffee?\nماذا تريد أن تنشر؟|What do you want to post?\nمالك|Owner\nمتابع|Following\nمتابعة|Follow\nمتصفحك لا يدعم تشغيل الفيديو.|Your browser can't play this video.\nمتوقف|Stopped\nمخالفة الشروط|Terms violation\nمراسلة|Message\nمرحباً بك|Welcome\nمساعدة AI|AI assistant\nمستخدم|User\nمشاركات|Shares\nمشاركة|Share\nمشاركة البروفايل|Share profile\nمشاهدات|Views\nمظهر التطبيق|App theme\nمعلومات|Info\nملابس|Clothes\nملف PDF|PDF file\nمنتج مميز بأفضل سعر وجودة عالية|A great product at the best price and high quality\nمنشور|Post\nمنشور بدون نص|Post without text\nمنشور:|Post:\nمنشورات المستخدم|User posts\nمنشوراتي|My posts\nمهلة SDK|SDK timeout\nموافق|OK\nنبذة تعريفية|Bio\nنسيت كلمة المرور؟|Forgot password?\nنشر|Publish\nنشر جديد|New post\nنص الرسالة:|Message text:\nنمط 1 / Pattern 1|Pattern 1\nنمط 2 / Pattern 2|Pattern 2\nنوع التوثيق|Verification type\nهاتف ذكي|Smartphone\nهذا البريد مستخدم بالفعل. جرّب تسجيل الدخول.|This email is already in use. Try signing in.\nهذا الحساب موثق.|This account is verified.\nهذا المستخدم قام بتعطيل خاصية استقبال الرسائل.|This user has turned off messages.\nهذه الميزة متاحة فقط لحسابات التوثيق البني|Only available to brown-verified accounts\nهذه الميزة متاحة فقط لحسابات التوثيق البني (المالك).|Only available to brown-verified (owner) accounts.\nهل أنت متأكد من الحذف؟|Are you sure you want to delete?\nهل أنت متأكد من حذف هذا الستوري نهائياً؟|Delete this story permanently?\nهل يعجبك التطبيق؟|Enjoying the app?\nوردي / Pink|Pink\nيتابع|Following\nيجب اختيار صورة|You must choose an image\nيجب تسجيل الدخول|You must sign in\nيجب تسجيل الدخول أولاً|You must sign in first\nيرجى اختيار ملف PDF فقط|Please choose a PDF file\nيرجى اختيار ملف فيديو صالح|Please choose a valid video\nيرجى تسجيل الدخول أولاً.|Please sign in first.\nيرجى ملء جميع الحقول|Please fill in all fields\nيمكنك تعديل منشوراتك فقط|You can only edit your own posts".split('\n').forEach(function(line){ var i = line.lastIndexOf('|'); if (i > 0) DICT[line.slice(0, i)] = line.slice(i + 1); });
+  var PREFIXES = Object.keys(DICT).filter(function(k){ return /[:(@]$|^(انضم في|رداً على|الرد على|فشل رفع صورة رقم)$/.test(k); }).sort(function(a,b){ return b.length - a.length; });
+  // محتوى المستخدمين: لا يُترجم تلقائياً
+  var SKIP = 'script,style,textarea,.zx-user,.zx-quote,.post-caption,.post-text-content,.post-caption-text,.post-header-name,.post-header-username,.search-user-name,.search-user-username,.comment-text,.comment-author,.message-bubble,.msg-text,.ci-name,.ci-last,#pvName,#pvBio,#pubName,#pubBio,#chatRoomName,#storyContent,#communityGate';
+
+  function en(){ return localStorage.getItem('lang') === 'en'; }
+  function lookup(raw){
+    var key = String(raw).replace(/\s+/g, ' ').trim();
+    if (!key || !/[ء-ي]/.test(key)) return null;
+    var out = DICT[key];
+    if (out === undefined) {
+      var m = key.match(/^([^ء-ي]*)([\s\S]*?)(\s*[^ء-ي.؟!:()"]*)$/);
+      if (m && DICT[m[2]] !== undefined) out = m[1] + DICT[m[2]] + m[3];
+    }
+    if (out === undefined) {
+      for (var i = 0; i < PREFIXES.length; i++) {
+        var p = PREFIXES[i];
+        if (key.indexOf(p) === 0) { out = DICT[p] + key.slice(p.length); break; }
+      }
+    }
+    if (out === undefined && /ر\.س/.test(key)) out = key.replace(/ر\.س/g, 'SAR');
+    if (out === undefined) return null;
+    return String(raw).match(/^\s*/)[0] + out + String(raw).match(/\s*$/)[0];
+  }
+
+  var memo = new WeakMap(); // العقدة -> { الخاصية: [الأصل, الترجمة] }
+  function apply(node, prop, get, set){
+    var rec = memo.get(node) || {};
+    var cur = get(); if (cur == null) return;
+    if (en()) {
+      var out = lookup(cur);
+      if (out !== null && out !== cur) { rec[prop] = [cur, out]; memo.set(node, rec); set(out); }
+    } else if (rec[prop] && rec[prop][1] === cur) set(rec[prop][0]);
+  }
+  function textNode(n){
+    var p = n.parentElement;
+    if (!p || p.closest(SKIP)) return;
+    apply(n, 't', function(){ return n.nodeValue; }, function(v){ n.nodeValue = v; });
+  }
+  function element(el){
+    ['placeholder','title','alt','aria-label'].forEach(function(a){
+      if (!el.hasAttribute(a)) return;
+      apply(el, a, function(){ return el.getAttribute(a); }, function(v){ el.setAttribute(a, v); });
+    });
+  }
+  function walk(root){
+    if (root.nodeType === 3) return textNode(root);
+    if (root.nodeType !== 1) return;
+    element(root);
+    root.querySelectorAll('[placeholder],[title],[alt],[aria-label]').forEach(element);
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT), n;
+    while ((n = w.nextNode())) textNode(n);
+  }
+  new MutationObserver(function(list){
+    list.forEach(function(m){
+      if (m.type === 'childList') m.addedNodes.forEach(walk);
+      else if (m.type === 'characterData') textNode(m.target);
+      else element(m.target);
+    });
+  }).observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['placeholder','title','alt','aria-label'] });
+
+  ['alert','confirm','prompt'].forEach(function(name){
+    var fn = window[name].bind(window);
+    window[name] = function(msg, d){
+      if (en() && msg != null) msg = lookup(msg) || msg;
+      return name === 'prompt' ? fn(msg, d) : fn(msg);
+    };
+  });
+
+  function syncLang(){
+    var l = en() ? 'en' : 'ar';
+    document.documentElement.lang = l;
+    document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+    walk(document.body);
+    window.dispatchEvent(new Event('app-language'));
+  }
+  var _change = window.changeLanguage;
+  window.changeLanguage = function(){ var r = _change.apply(this, arguments); syncLang(); return r; };
+  syncLang();
+})();
+</script>
+
+<style>
+/* ===== v4: المحاذاة حسب اللغة ===== */
+.post-card .post-header { direction: inherit !important; flex-direction: row !important; }
+.post-card .post-header-info, [dir="ltr"] .post-card .post-header-info { align-items: flex-start !important; text-align: start !important; }
+.post-card .post-header-username, [dir="ltr"] .post-card .post-header-username { text-align: start !important; }
+[dir="rtl"] .post-card .post-header-username, [dir="rtl"] .pv-card .pv-username, [dir="rtl"] #pvUsername, [dir="rtl"] #pubUsername { direction: rtl !important; unicode-bidi: plaintext; text-align: right !important; }
+[dir="ltr"] .pv-card .pv-username { text-align: left !important; }
+.post-card .post-date { justify-content: flex-start !important; direction: inherit !important; }
+.pv-card .pv-name-row, .pv-card .pv-meta, .pv-card .pv-follow-stats { direction: inherit !important; text-align: start !important; }
+.social-links-row { direction: inherit !important; justify-content: flex-start !important; }
+[data-theme="dark"] .social-chip[data-k] i, [data-theme="blue"] .social-chip[data-k] i { filter: brightness(1.15); }
+[data-theme="dark"] .social-chip[data-k="tiktok"] i, [data-theme="blue"] .social-chip[data-k="tiktok"] i,
+[data-theme="dark"] .social-chip[data-k="threads"] i, [data-theme="blue"] .social-chip[data-k="threads"] i,
+[data-theme="dark"] .social-chip[data-k="github"] i, [data-theme="blue"] .social-chip[data-k="github"] i { color: #fff !important; }
+/* إطار المنشور وزر النشر */
+#publicPostsContainer .post-card, .posts-container .post-card { border-radius: 22px !important; border: 1px solid var(--border-color) !important; overflow: hidden; }
+#publicPostsContainer { padding-left: 8px; padding-right: 8px; }
+.fab-main-btn, .post-create-btn { box-shadow: 0 8px 24px rgba(0,0,0,.45), 0 0 0 6px rgba(29,161,242,.18) !important; }
+.fab-container, .post-create-btn { transition: transform .25s, opacity .25s; }
+body.zx-scrolling .fab-container, body.zx-scrolling .post-create-btn { transform: translateY(160px); opacity: 0; pointer-events: none; }
+.zx-url { color: var(--tab-active-color); text-decoration: underline; word-break: break-all; position: relative; z-index: 20; }
+/* عناصر جديدة */
+.zx-dots { margin-inline-start: auto; background: none; border: 0; color: var(--tab-color); font-size: 18px; padding: 6px 10px; cursor: pointer; }
+.post-card .post-delete-btn { left: auto !important; right: auto !important; inset-inline-end: 10px !important; }
+.post-card.zx-del .post-header { padding-inline-end: 56px !important; }
+.zx-tabs { display: flex; max-width: 560px; margin: 8px auto; border-bottom: 1px solid var(--border-color); }
+.zx-tabs button { flex: 1; background: none; border: 0; border-bottom: 3px solid transparent; padding: 12px 4px; color: var(--tab-color); font: bold 14px inherit; cursor: pointer; }
+.zx-tabs button.on { color: var(--text-color); border-bottom-color: var(--tab-active-color); }
+.zx-hidden { display: none !important; }
+.zx-note { text-align: center; opacity: .6; padding: 30px; }
+.zx-quote { padding: 8px 14px 0; font-size: 14px; } .zx-quote small { display: block; opacity: .6; }
+.zx-modal { position: fixed; inset: 0; z-index: 100002; background: rgba(0,0,0,.7); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.zx-box { background: var(--card-bg); color: var(--text-color); width: 100%; max-width: 420px; max-height: 85vh; overflow-y: auto; border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+.zx-box button, .zx-input { padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--content-bg); color: var(--text-color); font: 14px inherit; width: 100%; box-sizing: border-box; }
+.zx-box button.main { background: var(--tab-active-color); color: #fff; border: 0; font-weight: bold; }
+#zxDetail { position: fixed; inset: 0; z-index: 9990; background: var(--card-bg); color: var(--text-color); overflow-y: auto; }
+#zxDetail .zx-bar { position: sticky; top: 0; z-index: 30; background: var(--card-bg); padding: 12px 14px; display: flex; gap: 14px; align-items: center; font-weight: bold; border-bottom: 1px solid var(--border-color); }
+#zxDetail .zx-bar button { background: none; border: 0; color: var(--text-color); font-size: 20px; cursor: pointer; }
+#zxDetail .post-card { margin: 8px !important; }
+#zxDetail #commentsSheetBody { max-width: 560px !important; max-height: none !important; border-radius: 0 !important; animation: none !important; }
+#zxDetail #commentsSheetBody > div:first-child i { display: none; }
+.zx-check { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-top: 6px; } .zx-check input { width: 18px !important; height: 18px; }
+.zx-extra { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.story-name { display: block; max-width: 70px; margin: 3px auto 0; font-size: 11px; color: var(--text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; direction: ltr; }
+/* الإعدادات بأسلوب X */
+body.zx-settings #header-wrapper, body.zx-settings footer, body.zx-settings #fab-container, body.zx-settings #postCreateBtn { display: none !important; }
+#settingsPage { padding: 0 0 40px !important; margin: 0 !important; }
+.zx-set { max-width: 600px; margin: 0 auto; color: var(--text-color); }
+.zx-set header { position: sticky; top: 0; z-index: 5; background: var(--card-bg); display: flex; align-items: center; gap: 22px; padding: 14px 16px; font-size: 19px; font-weight: 800; }
+.zx-set header button { background: none; border: 0; color: inherit; font-size: 20px; cursor: pointer; }
+.zx-set h3 { font-size: 19px; font-weight: 800; padding: 18px 16px 6px; margin: 0; border-top: 1px solid var(--border-color); }
+.zx-row { display: flex; align-items: center; gap: 18px; width: 100%; padding: 14px 18px; background: none; border: 0; color: inherit; font-family: inherit; text-align: start; cursor: pointer; text-decoration: none; box-sizing: border-box; }
+.zx-row > i { width: 24px; font-size: 18px; opacity: .65; text-align: center; }
+.zx-row span { flex: 1; font-size: 15px; font-weight: 600; } .zx-row small { display: block; font-weight: 400; opacity: .6; font-size: 12px; margin-top: 2px; }
+.zx-row em { font-style: normal; opacity: .5; } [dir="rtl"] .zx-row em { transform: scaleX(-1); }
+.zx-pick { padding: 0 18px 12px 18px; } .zx-pick .post-privacy-toggle { margin: 0; }
+/* المحفوظ والمعاد نشره */
+.post-action-btn.zx-on { color: var(--tab-active-color) !important; }
+.post-action-btn.zx-rp.zx-on { color: #00ba7c !important; }
+.post-actions .post-action-btn { min-width: 0; padding-left: 3px !important; padding-right: 3px !important; position: relative; z-index: 2; }
+/* تأثيرات المناسبات: لا تستقبل اللمس */
+body[data-occasion] .post-actions { position: relative; overflow: hidden; border-radius: 14px; }
+body[data-occasion] .post-actions::after { content: var(--oc-art); position: absolute; left: 0; right: 0; top: -100%; height: 200%; white-space: pre; text-align: center; font-size: 12px; line-height: 22px; letter-spacing: 14px; overflow: hidden; opacity: .3; filter: blur(.7px); pointer-events: none; z-index: 1; animation: zxFall 7s linear infinite; }
+@keyframes zxFall { from { transform: translateY(0); } to { transform: translateY(50%); } }
+@media (prefers-reduced-motion: reduce) { body[data-occasion] .post-actions::after { animation: none; } }
+</style>
+<script>
+(function(){
+var $ = function(id){ return document.getElementById(id); };
+var en = function(){ return localStorage.getItem('lang') === 'en'; };
+var tx = function(a, b){ return en() ? b : a; };
+var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return '&#' + c.charCodeAt(0) + ';'; }); };
+var arr = function(a){ return Array.isArray(a) ? a : []; };
+function el(html){ var d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstChild; }
+function wrap(name, after){ var f = window[name]; if (typeof f !== 'function') return; window[name] = function(){ var self = this, a = arguments, r = f.apply(self, a); if (r && r.then) return r.then(function(v){ after.apply(self, a); return v; }); after.apply(self, a); return r; }; }
+function need(){ if (currentUserKey) return true; alert(tx('يجب تسجيل الدخول أولاً', 'Please sign in first')); return false; }
+async function profile(key){ var fb = await getFB(); var s = await fb.getDoc(fb.doc(fb.db, 'profiles', key)); return s.exists() ? s.data() : {}; }
+async function save(col, id, data){ var fb = await getFB(); await fb.setDoc(fb.doc(fb.db, col, id), data, { mergeFields: Object.keys(data) }); }
+var people = {};
+function person(key){ if (!people[key]) { people[key] = profile(key); setTimeout(function(){ delete people[key]; }, 60000); } return people[key]; }
+function modal(inner){ var m = el('<div class="zx-modal"><div class="zx-box">' + inner + '</div></div>'); m.onclick = function(e){ if (e.target === m || e.target.closest('[data-close]')) m.remove(); }; document.body.appendChild(m); return m; }
+
+/* ---------- إزالة رسائل النجاح غير المرغوبة ---------- */
+var QUIET = /^(تم (نشر المنشور|النشر)( بنجاح)?|تم نسخ|Post published|Published|Link copied|Username copied)/;
+var _alert = window.alert; window.alert = function(m){ if (!QUIET.test(String(m))) _alert(m); };
+var _toast = window.toast; window.toast = function(m){ if (!QUIET.test(String(m))) _toast(m); };
+
+/* ---------- الروابط القابلة للنقر ---------- */
+var _mention = window.linkifyMentions;
+window.linkifyMentions = function(text){
+  return String(text || '').split(/((?:https?:\/\/|www\.)[^\s<>"']+)/i).map(function(part, i){
+    if (!(i % 2)) return _mention(part);
+    var href = /^www\./i.test(part) ? 'https://' + part : part;
+    return '<a class="zx-url" href="' + esc(href) + '" target="_blank" rel="noopener noreferrer">' + esc(part) + '</a>';
+  }).join('');
+};
+
+/* ---------- الترجمة: عربي ⇄ إنجليزي حسب لغة النص ---------- */
+window.zxTranslate = async function(text){
+  var ar = (text.match(/[ء-ي]/g) || []).length, la = (text.match(/[A-Za-z]/g) || []).length;
+  var to = ar > la ? 'en' : 'ar';
+  var r = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=' + to + '&dt=t&q=' + encodeURIComponent(text));
+  var d = await r.json(); return d[0].map(function(x){ return x[0] || ''; }).join('');
+};
+window.translatePost = async function(id, text, btn){
+  var box = btn.closest('.post-card').querySelector('.post-caption-text, .post-caption'); if (!box) return;
+  if (btn.zxOriginal) { box.innerHTML = btn.zxOriginal; btn.zxOriginal = null; btn.innerHTML = '<i class="fas fa-language"></i> ' + tx('ترجمة', 'Translate'); return; }
+  btn.disabled = true;
+  try { var out = await zxTranslate(text); btn.zxOriginal = box.innerHTML; box.innerHTML = linkifyMentions(out); btn.innerHTML = '<i class="fas fa-undo"></i> ' + tx('إلغاء الترجمة', 'Show original'); }
+  catch(e){ alert(tx('حدث خطأ أثناء الترجمة، حاول مرة أخرى.', 'Translation failed, try again.')); }
+  btn.disabled = false;
+};
+
+/* ---------- بطاقات المنشورات ---------- */
+var posts = {};
+async function getPost(id, fresh){
+  if (fresh || !posts[id]) { var fb = await getFB(); var s = await fb.getDoc(fb.doc(fb.db, 'posts', id)); posts[id] = s.exists() ? s.data() : null; }
+  return posts[id];
+}
+async function allPosts(){
+  var fb = await getFB(); var s = await fb.getDocs(fb.collection(fb.db, 'posts')); var out = [];
+  s.forEach(function(d){ posts[d.id] = d.data(); out.push({ id: d.id, data: d.data() }); });
+  return out.sort(function(a, b){ return new Date(b.data.createdAt || 0) - new Date(a.data.createdAt || 0); });
+}
+function fmtDate(v){ return v ? new Date(v).toLocaleString(en() ? 'en-US' : 'ar-EG-u-nu-latn') : ''; }
+function badges(a){
+  var bt = getBadgeTypeFromData(a); if (!bt || bt === 'none') return '';
+  return ' <img class="post-header-badge" src="' + esc(badgeSrc(bt)) + '">' + (bt === 'black' && a.customIcon ? '<img class="post-header-badge zx-mini" style="pointer-events:none" src="' + esc(a.customIcon) + '">' : '');
+}
+async function buildCard(id, p){
+  var a = await person(p.author);
+  var c = el('<div class="post-card" data-zx-id="' + esc(id) + '"><div class="post-header"><img class="post-header-avatar" src="' + esc(a.avatar || DEFAULT_AVATAR) + '"><div class="post-header-info"><div class="post-header-name">' + esc(a.name || 'User') + badges(a) + '</div><div class="post-header-username">@' + esc(a.username || 'user') + '</div></div></div>' +
+    (p.caption ? '<div class="post-caption">' + linkifyMentions(p.caption) + '</div>' : '') +
+    '<div class="post-date"><i class="fas fa-clock"></i> ' + esc(fmtDate(p.createdAt)) + '</div>' + buildPostMediaHtml(p) +
+    '<div class="post-actions">' + [['fa-heart','toggleLike',arr(p.likes).length, arr(p.likes).indexOf(currentUserKey) > -1 ? ' liked' : ''],['fa-thumbs-down','toggleDislike',arr(p.dislikes).length, arr(p.dislikes).indexOf(currentUserKey) > -1 ? ' disliked' : ''],['fa-comment','openCommentsSheet',p.commentsCount || 0, ''],['fa-eye','',p.views || 0, '']].map(function(b){
+      return '<button class="post-action-btn' + b[3] + '"' + (b[1] ? ' onclick="' + b[1] + '(\'' + esc(id) + '\'' + (b[1] === 'openCommentsSheet' ? '' : ',this') + ')"' : '') + '><i class="fas ' + b[0] + '"></i><span class="count">' + b[2] + '</span></button>'; }).join('') + '</div></div>');
+  c.querySelector('.post-header').onclick = function(){ closeDetail(); openPublicProfile(p.author); };
+  return c;
+}
+function cardId(card){
+  if (card.dataset.zxId) return card.dataset.zxId;
+  var m = card.innerHTML.match(/(?:openCommentsSheet|toggleLike)\((?:'|&#39;)([^'&]+)/);
+  if (m) card.dataset.zxId = m[1];
+  return m && m[1];
+}
+var myData = { key: null, saved: [], following: [] };
+async function me(force){
+  if (!currentUserKey) return (myData = { key: null, saved: [], following: [] });
+  if (force || myData.key !== currentUserKey) { var d = await profile(currentUserKey); myData = { key: currentUserKey, saved: arr(d.saved), following: arr(d.following) }; }
+  return myData;
+}
+async function decorate(card){
+  var id = cardId(card), bar = card.querySelector('.post-actions'), head = card.querySelector('.post-header');
+  if (!id || !bar || card.dataset.zxDone) return;
+  card.dataset.zxDone = '1';
+  if (!bar.querySelector('.fa-share')) bar.appendChild(el('<button class="post-action-btn zx-share"><i class="fas fa-share"></i></button>'));
+  var rp = el('<button class="post-action-btn zx-rp"><i class="fas fa-retweet"></i><span class="count">0</span></button>');
+  var bm = el('<button class="post-action-btn zx-bm"><i class="far fa-bookmark"></i></button>');
+  var eye = bar.querySelector('.fa-eye'), eyeBtn = eye && eye.closest('button');
+  if (eyeBtn) { eyeBtn.removeAttribute('onclick'); eyeBtn.classList.add('zx-eye'); eyeBtn.after(bm); bar.insertBefore(rp, eyeBtn); } else bar.append(rp, bm);
+  try {
+    card.classList.toggle('zx-del', !!card.querySelector('.post-delete-btn'));
+    var p = await getPost(id); if (!p) return;
+    card.dataset.zxAuthor = p.author;
+    paintRepost(rp, p);
+    var m = await me(); paintSaved(bm, m.saved.indexOf(id) > -1);
+    var a = await person(p.author);
+    if (head && getBadgeTypeFromData(a) !== 'black' && p.author !== currentUserKey && !head.querySelector('.zx-dots')) head.appendChild(el('<button class="zx-dots" aria-label="' + tx('المزيد', 'More') + '"><i class="fas fa-ellipsis-h"></i></button>'));
+    feedFilter();
+  } catch(e){ console.warn(e); }
+}
+function paintSaved(b, on){ b.classList.toggle('zx-on', on); b.querySelector('i').className = (on ? 'fas' : 'far') + ' fa-bookmark'; }
+function paintRepost(b, p){ b.querySelector('.count').textContent = arr(p.reposts).length; b.classList.toggle('zx-on', arr(p.reposts).indexOf(currentUserKey) > -1); }
+async function toggleSave(id, btn){
+  if (!need()) return;
+  var m = await me(true), on = m.saved.indexOf(id) < 0;
+  var list = on ? m.saved.concat(id) : m.saved.filter(function(x){ return x !== id; });
+  await save('profiles', currentUserKey, { saved: list }); myData.saved = list; paintSaved(btn, on);
+}
+async function repost(id, btn){
+  if (!need()) return;
+  var p = await getPost(id, true); if (!p) return;
+  var mine = arr(p.reposts).indexOf(currentUserKey) > -1;
+  async function apply(on, quote){
+    var fresh = await getPost(id, true), list = arr(fresh.reposts).filter(function(x){ return x !== currentUserKey; });
+    var quotes = (fresh.repostQuotes || []).filter(function(q){ return q.by !== currentUserKey; });
+    if (on) { list.push(currentUserKey); if (quote) quotes.push({ by: currentUserKey, text: quote }); }
+    await save('posts', id, { reposts: list, repostQuotes: quotes });
+    fresh.reposts = list; fresh.repostQuotes = quotes; paintRepost(btn, fresh);
+  }
+  if (mine) { if (confirm(tx('إلغاء إعادة النشر؟', 'Undo repost?'))) await apply(false); return; }
+  var m = modal('<b>' + tx('إعادة النشر', 'Repost') + '</b><textarea class="zx-input" rows="3" maxlength="280" placeholder="' + tx('أضف تعليقك فوق المنشور (اختياري)', 'Add a comment (optional)') + '"></textarea><button class="main">' + tx('إعادة النشر', 'Repost') + '</button><button data-close>' + tx('إلغاء', 'Cancel') + '</button>');
+  m.querySelector('.main').onclick = async function(){ var q = m.querySelector('textarea').value.trim(); m.remove(); try { await apply(true, q); } catch(e){ alert(e.message); } };
+}
+function report(id, p){
+  var m = modal('<b>' + tx('إبلاغ عن المنشور', 'Report post') + '</b><button class="main" data-step><i class="fas fa-flag"></i> ' + tx('إبلاغ عن المنشور', 'Report this post') + '</button><button data-close>' + tx('إلغاء', 'Cancel') + '</button>');
+  m.querySelector('[data-step]').onclick = function(){
+    var box = m.querySelector('.zx-box');
+    box.innerHTML = '<b>' + tx('ادخل تفاصيل الإبلاغ', 'Enter report details') + '</b><textarea class="zx-input" rows="5"></textarea><button class="main">' + tx('إرسال', 'Send') + '</button><button data-close>' + tx('إلغاء', 'Cancel') + '</button>';
+    box.querySelector('.main').onclick = async function(){
+      var details = box.querySelector('textarea').value.trim(); if (!details) return;
+      var info = { postId: id, postLink: location.origin + location.pathname + '?post=' + id, author: p.author, reporter: currentUserKey || 'guest', details: details };
+      this.disabled = true;
+      try { var fb = await getFB(); await fb.addDoc(fb.collection(fb.db, 'reports'), Object.assign({ createdAt: new Date().toISOString() }, info)); } catch(e){}
+      try {
+        var r = await fetch('https://formsubmit.co/ajax/zakidev.shop@gmail.com', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(Object.assign({ _subject: 'بلاغ عن منشور' }, info)) });
+        var j = await r.json(); if (String(j.success) !== 'true') throw 0;
+        m.remove(); alert(tx('تم إرسال البلاغ', 'Report sent'));
+      } catch(e){
+        m.remove(); location.href = 'mailto:zakidev.shop@gmail.com?subject=' + encodeURIComponent('Report ' + id) + '&body=' + encodeURIComponent(info.postLink + '\n\n' + details);
+      }
+    };
+  };
+}
+
+/* ---------- صفحة المنشور ---------- */
+var sheetHome = null;
+function closeDetail(){
+  var d = $('zxDetail'); if (!d) return;
+  if (sheetHome) { sheetHome.appendChild($('commentsSheetBody')); sheetHome = null; }
+  d.remove(); currentPostIdForComments = null;
+}
+async function openDetail(id){
+  closeDetail();
+  var p = await getPost(id, true); if (!p) { alert(tx('المنشور غير موجود', 'Post not found')); return; }
+  var d = el('<div id="zxDetail"><div class="zx-bar"><button aria-label="back"><i class="fas ' + (en() ? 'fa-arrow-left' : 'fa-arrow-right') + '"></i></button>' + tx('المنشور', 'Post') + '</div></div>');
+  d.querySelector('button').onclick = closeDetail;
+  document.body.appendChild(d);
+  d.appendChild(await buildCard(id, p));
+  var body = $('commentsSheetBody'); sheetHome = $('commentsSheet'); sheetHome.style.display = 'none';
+  d.appendChild(body); currentPostIdForComments = id; loadComments(id);
+}
+window.zxOpenPost = openDetail;
+var _openComments = window.openCommentsSheet;
+window.openCommentsSheet = function(id){ if ($('zxDetail') && currentPostIdForComments === id) { $('commentInput').focus(); return; } return _openComments.apply(this, arguments); };
+var sheet = $('commentsSheet'); if (sheet && sheet.firstElementChild) sheet.firstElementChild.id = 'commentsSheetBody';
+wrap('switchTab', function(){ closeDetail(); });
+
+document.addEventListener('click', function(e){
+  var t = e.target; if (!t.closest) return;
+  var card = t.closest('.post-card'); if (!card) return;
+  var id = cardId(card); if (!id) return;
+  var btn = t.closest('.zx-share, .zx-rp, .zx-bm, .zx-dots, .zx-eye');
+  if (btn) {
+    e.preventDefault(); e.stopPropagation();
+    if (btn.matches('.zx-share')) sharePost(id, '');
+    else if (btn.matches('.zx-rp')) repost(id, btn).catch(function(x){ alert(x.message); });
+    else if (btn.matches('.zx-bm')) toggleSave(id, btn).catch(function(x){ alert(x.message); });
+    else if (btn.matches('.zx-dots')) getPost(id).then(function(p){ report(id, p); });
+    return;
+  }
+  if ($('zxDetail') && $('zxDetail').contains(card)) return;
+  if (t.closest('a,button,input,video,img,.plyr,.post-header,.post-actions,.post-video-wrap,.post-image-wrap,.post-pdf-wrap,[onclick]') && !t.closest('.post-card[onclick]')) return;
+  openDetail(id);
+}, true);
+
+/* ---------- تبويبات المجتمع: لك / المتابَعون ---------- */
+var feed = 'all';
+function tabs(items, onPick){
+  var n = el('<div class="zx-tabs"></div>');
+  items.forEach(function(it, i){ var b = el('<button type="button" class="' + (i ? '' : 'on') + '" data-k="' + it[0] + '"></button>'); b.dataset.ar = it[1]; b.dataset.en = it[2]; b.textContent = tx(it[1], it[2]); b.onclick = function(){ n.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x === b); }); onPick(it[0]); }; n.appendChild(b); });
+  return n;
+}
+var feedNote = el('<div class="zx-note zx-hidden"></div>');
+function feedFilter(){
+  var cards = document.querySelectorAll('#publicPostsContainer .post-card'), shown = 0;
+  cards.forEach(function(c){ var hide = feed === 'following' && myData.following.indexOf(c.dataset.zxAuthor) < 0; c.classList.toggle('zx-hidden', hide); if (!hide) shown++; });
+  feedNote.classList.toggle('zx-hidden', !(feed === 'following' && !shown));
+  feedNote.textContent = tx('لا توجد منشورات من حسابات تتابعها', 'No posts from accounts you follow');
+}
+var feedTabs = tabs([['all', 'لك', 'For you'], ['following', 'المتابَعون', 'Following']], async function(k){
+  if (k === 'following' && !need()) { feedTabs.firstChild.click(); return; }
+  feed = k; await me(true); feedFilter();
+});
+$('publicPostsContainer').before(feedTabs, feedNote);
+
+/* ---------- تبويبات البروفايل ---------- */
+async function fillList(box, kind, key){
+  box.innerHTML = '<div class="zx-note"><i class="fas fa-spinner fa-spin"></i></div>';
+  var token = box.zxToken = {};
+  try {
+    var list = await allPosts();
+    var m = await me(true), mineComments = {};
+    if (kind === 'acted') { var fb = await getFB(); (await fb.getDocs(fb.query(fb.collection(fb.db, 'comments'), fb.where('userId', '==', key)))).forEach(function(d){ mineComments[d.data().postId] = 1; }); }
+    list = list.filter(function(x){
+      var p = x.data; if (p.privacy === 'private' && p.author !== currentUserKey) return false;
+      if (kind === 'saved') return m.saved.indexOf(x.id) > -1;
+      if (kind === 'reposts') return arr(p.reposts).indexOf(key) > -1;
+      return arr(p.likes).indexOf(key) > -1 || arr(p.dislikes).indexOf(key) > -1 || mineComments[x.id];
+    });
+    var cards = [];
+    for (var i = 0; i < list.length; i++) {
+      var c = await buildCard(list[i].id, list[i].data);
+      if (kind === 'reposts') { var who = await person(key), q = (list[i].data.repostQuotes || []).filter(function(v){ return v.by === key; })[0]; c.prepend(el('<div class="zx-quote"><small><i class="fas fa-retweet"></i> ' + esc(who.name || '') + ' ' + tx('أعاد النشر', 'reposted') + '</small>' + (q ? linkifyMentions(q.text) : '') + '</div>')); }
+      cards.push(c);
+    }
+    if (box.zxToken !== token) return;
+    box.innerHTML = cards.length ? '' : '<div class="zx-note">' + tx('لا توجد منشورات', 'No posts') + '</div>';
+    cards.forEach(function(c){ box.appendChild(c); });
+  } catch(e){ box.innerHTML = '<div class="zx-note">' + esc(e.message) + '</div>'; }
+}
+var myBox = el('<div class="posts-container zx-hidden" style="max-width:560px;margin:10px auto"></div>');
+var myTabs = tabs([['mine', 'منشوراتي', 'My posts'], ['reposts', 'إعادة النشر', 'Reposts'], ['acted', 'تفاعلت معها', 'Interacted'], ['saved', 'المحفوظات', 'Saved']], function(k){
+  var sec = $('myPostsSection'); sec.classList.toggle('zx-hidden', k !== 'mine'); myBox.classList.toggle('zx-hidden', k === 'mine'); if (k !== 'mine') fillList(myBox, k, currentUserKey);
+});
+$('myPostsSection').before(myTabs, myBox);
+var pubBox = el('<div class="posts-container zx-hidden" style="margin:10px auto"></div>');
+var pubTabs = tabs([['posts', 'المنشورات', 'Posts'], ['reposts', 'إعادة النشر', 'Reposts']], function(k){
+  $('pubPostsGrid').classList.toggle('zx-hidden', k !== 'posts'); pubBox.classList.toggle('zx-hidden', k === 'posts'); if (k !== 'posts') fillList(pubBox, k, currentViewingProfileKey);
+});
+$('pubPostsSection').prepend(pubTabs); $('pubPostsSection').appendChild(pubBox);
+function syncProfileTabs(){
+  var show = $('profileView').style.display !== 'none';
+  myTabs.classList.toggle('zx-hidden', !show);
+  if (!show) { myBox.classList.add('zx-hidden'); $('myPostsSection').classList.remove('zx-hidden'); myTabs.querySelectorAll('button').forEach(function(b, i){ b.classList.toggle('on', !i); }); }
+}
+new MutationObserver(syncProfileTabs).observe($('profileView'), { attributes: true, attributeFilter: ['style'] }); syncProfileTabs();
+wrap('openPublicProfile', function(){ closeDetail(); pubTabs.firstChild.click(); });
+
+/* ---------- الحقول الجديدة في الحساب ---------- */
+var CODES = 'AF AL DZ AD AO AG AR AM AU AT AZ BS BH BD BB BY BE BZ BJ BT BO BA BW BR BN BG BF BI CV KH CM CA CF TD CL CN CO KM CG CD CR CI HR CU CY CZ DK DJ DM DO EC EG SV GQ ER EE SZ ET FJ FI FR GA GM GE DE GH GR GD GT GN GW GY HT HN HU IS IN ID IR IQ IE IT JM JP JO KZ KE KI KW KG LA LV LB LS LR LY LI LT LU MG MW MY MV ML MT MH MR MU MX FM MD MC MN ME MA MZ MM NA NR NP NL NZ NI NE NG KP MK NO OM PK PW PS PA PG PY PE PH PL PT QA RO RU RW KN LC VC WS SM ST SA SN RS SC SL SG SK SI SB SO ZA KR SS ES LK SD SR SE CH SY TW TJ TZ TH TL TG TO TT TN TR TM TV UG UA AE GB US UY UZ VU VA VE VN YE ZM ZW EH'.split(' ');
+function country(c){ if (c === 'PS') return tx('فلسطين', 'Palestine'); try { return new Intl.DisplayNames([en() ? 'en' : 'ar'], { type: 'region' }).of(c); } catch(e){ return c; } }
+var RELIGION = [['islam','الإسلام','Islam'],['christianity','المسيحية','Christianity'],['judaism','اليهودية','Judaism'],['other','أخرى','Other']];
+var GENDER = [['male','ذكر','Male'],['female','أنثى','Female']];
+var FIELDS = [['religion','الديانة','Religion','fa-hands-praying'],['gender','النوع','Gender','fa-venus-mars'],['country','الدولة','Country','fa-globe'],['birthdate','تاريخ الميلاد','Date of birth','fa-cake-candles']];
+function label(k, v){
+  if (!v) return '';
+  if (k === 'country') return country(v);
+  var l = k === 'religion' ? RELIGION : k === 'gender' ? GENDER : null; if (!l) return v;
+  var f = l.filter(function(x){ return x[0] === v; })[0]; return f ? tx(f[1], f[2]) : v;
+}
+function fieldsHtml(pre, data){
+  return '<div id="' + pre + 'Fields">' + FIELDS.map(function(f){
+    var k = f[0], v = data[k] || '', input;
+    if (k === 'birthdate') input = '<input type="date" data-f="' + k + '" min="1900-01-01" max="' + new Date().toISOString().slice(0, 10) + '" value="' + esc(v) + '">';
+    else {
+      var opts = k === 'country' ? CODES.map(function(c){ return [c, country(c)]; }).sort(function(a, b){ return a[1].localeCompare(b[1], en() ? 'en' : 'ar'); }) : (k === 'religion' ? RELIGION : GENDER).map(function(x){ return [x[0], tx(x[1], x[2])]; });
+      input = '<select data-f="' + k + '"><option value="">' + tx('اختر...', 'Choose...') + '</option>' + opts.map(function(o){ return '<option value="' + o[0] + '"' + (o[0] === v ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select>';
+    }
+    return '<div class="profile-field"><label>' + tx(f[1], f[2]) + '</label>' + input + '<label class="zx-check"><input type="checkbox" data-s="' + k + '"' + ((data.show || {})[k] ? ' checked' : '') + '> ' + tx('إظهار في البروفايل', 'Show on profile') + '</label></div>';
+  }).join('') + '</div>';
+}
+function readFields(pre){
+  var out = { show: {} }, box = $(pre + 'Fields'); if (!box) return null;
+  box.querySelectorAll('[data-f]').forEach(function(i){ out[i.dataset.f] = i.value; });
+  box.querySelectorAll('[data-s]').forEach(function(i){ out.show[i.dataset.s] = i.checked; });
+  return out;
+}
+function putFields(pre, before, data){ var old = $(pre + 'Fields'); if (old) old.remove(); var n = el(fieldsHtml(pre, data)); before.before(n); }
+putFields('zxReg', $('registerBtn'), {});
+var _create = window.createAccountAndSendVerification;
+window.createAccountAndSendVerification = async function(){
+  var extra = readFields('zxReg'), email = $('regEmail').value.trim();
+  await _create.apply(this, arguments);
+  if (extra && currentUserKey && currentUserKey === profileKeyFrom(email) && $('verifySentEmail').textContent === email) await save('profiles', currentUserKey, extra);
+};
+var loadedFor = null;
+async function loadEditor(){
+  loadedFor = null; if (!currentUserKey) return;
+  var key = currentUserKey, d = await profile(key), actions = document.querySelector('#profileEditForm .profile-actions');
+  putFields('zxEdit', actions, d);
+  var old = $('zxEditMore'); if (old) old.remove();
+  var more = el('<div id="zxEditMore"><label class="zx-check"><input type="checkbox" id="zxHideEmail"' + (d.hideEmail ? ' checked' : '') + '> ' + tx('إخفاء البريد الإلكتروني من البروفايل', 'Hide my email on the profile') + '</label>' +
+    (getBadgeTypeFromData(d) === 'black' ? '<div class="profile-field"><label>' + tx('الأيقونة الصغيرة بجانب التوثيق', 'Small icon next to badge') + '</label><input type="file" id="zxIcon" accept="image/*">' + (d.customIcon ? '<button type="button" id="zxIconDel" class="zx-input">' + tx('إزالة الأيقونة', 'Remove icon') + '</button>' : '') + '</div>' : '') +
+    '<button type="button" id="zxDel" class="zx-input" style="color:#e0245e;font-weight:bold;margin:12px 0"><i class="fas fa-user-slash"></i> ' + tx('حذف الحساب', 'Delete account') + '</button></div>');
+  actions.before(more);
+  more.querySelector('#zxDel').onclick = deleteAccount;
+  var icon = more.querySelector('#zxIcon'); if (icon) icon.onchange = async function(){ if (!icon.files[0]) return; try { await save('profiles', key, { customIcon: await uploadImageToImgBB(icon.files[0]) }); alert(tx('تم الحفظ', 'Saved')); } catch(e){ alert(e.message); } };
+  var del = more.querySelector('#zxIconDel'); if (del) del.onclick = async function(){ await save('profiles', key, { customIcon: null }); del.remove(); };
+  loadedFor = key;
+}
+wrap('showEditProfile', function(){ loadEditor().catch(console.warn); });
+var _saveProfile = window.saveProfile;
+window.saveProfile = async function(){
+  if (loadedFor && loadedFor === currentUserKey) {
+    var data = readFields('zxEdit'); data.hideEmail = $('zxHideEmail').checked;
+    try { await save('profiles', currentUserKey, data); delete people[currentUserKey]; } catch(e){ alert(e.message); return; }
+  }
+  return _saveProfile.apply(this, arguments);
+};
+async function showExtra(pre, key){
+  var view = pre === 'pv' ? $('profileView') : $('publicProfilePage'); if (!view || !key) return;
+  var meta = view.querySelector('.pv-meta'), box = $(pre + 'Extra');
+  if (!box) { box = el('<div class="zx-extra" id="' + pre + 'Extra"></div>'); meta.appendChild(box); }
+  box.innerHTML = '';
+  var d = await profile(key);
+  box.innerHTML = FIELDS.filter(function(f){ return d[f[0]] && (d.show || {})[f[0]]; }).map(function(f){ return '<span><i class="fas ' + f[3] + '"></i> ' + esc(tx(f[1], f[2])) + ': ' + esc(label(f[0], d[f[0]])) + '</span>'; }).join('');
+  if (pre === 'pv') $('pvEmail').parentElement.classList.toggle('zx-hidden', !!d.hideEmail);
+}
+wrap('renderProfileView', function(){ showExtra('pv', currentUserKey).catch(console.warn); });
+wrap('openPublicProfile', function(k){ showExtra('pub', k || currentViewingProfileKey).catch(console.warn); });
+
+async function deleteAccount(){
+  if (!need()) return;
+  var user = firebase.auth().currentUser; if (!user) return;
+  if (!confirm(tx('هل أنت متأكد من حذف حسابك نهائياً؟ سيتم حذف منشوراتك وستورياتك ولا يمكن التراجع.', 'Permanently delete your account? Your posts and stories will be removed. This cannot be undone.'))) return;
+  var pass = prompt(tx('اكتب كلمة المرور للتأكيد', 'Type your password to confirm')); if (!pass) return;
+  try {
+    await user.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(user.email, pass));
+    var fb = await getFB(), key = currentUserKey;
+    for (var pair of [['posts', 'author'], ['stories', 'author'], ['comments', 'userId']]) {
+      var s = await fb.getDocs(fb.query(fb.collection(fb.db, pair[0]), fb.where(pair[1], '==', key))), jobs = [];
+      s.forEach(function(d){ jobs.push(fb.deleteDoc(fb.doc(fb.db, pair[0], d.id))); });
+      await Promise.all(jobs);
+    }
+    await fb.deleteDoc(fb.doc(fb.db, 'profiles', key));
+    await user.delete();
+    localStorage.removeItem('app_last_profile_key'); localStorage.removeItem('app_avatar_url');
+    alert(tx('تم حذف الحساب', 'Account deleted')); location.reload();
+  } catch(e){ alert(tx('تعذر حذف الحساب: ', 'Could not delete the account: ') + e.message); }
+}
+async function downloadData(){
+  if (!need()) return;
+  var d = await profile(currentUserKey);
+  var rows = [['name','الاسم','Name'],['username','اسم المستخدم','Username'],['email','البريد','Email'],['bio','النبذة','Bio'],['website','الموقع','Website'],['privacy','الخصوصية','Privacy'],['joined','تاريخ الانضمام','Joined']].concat(FIELDS);
+  var text = rows.map(function(r){ return tx(r[1], r[2]) + ': ' + (label(r[0], d[r[0]]) || '—'); });
+  Object.keys(d.socials || {}).forEach(function(k){ text.push(k + ': ' + d.socials[k]); });
+  var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + text.join('\r\n')], { type: 'text/plain;charset=utf-8' })); a.download = 'my-data.txt'; document.body.appendChild(a); a.click(); a.remove();
+}
+
+/* ---------- نافذة التوثيق: قائمة لكل نوع ---------- */
+var BADGE = {
+  normal: [['هوية صاحب الحساب موثقة', 'The account holder is verified'], ['حساب نشط وحقيقي', 'An active, genuine account'], ['علامة التوثيق الزرقاء', 'Blue verification badge']],
+  gold: [['حساب تابع لجهة رسمية', 'Belongs to an official organization'], ['تمت مراجعة بيانات الجهة', 'Organization details reviewed'], ['علامة التوثيق الذهبية', 'Gold verification badge']],
+  owner: [['حساب تابع لإدارة رسمية', 'An official management account'], ['موثق من إدارة التطبيق', 'Verified by the app team']],
+  black: [['حساب المالك الرسمي للتطبيق', 'The official app owner account'], ['يملك صلاحيات إدارة التطبيق', 'Has app administration rights'], ['علامة التوثيق البنية السوداء', 'Dark brown verification badge']]
+};
+window.showBadgeTooltip = function(e, img){
+  e.stopPropagation();
+  var view = img.closest('#profileView, #publicProfilePage'); if (!view) return;
+  var type = ['black','gold','owner','normal'].filter(function(t){ return badgeSrc(t) === img.getAttribute('src'); })[0] || 'normal';
+  $('badgeModalImage').src = img.src; $('badgeModalTitle').textContent = tx('حساب موثق', 'Verified account');
+  $('badgeModalText').innerHTML = '<ul style="text-align:start;margin:0;padding-inline-start:20px;line-height:2">' + BADGE[type].map(function(x){ return '<li>' + tx(x[0], x[1]) + '</li>'; }).join('') + '</ul>';
+  $('badgeModalLink').textContent = tx('عرض المزيد', 'Learn more'); $('badgeModalLink').href = 'https://zakidev.shop/what-is-the-verification-mark';
+  $('badgeModalDismissBtn').textContent = tx('إغلاق', 'Close'); $('badgeVerifyModal').classList.add('active');
+};
+
+/* ---------- عرض صورة البروفايل مع السحب للإغلاق ---------- */
+document.addEventListener('click', function(e){
+  var a = e.target.closest && e.target.closest('#profileView .pv-avatar, #publicProfilePage .pv-avatar');
+  if (!a) return; var img = a.querySelector('img'); if (!img || !img.src) return;
+  e.preventDefault(); e.stopPropagation(); openProfileImageModal(img.src);
+}, true);
+(function(){
+  var m = $('profileImageModal'), img = $('profileFullImage'), sx, sy; if (!m) return;
+  m.onclick = function(e){ if (e.target !== img) closeProfileImageModal(); };
+  m.addEventListener('touchstart', function(e){ e.stopPropagation(); sx = e.touches[0].clientX; sy = e.touches[0].clientY; img.style.transition = 'none'; }, { passive: true });
+  m.addEventListener('touchmove', function(e){ e.preventDefault(); e.stopPropagation(); img.style.transform = 'translate(' + (e.touches[0].clientX - sx) + 'px,' + (e.touches[0].clientY - sy) + 'px)'; }, { passive: false });
+  m.addEventListener('touchend', function(e){ e.stopPropagation(); var c = e.changedTouches[0]; img.style.transition = '.2s'; img.style.transform = ''; if (Math.hypot(c.clientX - sx, c.clientY - sy) > 90) closeProfileImageModal(); });
+})();
+
+/* ---------- الستوري: فيديو، نص للايف، لايف دائم للمالك، الأسماء ---------- */
+var fileIn = $('storyImageFile'); fileIn.accept = 'image/*,video/*';
+$('liveCreatePanel').appendChild(el('<div id="zxLive"><div class="profile-field"><label id="zxLiveL"></label><input type="text" id="zxLiveText" maxlength="200"></div><div id="zxOwnerLive" class="zx-hidden"><label class="zx-check"><input type="checkbox" id="zxPermanent"> <span></span></label><div class="profile-field"><label></label><input type="text" id="zxLiveName" maxlength="30"></div><div class="profile-field"><label></label><input type="file" id="zxLiveImg" accept="image/*"></div></div></div>'));
+wrap('openCreateStory', function(){
+  var o = $('zxOwnerLive'), l = o.querySelectorAll('.profile-field label');
+  $('zxLiveL').textContent = tx('نص البث (اختياري)', 'Live text (optional)');
+  o.querySelector('span').textContent = tx('بث دائم (لا يختفي بعد 24 ساعة)', 'Permanent live (no 24h expiry)');
+  l[0].textContent = tx('اسم يظهر بدل اسم الناشر', 'Name shown instead of yours'); l[1].textContent = tx('صورة دائرة البث', 'Live circle image');
+  o.classList.toggle('zx-hidden', currentBadgeType !== 'black'); $('zxLiveText').value = $('zxLiveName').value = ''; $('zxLiveImg').value = ''; $('zxPermanent').checked = false;
+});
+window.publishStory = async function(){
+  if (!need()) return;
+  var btn = $('publishStoryBtn'), html = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  try {
+    var d = await profile(currentUserKey), live = currentStoryCreateTab === 'live';
+    var story = { author: currentUserKey, name: d.name || 'User', username: d.username || '', avatar: d.avatar || null, createdAt: new Date().toISOString(), imageUrl: null, videoUrl: null, liveUrl: null };
+    if (live) {
+      var url = $('storyLiveUrl').value.trim();
+      if (!/^https:\/\/((www\.|m\.)?youtube\.com\/live\/|(www\.)?twitch\.tv\/)/i.test(url)) throw new Error(tx('أدخل رابط بث مباشر من YouTube Live أو Twitch', 'Enter a YouTube Live or Twitch link'));
+      story.liveUrl = url; story.caption = $('zxLiveText').value.trim();
+      if (getBadgeTypeFromData(d) === 'black') {
+        story.permanent = $('zxPermanent').checked;
+        var n = $('zxLiveName').value.trim(); if (n) story.displayName = n;
+        if ($('zxLiveImg').files[0]) story.ringImage = await uploadImageToImgBB($('zxLiveImg').files[0]);
+      }
+    } else {
+      var f = fileIn.files[0]; if (!f) throw new Error(tx('اختر صورة أو فيديو', 'Choose an image or video'));
+      if (f.type.indexOf('video/') === 0) story.videoUrl = (await uploadFileToTelegram(f)).url; else story.imageUrl = await uploadImageToImgBB(f);
+      story.caption = $('storyCaptionInput').value.trim();
+    }
+    var fb = await getFB(); await fb.addDoc(fb.collection(fb.db, 'stories'), story);
+    $('createStoryModal').style.display = 'none'; $('storyCaptionInput').value = ''; loadStories();
+  } catch(e){ alert(e.message); }
+  btn.disabled = false; btn.innerHTML = html;
+};
+wrap('showStory', function(){
+  var s = storiesList[currentStoryIndex]; if (!s) return; var d = s.data, box = $('storyContent');
+  if (d.videoUrl && !d.liveUrl) {
+    clearTimeout(storyTimer);
+    box.querySelectorAll('img,video').forEach(function(n){ n.remove(); });
+    var v = el('<video playsinline autoplay controls style="width:100%;height:100%;object-fit:contain"></video>'); v.src = d.videoUrl; v.onended = nextStory; box.prepend(v); v.play().catch(function(){});
+    setTimeout(function(){ if (storiesList[currentStoryIndex] === s) clearTimeout(storyTimer); }, 50);
+  }
+  if (d.caption) {
+    var cap = Array.prototype.filter.call(box.children, function(n){ return n.tagName === 'DIV' && n.textContent === d.caption; })[0];
+    if (!cap) { cap = el('<div style="position:absolute;bottom:20px;left:8%;right:8%;background:rgba(0,0,0,.55);color:#fff;padding:10px;border-radius:10px;text-align:center"></div>'); box.appendChild(cap); }
+    cap.style.zIndex = 20; if (d.videoUrl) cap.style.bottom = '70px'; cap.innerHTML = linkifyMentions(d.caption);
+  }
+  $('storyAuthorName').textContent = d.displayName || d.username || d.name || '';
+});
+wrap('loadStories', function(){
+  document.querySelectorAll('#storiesBar .story-item').forEach(function(item){
+    if (item.querySelector('.story-name')) return;
+    var s = null, handler = item.onclick;
+    var all = Array.prototype.slice.call($('storiesBar').children);
+    s = item.zxStory; if (!s) return;
+    var d = s.data, n = el('<span class="story-name zx-user"></span>'); n.textContent = d.displayName || d.username || d.name || '';
+    item.appendChild(n);
+    if (d.ringImage) item.querySelector('.story-avatar').src = d.ringImage;
+    if (!d.displayName && !d.username) person(d.author).then(function(p){ n.textContent = p.username || p.name || d.name || ''; });
+  });
+});
+
+/* ---------- الإعدادات ---------- */
+function buildSettings(){
+  var page = $('settingsPage'), theme = $('themeBtnLight').parentElement, lang = $('langBtnAr').parentElement;
+  var root = el('<div class="zx-set"></div>');
+  function add(html, fn){ var n = el(html); if (fn) n.onclick = fn; root.appendChild(n); return n; }
+  function row(icon, a, b, sa, sb, fn){ return add('<button type="button" class="zx-row"><i class="fas ' + icon + '"></i><span data-ar="' + a + '" data-en="' + b + '"><b></b><small data-ar="' + sa + '" data-en="' + sb + '"></small></span><em>›</em></button>', fn); }
+  function head(a, b){ add('<h3 data-ar="' + a + '" data-en="' + b + '"></h3>'); }
+  var h = add('<header><button type="button" aria-label="back"><i class="fas fa-arrow-right"></i></button><span data-ar="الإعدادات" data-en="Settings"></span></header>');
+  h.querySelector('button').onclick = function(){ switchTab(backTo); };
+  head('إعدادات المجتمع', 'Community settings');
+  row('fa-user-pen', 'تعديل الحساب', 'Edit account', 'بياناتك وروابطك وخصوصيتك', 'Your details, links and privacy', function(){ if (!need()) return; switchTab('accountPage'); setTimeout(showEditProfile, 600); });
+  row('fa-circle-check', 'طلب التوثيق', 'Request verification', 'علامة التوثيق للحساب', 'Get a verified badge', function(){ location.href = 'https://zakidev.shop/what-is-the-verification-mark'; });
+  row('fa-circle-info', 'حول إزالة علامة التوثيق', 'About badge removal', 'الأسباب والشروط', 'Reasons and rules', function(){ window.open('https://www.zakidev.shop/about-removing-the-verification-badge', '_blank'); });
+  row('fa-download', 'تنزيل المعلومات', 'Download my data', 'ملف TXT ببيانات بروفايلك', 'A TXT file of your profile data', function(){ downloadData().catch(function(e){ alert(e.message); }); });
+  row('fa-user-slash', 'حذف الحساب', 'Delete account', 'حذف نهائي بعد التأكيد', 'Permanent, asks to confirm', deleteAccount);
+  head('إعدادات التطبيق', 'App settings');
+  row('fa-moon', 'مظهر التطبيق', 'App theme', 'فاتح، داكن، أزرق', 'Light, dark, blue');
+  add('<div class="zx-pick"></div>').appendChild(theme);
+  row('fa-language', 'اللغة', 'Language', 'العربية أو الإنجليزية', 'Arabic or English');
+  add('<div class="zx-pick"></div>').appendChild(lang);
+  row('fa-door-open', 'صفحة البداية', 'Start page', 'ما يظهر عند فتح التطبيق', 'What opens first');
+  var start = add('<div class="zx-pick"><div class="post-privacy-toggle"><button type="button" data-v="homePage" data-ar="الصفحة الرئيسية" data-en="Home"></button><button type="button" data-v="morePage" data-ar="المجتمع" data-en="Community"></button></div></div>');
+  function mark(){ var v = localStorage.getItem('startPage') || 'homePage'; start.querySelectorAll('button').forEach(function(b){ b.classList.toggle('active', b.dataset.v === v); }); }
+  start.querySelectorAll('button').forEach(function(b){ b.onclick = function(){ localStorage.setItem('startPage', b.dataset.v); mark(); }; }); mark();
+  row('fa-font', 'نصوص القائمة السفلية', 'Bottom bar labels', 'إظهار أو إخفاء', 'Show or hide', function(){ toggleFooterLabels(); });
+  row('fa-snowflake', 'تأثيرات المناسبات', 'Occasion effects', 'تشغيل أو إيقاف', 'On or off', function(){ localStorage.setItem('effectsOff', localStorage.getItem('effectsOff') ? '' : '1'); occasion(); alert(localStorage.getItem('effectsOff') ? tx('تم إيقاف التأثيرات', 'Effects off') : tx('تم تشغيل التأثيرات', 'Effects on')); });
+  row('fa-lock', 'سياسة الخصوصية', 'Privacy policy', '', '', function(){ location.href = 'go:058889'; });
+  row('fa-file-lines', 'شروط الخدمة', 'Terms of service', '', '', function(){ location.href = 'go:0558285'; });
+  page.innerHTML = ''; page.appendChild(root);
+}
+function paintLang(){
+  document.querySelectorAll('.zx-set [data-ar], .zx-tabs button[data-ar]').forEach(function(n){ var v = en() ? n.dataset.en : n.dataset.ar; (n.querySelector(':scope > b') || n).textContent = v; });
+  var i = document.querySelector('.zx-set header i'); if (i) i.className = 'fas ' + (en() ? 'fa-arrow-left' : 'fa-arrow-right');
+  feedFilter(); putFields('zxReg', $('registerBtn'), readFields('zxReg') || {});
+}
+var backTo = 'homePage', here = currentPage || 'homePage';
+buildSettings();
+wrap('switchTab', function(id){ if (id === 'settingsPage') { if (here !== 'settingsPage') backTo = here; } here = id; document.body.classList.toggle('zx-settings', id === 'settingsPage'); });
+window.addEventListener('app-language', paintLang); paintLang();
+
+/* ---------- المناسبات ---------- */
+function easter(y, orthodox){
+  if (orthodox) { var d = (19 * (y % 19) + 15) % 30, e = (2 * (y % 4) + 4 * (y % 7) - d + 34) % 7; return new Date(y, 3, 4 + d + e); /* التقويم اليولياني + 13 يوماً */ }
+  var a = y % 19, b = Math.floor(y / 100), c = y % 100, h = (19 * a + b - Math.floor(b / 4) - Math.floor((b - Math.floor((b + 8) / 25) + 1) / 3) + 15) % 30, l = (32 + 2 * (b % 4) + 2 * Math.floor(c / 4) - h - c % 4) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451), n = h + l - 7 * m + 114;
+  return new Date(y, Math.floor(n / 31) - 1, n % 31 + 1);
+}
+function occasionFor(now){
+  var m = now.getMonth() + 1, d = now.getDate();
+  if ((m === 12 && d === 31) || (m === 1 && d <= 2)) return 'newyear';
+  if ((m === 12 && d >= 20) || (m === 1 && (d === 6 || d === 7))) return 'christmas';
+  var same = function(x){ return x.getMonth() === now.getMonth() && x.getDate() === d; };
+  if (same(easter(now.getFullYear())) || same(easter(now.getFullYear(), true))) return 'easter';
+  try {
+    var h = {}; new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { day: 'numeric', month: 'numeric' }).formatToParts(now).forEach(function(p){ h[p.type] = +p.value; });
+    if (h.month === 10 && h.day <= 3) return 'eid';
+    if (h.month === 12 && h.day >= 9 && h.day <= 13) return 'eid';
+    if (h.month === 9) return 'ramadan';
+    if ((h.month === 1 && h.day === 1) || (h.month === 3 && h.day === 12)) return 'ramadan';
+  } catch(e){}
+  return '';
+}
+function occasion(){
+  var test = new URLSearchParams(location.search).get('occasion');
+  var o = localStorage.getItem('effectsOff') ? '' : (test || occasionFor(new Date()));
+  var art = { christmas: '❄', newyear: '✨', ramadan: '🌙', eid: '🎉', easter: '🌸' }[o];
+  if (!art) { document.body.removeAttribute('data-occasion'); return; }
+  var rows = []; for (var i = 0; i < 8; i++) rows.push(i % 2 ? '  ' + art + '    ' + art + '   ' + art : art + '   ' + art + '     ' + art);
+  var all = rows.concat(rows).join('\\A ');
+  document.body.dataset.occasion = o; document.body.style.setProperty('--oc-art', '"' + all + '"');
+}
+occasion();
+
+/* ---------- إخفاء زر النشر عند النزول ---------- */
+var lastY = 0;
+window.addEventListener('scroll', function(){ var y = window.scrollY; if (Math.abs(y - lastY) < 8) return; document.body.classList.toggle('zx-scrolling', y > lastY && y > 80); lastY = y; }, { passive: true });
+
+var pending;
+function scan(){ pending = null; document.querySelectorAll('.post-card:not([data-zx-done])').forEach(decorate); }
+new MutationObserver(function(){ if (!pending) pending = setTimeout(scan, 150); }).observe(document.body, { childList: true, subtree: true }); scan();
+
+if (localStorage.getItem('startPage') === 'morePage' && !/[?&](post|profile)=/.test(location.search)) window.addEventListener('load', function(){ setTimeout(function(){ if (currentPage === 'homePage') switchTab('morePage'); }, 50); });
+})();
+</script>
 </body>
 </html>
