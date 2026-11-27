@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>تطبيقي - واجهة عرض المنتجات</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <style>
         * { -webkit-tap-highlight-color: transparent; user-select: none; margin: 0; padding: 0; box-sizing: border-box; outline: none; }
@@ -235,7 +237,28 @@
         .notif-panel { display: none; }
         .notif-panel.active { display: block; }
 
-        #createPostModal .modal-box { max-width: 420px; text-align: right; }
+        #createPostModal .modal-box {
+            max-width: 420px;
+            text-align: right;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 22px 18px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+        #createPostModal .modal-actions-sticky {
+            position: sticky;
+            bottom: 0;
+            background: var(--card-bg, #111);
+            padding-top: 12px;
+            padding-bottom: 4px;
+            margin-top: 8px;
+            z-index: 5;
+            border-top: 1px solid var(--border-color, rgba(128,128,128,0.2));
+        }
+        #createPostModal .modal-box::-webkit-scrollbar { width: 4px; }
+        #createPostModal .modal-box::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.4); border-radius: 4px; }
+
         .post-privacy-toggle { display: flex; gap: 8px; margin: 12px 0; }
         .post-privacy-toggle button { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--tab-color); background: transparent; color: var(--text-color); font-size: 14px; font-weight: bold; cursor: pointer; }
         .post-privacy-toggle button.active { background: var(--tab-active-color); color: #fff; border-color: var(--tab-active-color); }
@@ -1438,11 +1461,187 @@
 .social-links-row a.social-link-icon i { pointer-events: none; }
 
 
-#adminModal { align-items: flex-start; padding: 12px 0; overflow-y: auto; }
-#adminModal .modal-box { margin: 12px auto; max-height: calc(100vh - 24px); }
-.mention-link { color: var(--tab-active-color) !important; font-weight: 700; cursor: pointer; text-decoration: none; }
-.mention-link:hover { text-decoration: underline; }
 
+        /* ==================== VIDEO (Plyr) — إطار متناسق مثل الصور ==================== */
+        .post-video-wrap {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 4px 0 12px !important;
+            padding: 0 !important;
+            border-radius: 16px !important;
+            overflow: hidden !important;
+            border: 1px solid var(--tw-border, var(--border-color)) !important;
+            background: #000 !important;
+            position: relative !important;
+            aspect-ratio: 16 / 9;
+            max-height: 510px;
+            min-height: 180px;
+            box-sizing: border-box !important;
+            isolation: isolate;
+        }
+        .post-video-wrap > video.js-plyr-player,
+        .post-video-wrap video {
+            width: 100% !important;
+            height: 100% !important;
+            max-height: 510px !important;
+            display: block !important;
+            background: #000 !important;
+            object-fit: contain !important;
+            border: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            vertical-align: middle;
+        }
+        /* غلاف Plyr بالكامل داخل الإطار */
+        .post-video-wrap .plyr,
+        .post-video-wrap .plyr--video {
+            width: 100% !important;
+            height: 100% !important;
+            max-height: 510px !important;
+            border-radius: 0 !important;
+            overflow: hidden !important;
+            background: #000 !important;
+            --plyr-color-main: #1da1f2;
+            --plyr-video-background: #000;
+            --plyr-border-radius: 0;
+        }
+        .post-video-wrap .plyr__video-wrapper {
+            height: 100% !important;
+            background: #000 !important;
+            border-radius: 0 !important;
+            overflow: hidden !important;
+        }
+        .post-video-wrap .plyr__video-embed,
+        .post-video-wrap .plyr__poster {
+            border-radius: 0 !important;
+        }
+        .post-video-wrap .plyr__control.plyr__control--overlaid {
+            background: rgba(29, 161, 242, 0.9) !important;
+            padding: 18px !important;
+        }
+        .post-video-wrap .plyr__controls {
+            border-radius: 0 !important;
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
+        .post-video-wrap iframe {
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 180px;
+            border: none !important;
+            display: block;
+            aspect-ratio: 16 / 9;
+            border-radius: 0 !important;
+        }
+        .post-video-fallback {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 24px;
+            color: #fff;
+            text-align: center;
+            min-height: 160px;
+        }
+        .post-video-fallback a {
+            color: #1da1f2;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        .post-pdf-wrap {
+            display: flex !important; flex-direction: row !important; align-items: center !important;
+            gap: 14px !important; padding: 14px 16px !important; background: var(--card-bg) !important;
+            border: 1px solid var(--border-color) !important; border-radius: 16px !important;
+            margin: 8px 0 14px !important; cursor: pointer; text-decoration: none !important;
+            color: inherit !important; direction: ltr !important; box-sizing: border-box !important; max-width: 100%;
+        }
+        .post-pdf-wrap:hover { background: var(--sidebar-hover-bg) !important; }
+        .post-pdf-icon {
+            width: 52px !important; height: 52px !important; min-width: 52px !important; border-radius: 14px !important;
+            background: #e0245e !important; color: #fff !important; display: flex !important; flex-direction: column !important;
+            align-items: center !important; justify-content: center !important; flex-shrink: 0 !important;
+            line-height: 1 !important; font-weight: 800 !important; box-shadow: 0 2px 8px rgba(224,36,94,0.35);
+        }
+        .post-pdf-icon i { font-size: 20px !important; margin-bottom: 2px !important; color: #fff !important; display: block !important; }
+        .post-pdf-icon .pdf-label { font-size: 11px !important; font-weight: 800 !important; letter-spacing: 1px !important; color: #fff !important; }
+        .post-pdf-info { flex: 1 1 auto !important; text-align: left !important; min-width: 0 !important; }
+        .post-pdf-name { font-weight: bold !important; font-size: 15px !important; color: var(--text-color) !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
+        .post-pdf-meta { font-size: 12px !important; opacity: 0.65 !important; margin-top: 3px !important; color: var(--text-color) !important; }
+        .post-pdf-open { color: var(--tab-active-color) !important; font-weight: bold !important; font-size: 14px !important; white-space: nowrap !important; display: flex !important; align-items: center !important; gap: 5px !important; flex-shrink: 0 !important; }
+        .social-links-row { display: flex !important; flex-wrap: wrap !important; gap: 6px !important; margin: 10px 0 6px !important; align-items: center !important; }
+        .social-links-row .social-chip {
+            display: inline-flex !important; align-items: center !important; gap: 5px !important;
+            padding: 5px 10px !important; border-radius: 16px !important;
+            background: var(--content-bg) !important; border: 1px solid var(--border-color) !important;
+            text-decoration: none !important; color: var(--text-color) !important;
+            font-size: 11px !important; font-weight: 700 !important; line-height: 1.2 !important;
+        }
+        .social-links-row .social-chip i { font-size: 13px !important; }
+        .social-chip[data-k="instagram"] i { color: #E1306C !important; }
+        .social-chip[data-k="whatsapp"] i { color: #25D366 !important; }
+        .social-chip[data-k="facebook"] i { color: #1877F2 !important; }
+        .social-chip[data-k="twitter"] i { color: #1DA1F2 !important; }
+        .social-chip[data-k="tiktok"] i { color: #111 !important; }
+        .social-chip[data-k="youtube"] i { color: #FF0000 !important; }
+        .social-chip[data-k="telegram"] i { color: #229ED9 !important; }
+        .social-chip[data-k="snapchat"] i { color: #C9B400 !important; }
+        .social-chip[data-k="linkedin"] i { color: #0A66C2 !important; }
+        .social-chip[data-k="discord"] i { color: #5865F2 !important; }
+        .social-chip[data-k="reddit"] i { color: #FF4500 !important; }
+        .social-chip[data-k="github"] i { color: #555 !important; }
+        .social-chip[data-k="twitch"] i { color: #9146FF !important; }
+        .social-chip[data-k="pinterest"] i { color: #E60023 !important; }
+        .social-chip[data-k="threads"] i { color: #111 !important; }
+        .mention-link { color: var(--tab-active-color) !important; font-weight: 700 !important; cursor: pointer; text-decoration: none !important; }
+        .mention-link:hover { text-decoration: underline !important; }
+        #pfSocialList .pf-social-item {
+            display: flex; align-items: center; gap: 8px; padding: 8px 10px; margin-bottom: 6px;
+            background: var(--content-bg); border-radius: 10px; border: 1px solid var(--border-color);
+        }
+        #pfSocialList .pf-social-item i { width: 20px; text-align: center; font-size: 16px; }
+        #pfSocialList .pf-social-item .pf-s-name { font-weight: 700; font-size: 13px; min-width: 70px; }
+        #pfSocialList .pf-social-item .pf-s-val { flex: 1; font-size: 12px; opacity: 0.8; direction: ltr; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        #pfSocialList .pf-social-item button { background: transparent; border: none; color: #e0245e; cursor: pointer; font-size: 14px; padding: 4px 6px; }
+        .media-type-tabs { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+        .media-type-tab {
+            flex: 1; min-width: 90px; padding: 10px 8px; border-radius: 10px;
+            border: 1px solid var(--tab-color); background: transparent;
+            color: var(--text-color); font-size: 13px; font-weight: bold;
+            cursor: pointer; text-align: center;
+        }
+        .media-type-tab.active {
+            background: var(--tab-active-color); color: #fff; border-color: var(--tab-active-color);
+        }
+        .media-type-tab i { display: block; font-size: 18px; margin-bottom: 4px; }
+        #postVideoPreview, #postPdfPreview {
+            display: none; margin-top: 10px; text-align: center;
+        }
+        #postVideoPreview video {
+            max-width: 100%; max-height: 180px; border-radius: 10px; background: #000;
+        }
+        .upload-progress-bar {
+            width: 100%; height: 6px; background: var(--content-bg);
+            border-radius: 4px; margin-top: 8px; overflow: hidden; display: none;
+        }
+        .upload-progress-bar .bar {
+            height: 100%; width: 0%; background: var(--tab-active-color);
+            transition: width 0.2s;
+        }
+
+</style>
+<style>
+/* لوحة تحكم المالك: ملء الشاشة مع تمرير واحد */
+#adminModal { align-items: stretch; }
+#adminModal .modal-box { box-sizing: border-box; width: 100%; max-width: 600px; height: 100%; max-height: 100%; border-radius: 0; padding: 18px 14px 40px; text-align: right; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y; }
+#adminModal input, #adminModal select, #adminModal textarea { box-sizing: border-box; max-width: 100%; min-width: 0; }
+#adminModal #adminPostsList, #adminModal #adminAppealsList, #adminModal #adminList { max-height: none !important; overflow: visible !important; }
+</style>
+<style>
+body:not(.can-download) .plyr [data-plyr="download"] { display: none !important; }
+.plyr__menu__container { max-height: 150px; overflow-y: auto; }
+@media (max-width: 600px) { .post-video-wrap .plyr__volume input[type="range"] { display: none !important; } .post-video-wrap .plyr__volume { min-width: 0 !important; width: auto !important; flex: 0 0 auto !important; } }
 </style>
 </head>
 <!-- ✨ نافذة المشاركة السفلية -->
@@ -1491,6 +1690,9 @@
 <body>
 	
 <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js"></script>
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+
 
 <div id="smart-preloader">
     <div class="spinner"></div>
@@ -1850,101 +2052,103 @@
 
 <!-- 3. نافذة لوحة التحكم (ابقِها كما هي) -->
 <div class="modal" id="adminModal">
-    <div class="modal-box" style="max-width:420px;max-height:90vh;overflow-y:auto;width:92%;">
-        <p style="font-weight:bold;font-size:18px;"><i class="fas fa-tools"></i> لوحة تحكم المالك</p>
-        <p style="font-size:12px;opacity:.6;margin-bottom:12px;">تحكم كامل في حسابات المستخدمين</p>
-
-        <div class="profile-field" style="text-align:right;">
-            <label>البريد الإلكتروني</label>
-            <input type="text" id="adminTarget" placeholder="البريد الإلكتروني" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);">
-            <div style="display:flex;gap:6px;margin-top:6px;">
-                <button type="button" onclick="adminFetchUser()" style="flex:1;padding:10px;border:none;border-radius:8px;background:var(--tab-active-color);color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-search"></i> جلب مستخدم</button>
-                <button type="button" onclick="adminListAllUsers()" style="flex:1;padding:10px;border:none;border-radius:8px;background:#6c757d;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-users"></i> عرض الجميع</button>
+    <div class="modal-box">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <button type="button" onclick="closeAdminPanel()" style="background:none;border:none;color:var(--tab-color);font-size:20px;cursor:pointer;padding:4px 8px;"><i class="fas fa-times"></i></button>
+            <div style="text-align:right;">
+                <p style="font-weight:800;font-size:18px;margin:0;"><i class="fas fa-user-shield" style="color:#b8860b;"></i> لوحة تحكم المالك</p>
+                <p style="font-size:12px;opacity:.65;margin:4px 0 0;">إدارة الحسابات والأرقام الوهمية</p>
             </div>
         </div>
 
-        <div id="adminStatsSection" style="display:block;text-align:right;background:var(--content-bg);padding:12px;border-radius:10px;margin:12px 0;border:1px solid #b8860b;">
-            <p style="font-size:13px;font-weight:bold;margin-bottom:8px;color:#b8860b;"><i class="fas fa-chart-line"></i> التحكم في الأرقام الوهمية</p>
-            <p style="font-size:11px;opacity:0.75;margin-bottom:10px;line-height:1.5;">الصق الرابط كاملاً أو الآيدي / اسم المستخدم ثم اضغط جلب.</p>
-
-            <div class="profile-field">
-                <label>رابط أو آيدي المنشور</label>
-                <input type="text" id="adminPostLinkInput" placeholder="https://.../?post=ID أو ID فقط" dir="ltr" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);text-align:left;">
-                <button type="button" onclick="adminFetchByPostLink()" style="width:100%;margin-top:6px;padding:10px;border:none;border-radius:8px;background:var(--tab-active-color);color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-search"></i> جلب المنشور</button>
+        <!-- بحث سريع -->
+        <div style="background:var(--content-bg);border:1px solid var(--border-color);border-radius:12px;padding:12px;margin-bottom:12px;">
+            <p style="font-size:13px;font-weight:bold;margin-bottom:8px;"><i class="fas fa-search"></i> جلب مستخدم</p>
+            <input type="text" id="adminTarget" placeholder="البريد أو اسم المستخدم" style="width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);margin-bottom:8px;">
+            <div style="display:flex;gap:8px;">
+                <button type="button" onclick="adminFetchUser()" style="flex:1;padding:10px;border:none;border-radius:10px;background:var(--tab-active-color);color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-search"></i> جلب</button>
+                <button type="button" onclick="adminListAllUsers()" style="flex:1;padding:10px;border:none;border-radius:10px;background:#6c757d;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-users"></i> الجميع</button>
             </div>
+            <p id="adminProfileTargetLabel" style="font-size:12px;opacity:0.85;margin:10px 0 0;">بروفايل مستهدف: —</p>
+        </div>
 
-            <div class="profile-field" style="margin-top:8px;">
-                <label>رابط البروفايل / يوزرنيم / بريد</label>
-                <input type="text" id="adminProfileLinkInput" placeholder="https://.../?profile=user أو username" dir="ltr" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);text-align:left;">
-                <button type="button" onclick="adminFetchByProfileLink()" style="width:100%;margin-top:6px;padding:10px;border:none;border-radius:8px;background:#6c757d;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-user-check"></i> جلب البروفايل</button>
-            </div>
+        <!-- روابط سريعة -->
+        <div id="adminStatsSection" style="background:var(--content-bg);border:1px solid #b8860b55;border-radius:12px;padding:12px;margin-bottom:12px;">
+            <p style="font-size:13px;font-weight:bold;margin-bottom:6px;color:#b8860b;"><i class="fas fa-chart-line"></i> الأرقام الوهمية</p>
+            <p style="font-size:11px;opacity:0.7;margin-bottom:10px;line-height:1.5;">الصق رابط المنشور أو البروفايل، أو اكتب الآيدي / اسم المستخدم مباشرة.</p>
 
-            <p id="adminProfileTargetLabel" style="font-size:12px;opacity:0.85;margin:10px 0 8px;">بروفايل مستهدف: —</p>
-            <div class="profile-field"><label>عدد المتابعين المعروض</label>
-                <input type="number" id="adminFakeFollowers" min="0" step="1" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);">
-            </div>
-            <div class="profile-field"><label>عدد المتابَعين المعروض</label>
-                <input type="number" id="adminFakeFollowing" min="0" step="1" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);">
-            </div>
-            <button type="button" onclick="adminSaveFakeFollows()" style="width:100%;padding:10px;border:none;border-radius:8px;background:#1a1a1a;color:#ffd700;font-weight:bold;cursor:pointer;margin-bottom:12px;"><i class="fas fa-save"></i> حفظ أرقام المتابعة</button>
+            <label style="font-size:12px;font-weight:bold;display:block;margin-bottom:4px;"><i class="fas fa-link"></i> رابط / آيدي المنشور</label>
+            <input type="text" id="adminPostLinkInput" placeholder="?post=xxxx أو الرابط أو الآيدي" dir="ltr" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);text-align:left;margin-bottom:6px;">
+            <button type="button" onclick="adminFetchByPostLink()" style="width:100%;padding:10px;border:none;border-radius:10px;background:var(--tab-active-color);color:#fff;font-weight:bold;cursor:pointer;margin-bottom:12px;"><i class="fas fa-search"></i> جلب المنشور</button>
 
-            <p style="font-size:12px;font-weight:bold;margin-bottom:6px;">المنشور المحدد / قائمة المنشورات</p>
-            <div id="adminPostsList" style="max-height:140px;overflow-y:auto;margin-bottom:8px;font-size:12px;"></div>
+            <label style="font-size:12px;font-weight:bold;display:block;margin-bottom:4px;"><i class="fas fa-user"></i> رابط البروفايل / يوزرنيم / بريد</label>
+            <input type="text" id="adminProfileLinkInput" placeholder="?profile=username أو الرابط أو البريد" dir="ltr" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);text-align:left;margin-bottom:6px;">
+            <button type="button" onclick="adminFetchByProfileLink()" style="width:100%;padding:10px;border:none;border-radius:10px;background:#6c757d;color:#fff;font-weight:bold;cursor:pointer;margin-bottom:14px;"><i class="fas fa-user-check"></i> جلب البروفايل</button>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                <div>
+                    <label style="font-size:12px;font-weight:bold;display:block;margin-bottom:4px;">المتابعون</label>
+                    <input type="number" id="adminFakeFollowers" min="0" step="1" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);">
+                </div>
+                <div>
+                    <label style="font-size:12px;font-weight:bold;display:block;margin-bottom:4px;">يتابع</label>
+                    <input type="number" id="adminFakeFollowing" min="0" step="1" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);">
+                </div>
+            </div>
+            <button type="button" onclick="adminSaveFakeFollows()" style="width:100%;padding:11px;border:none;border-radius:10px;background:#1a1a1a;color:#ffd700;font-weight:bold;cursor:pointer;margin-bottom:14px;"><i class="fas fa-save"></i> حفظ أرقام المتابعة</button>
+
+            <p style="font-size:12px;font-weight:bold;margin-bottom:6px;">منشورات المستخدم</p>
+            <div id="adminPostsList" style="max-height:150px;overflow-y:auto;margin-bottom:8px;font-size:12px;background:var(--card-bg);border-radius:10px;padding:6px;border:1px solid var(--border-color);"></div>
             <input type="hidden" id="adminSelectedPostId" value="">
-            <div id="adminPostStatsFields" style="display:none;">
+            <div id="adminPostStatsFields" style="display:none;background:var(--card-bg);border:1px solid var(--border-color);border-radius:12px;padding:12px;">
                 <p id="adminSelectedPostLabel" style="font-size:12px;opacity:0.85;margin-bottom:8px;"></p>
-                <div class="profile-field"><label>لايكات</label><input type="number" id="adminFakeLikes" min="0" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
-                <div class="profile-field"><label>تعليقات</label><input type="number" id="adminFakeComments" min="0" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
-                <div class="profile-field"><label>مشاركات</label><input type="number" id="adminFakeShares" min="0" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
-                <div class="profile-field"><label>مشاهدات</label><input type="number" id="adminFakeViews" min="0" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
-                <button type="button" onclick="adminSavePostStats()" style="width:100%;padding:10px;border:none;border-radius:8px;background:var(--btn-bg);color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-save"></i> حفظ تفاعل المنشور</button>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                    <div><label style="font-size:12px;font-weight:bold;">لايكات</label><input type="number" id="adminFakeLikes" min="0" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);"></div>
+                    <div><label style="font-size:12px;font-weight:bold;">تعليقات</label><input type="number" id="adminFakeComments" min="0" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);"></div>
+                    <div><label style="font-size:12px;font-weight:bold;">مشاركات</label><input type="number" id="adminFakeShares" min="0" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);"></div>
+                    <div><label style="font-size:12px;font-weight:bold;">مشاهدات</label><input type="number" id="adminFakeViews" min="0" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);"></div>
+                </div>
+                <button type="button" onclick="adminSavePostStats()" style="width:100%;margin-top:10px;padding:11px;border:none;border-radius:10px;background:var(--btn-bg);color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-save"></i> حفظ تفاعل المنشور</button>
             </div>
         </div>
 
-        <div id="adminEditFields" style="display:none;text-align:right;background:var(--content-bg);padding:12px;border-radius:10px;margin-bottom:12px;border:1px solid var(--tab-color);">
-            <p style="font-size:12px;font-weight:bold;margin-bottom:8px;color:var(--tab-active-color);">تعديل بيانات الحساب:</p>
-            <div class="profile-field"><label>الاسم الكامل</label><input type="text" id="adminEditName" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
-            <div class="profile-field"><label>اسم المستخدم</label><input type="text" id="adminEditUsername" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
-            <div class="profile-field"><label>النبذة</label><textarea id="adminEditBio" rows="2" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></textarea></div>
-            <div class="profile-field"><label>رابط الصورة الشخصية</label><input type="text" id="adminEditAvatar" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
-            <div class="profile-field"><label>رابط صورة الغلاف</label><input type="text" id="adminEditCover" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
-            <div class="profile-field"><label>أيقونة مخصصة</label><input type="text" id="adminEditCustomIcon" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
-            <button type="button" onclick="adminSaveUserData()" style="width:100%;padding:10px;border:none;border-radius:8px;background:#28a745;color:#fff;font-weight:bold;cursor:pointer;margin-top:6px;"><i class="fas fa-save"></i> حفظ التعديلات</button>
-        </div>
-
-        <div class="profile-field" style="text-align:right;">
-            <label>نوع التوثيق</label>
-            <select id="adminBadgeType" style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);">
-                <option value="normal">توثيق (أزرق)</option>
-                <option value="owner">توثيق (ذهبي)</option>
-                <option value="black">توثيق بني المالك</option>
-                <option value="none">بدون توثيق</option>
-            </select>
-        </div>
-        <a onclick="adminApplyBadge()" style="display:block;background:var(--btn-bg);color:#fff;padding:10px;border-radius:8px;cursor:pointer;margin-bottom:6px;font-weight:bold;text-align:center;"><i class="fas fa-check"></i> تفعيل / تعديل التوثيق</a>
-        <a onclick="adminRemoveBadge()" style="display:block;background:#e0245e;color:#fff;padding:10px;border-radius:8px;cursor:pointer;margin-bottom:10px;font-weight:bold;text-align:center;"><i class="fas fa-trash"></i> إزالة التوثيق</a>
-
-        <div style="display:flex;gap:6px;margin-bottom:10px;">
-            <a onclick="adminBlockImages()" style="flex:1;text-align:center;background:#6c757d;color:#fff;padding:10px;border-radius:8px;cursor:pointer;font-weight:bold;"><i class="fas fa-ban"></i> حظر الصور</a>
-            <a onclick="adminUnblockImages()" style="flex:1;text-align:center;background:#28a745;color:#fff;padding:10px;border-radius:8px;cursor:pointer;font-weight:bold;"><i class="fas fa-check-circle"></i> فك الحظر</a>
-        </div>
-        <a onclick="sendMessageToUser()" style="display:block;background:#1da1f2;color:#fff;padding:10px;border-radius:8px;cursor:pointer;margin-bottom:12px;font-weight:bold;text-align:center;"><i class="fas fa-paper-plane"></i> إرسال رسالة نظامية</a>
-
-        <div style="margin-top:8px;padding:12px;background:var(--content-bg);border-radius:10px;text-align:right;">
-            <p style="font-size:12px;font-weight:bold;margin-bottom:8px;color:var(--tab-active-color);">إدارة الحساب</p>
-            <div style="display:flex;gap:6px;margin-bottom:8px;">
-                <button type="button" onclick="adminSuspendUser()" style="flex:1;padding:10px;border:none;border-radius:8px;background:#f39c12;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-pause"></i> تعليق</button>
-                <button type="button" onclick="adminUnsuspendUser()" style="flex:1;padding:10px;border:none;border-radius:8px;background:#28a745;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-play"></i> فك التعليق</button>
+        <!-- تعديل بيانات المستخدم -->
+        <div id="adminEditFields" style="display:none;background:var(--content-bg);border:1px solid var(--border-color);border-radius:12px;padding:12px;margin-bottom:12px;">
+            <p style="font-size:13px;font-weight:bold;margin-bottom:10px;"><i class="fas fa-user-edit"></i> تعديل بيانات المستخدم</p>
+            <div class="profile-field"><label>الاسم</label><input type="text" id="adminEditName" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
+            <div class="profile-field"><label>اسم المستخدم</label><input type="text" id="adminEditUsername" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></div>
+            <div class="profile-field"><label>النبذة</label><textarea id="adminEditBio" rows="2" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);"></textarea></div>
+            <div class="profile-field"><label>رابط الصورة</label><input type="text" id="adminEditAvatar" dir="ltr" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);text-align:left;"></div>
+            <div class="profile-field"><label>رابط الغلاف</label><input type="text" id="adminEditCover" dir="ltr" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);text-align:left;"></div>
+            <div class="profile-field"><label>أيقونة مخصصة</label><input type="text" id="adminEditCustomIcon" dir="ltr" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);text-align:left;"></div>
+            <div class="profile-field"><label>نوع التوثيق</label>
+                <select id="adminBadgeType" style="width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--tab-color);background:var(--card-bg);color:var(--text-color);font-size:14px;">
+                    <option value="none">بدون</option>
+                    <option value="normal">أزرق</option>
+                    <option value="gold">ذهبي</option>
+                    <option value="black">بني / مالك</option>
+                    <option value="owner">مالك</option>
+                </select>
             </div>
-            <button type="button" onclick="adminDeleteUserAccount()" style="width:100%;padding:10px;border:none;border-radius:8px;background:#e0245e;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-trash"></i> حذف الحساب نهائياً</button>
+            <div style="display:flex;gap:8px;margin-top:8px;">
+                <button type="button" onclick="adminSaveUserData();adminApplyBadge();" style="flex:1;padding:10px;border:none;border-radius:10px;background:var(--tab-active-color);color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-save"></i> حفظ</button>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px;">
+                <button type="button" onclick="adminSuspendUser()" style="flex:1;padding:10px;border:none;border-radius:10px;background:#f39c12;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-pause"></i> تعليق</button>
+                <button type="button" onclick="adminUnsuspendUser()" style="flex:1;padding:10px;border:none;border-radius:10px;background:#28a745;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-play"></i> فك التعليق</button>
+            </div>
+            <button type="button" onclick="adminDeleteUserAccount()" style="width:100%;margin-top:8px;padding:10px;border:none;border-radius:10px;background:#e0245e;color:#fff;font-weight:bold;cursor:pointer;"><i class="fas fa-trash"></i> حذف الحساب نهائياً</button>
         </div>
 
-        <div style="margin-top:12px;padding:12px;background:var(--content-bg);border-radius:10px;text-align:right;">
-            <p style="font-size:12px;font-weight:bold;margin-bottom:8px;color:var(--tab-active-color);">طلبات المراجعة</p>
-            <div id="adminAppealsList" style="max-height:160px;overflow-y:auto;font-size:12px;"><p style="opacity:.6;">لا توجد طلبات</p></div>
+        <!-- طلبات المراجعة -->
+        <div style="background:var(--content-bg);border:1px solid var(--border-color);border-radius:12px;padding:12px;margin-bottom:12px;">
+            <p style="font-size:13px;font-weight:bold;margin-bottom:8px;color:var(--tab-active-color);"><i class="fas fa-inbox"></i> طلبات المراجعة</p>
+            <div id="adminAppealsList" style="max-height:150px;overflow-y:auto;font-size:12px;"><p style="opacity:.6;">لا توجد طلبات</p></div>
         </div>
-        <div id="adminList" style="text-align:right;font-size:12px;max-height:150px;overflow-y:auto;margin-top:8px;line-height:1.8;background:var(--content-bg);padding:10px;border-radius:10px;"></div>
-        <span onclick="closeAdminPanel()" style="color:#8899a6;margin-top:12px;display:block;text-align:center;cursor:pointer;font-weight:bold;">إغلاق</span>
+
+        <div id="adminList" style="text-align:right;font-size:12px;max-height:150px;overflow-y:auto;margin-bottom:8px;line-height:1.8;background:var(--content-bg);padding:10px;border-radius:12px;border:1px solid var(--border-color);"></div>
+
+        <button type="button" onclick="closeAdminPanel()" style="width:100%;padding:12px;border:none;border-radius:12px;background:var(--content-bg);color:var(--text-color);font-weight:bold;cursor:pointer;border:1px solid var(--border-color);">إغلاق</button>
     </div>
 </div>
 
@@ -2189,12 +2393,8 @@
             <p class="pv-bio" id="pvBio"></p>
             
             <!-- ✨ أيقونات التواصل في بروفايلك الشخصي -->
-            <div id="pvSocialLinks" class="social-links-row" style="display:none !important; gap:18px; margin:14px 0; flex-wrap:wrap; align-items:center; justify-content:flex-start;">
-                <a id="pvInstaLink" class="social-link-icon" href="#" target="_blank" rel="noopener" style="display:none; font-size:28px; color:#E1306C; line-height:1;"><i class="fab fa-instagram"></i></a>
-                <a id="pvWhatsLink" class="social-link-icon" href="#" target="_blank" rel="noopener" style="display:none; font-size:28px; color:#25D366; line-height:1;"><i class="fab fa-whatsapp"></i></a>
-                <a id="pvFaceLink" class="social-link-icon" href="#" target="_blank" rel="noopener" style="display:none; font-size:28px; color:#1877F2; line-height:1;"><i class="fab fa-facebook"></i></a>
-                <a id="pvTwitLink" class="social-link-icon" href="#" target="_blank" rel="noopener" style="display:none; font-size:28px; color:#1DA1F2; line-height:1;"><i class="fab fa-twitter"></i></a>
-            </div>
+                        <div id="pvSocialLinks" class="social-links-row" style="display:none;"></div>
+
 
             <div class="pv-meta">
                 <span><i class="fas fa-envelope"></i> <span id="pvEmail">—</span></span>
@@ -2269,28 +2469,40 @@
             <div class="profile-field"><label>خصوصية البروفايل</label><select id="pfPrivacy"><option value="public">عام</option><option value="private">خاص</option></select></div>
 
             <!-- ✨ حقول التواصل الاجتماعي (جديدة) -->
-            <div class="profile-field" style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                <label style="color: var(--tab-active-color); font-size: 15px; margin-bottom: 10px; display: block;">
-                    <i class="fas fa-share-nodes"></i> روابط التواصل الاجتماعي (اختياري)
+                        <div class="profile-field" style="margin-top:15px;border-top:1px solid var(--border-color);padding-top:15px;">
+                <label style="color:var(--tab-active-color);font-size:15px;margin-bottom:10px;display:block;">
+                    <i class="fas fa-share-nodes"></i> روابط التواصل الاجتماعي
                 </label>
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                    <i class="fab fa-instagram" style="font-size: 20px; color: #E1306C; width: 24px; text-align: center;"></i>
-                    <input type="text" id="pfInstagram" placeholder="اسم المستخدم فقط (بدون @)" dir="ltr" style="flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--tab-color); background: var(--content-bg); color: var(--text-color); font-size: 15px; font-family: inherit;">
+                <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+                    <select id="pfSocialSelect" style="flex:1;min-width:140px;padding:10px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);font-size:14px;font-weight:bold;">
+                        <option value="">اختر منصة...</option>
+                        <option value="instagram">Instagram</option>
+                        <option value="whatsapp">WhatsApp</option>
+                        <option value="facebook">Facebook</option>
+                        <option value="twitter">Twitter</option>
+                        <option value="tiktok">TikTok</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="telegram">Telegram</option>
+                        <option value="snapchat">Snapchat</option>
+                        <option value="linkedin">LinkedIn</option>
+                        <option value="discord">Discord</option>
+                        <option value="reddit">Reddit</option>
+                        <option value="github">GitHub</option>
+                        <option value="twitch">Twitch</option>
+                        <option value="pinterest">Pinterest</option>
+                        <option value="threads">Threads</option>
+                    </select>
+                    <input type="text" id="pfSocialValue" placeholder="يوزرنيم أو رابط" dir="ltr" style="flex:1.4;min-width:140px;padding:10px;border-radius:10px;border:1px solid var(--tab-color);background:var(--content-bg);color:var(--text-color);font-size:14px;">
+                    <button type="button" onclick="addSocialFromEditor()" style="padding:10px 14px;border:none;border-radius:10px;background:var(--tab-active-color);color:#fff;font-weight:bold;cursor:pointer;white-space:nowrap;"><i class="fas fa-plus"></i> إضافة</button>
                 </div>
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                    <i class="fab fa-whatsapp" style="font-size: 20px; color: #25D366; width: 24px; text-align: center;"></i>
-                    <input type="text" id="pfWhatsapp" placeholder="رقم واتساب مع رمز الدولة مثل 9665..." dir="ltr" style="flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--tab-color); background: var(--content-bg); color: var(--text-color); font-size: 15px; font-family: inherit;">
-                </div>
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                    <i class="fab fa-facebook" style="font-size: 20px; color: #1877F2; width: 24px; text-align: center;"></i>
-                    <input type="text" id="pfFacebook" placeholder="اسم المستخدم فقط" dir="ltr" style="flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--tab-color); background: var(--content-bg); color: var(--text-color); font-size: 15px; font-family: inherit;">
-                </div>
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                    <i class="fab fa-twitter" style="font-size: 20px; color: #1DA1F2; width: 24px; text-align: center;"></i>
-                    <input type="text" id="pfTwitter" placeholder="اسم المستخدم فقط (بدون @)" dir="ltr" style="flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--tab-color); background: var(--content-bg); color: var(--text-color); font-size: 15px; font-family: inherit;">
-                </div>
+                <div id="pfSocialList"></div>
+                <p style="font-size:11px;opacity:0.6;margin-top:6px;">اختر المنصة واكتب اليوزرنيم ثم إضافة. تظهر فقط المنصات المضافة.</p>
+                <input type="hidden" id="pfInstagram" value="">
+                <input type="hidden" id="pfWhatsapp" value="">
+                <input type="hidden" id="pfFacebook" value="">
+                <input type="hidden" id="pfTwitter" value="">
             </div>
-            <!-- ✨ نهاية حقول التواصل -->
+
 
             <!-- ✨ أزرار الخصوصية الجديدة -->
             <div class="profile-field" style="display:flex; justify-content:space-between; align-items:center; background:var(--content-bg); padding:12px; border-radius:10px; margin-top:10px;">
@@ -2334,12 +2546,8 @@
                 <p class="pv-bio" id="pubBio"></p>
                 
                 <!-- ✨ أيقونات التواصل في بروفايل الآخرين -->
-                <div id="pubSocialLinks" class="social-links-row" style="display:none !important; gap:18px; margin:14px 0; flex-wrap:wrap; align-items:center; justify-content:flex-start;">
-                    <a id="pubInstaLink" class="social-link-icon" href="#" target="_blank" rel="noopener" style="display:none; font-size:28px; color:#E1306C; line-height:1;"><i class="fab fa-instagram"></i></a>
-                    <a id="pubWhatsLink" class="social-link-icon" href="#" target="_blank" rel="noopener" style="display:none; font-size:28px; color:#25D366; line-height:1;"><i class="fab fa-whatsapp"></i></a>
-                    <a id="pubFaceLink" class="social-link-icon" href="#" target="_blank" rel="noopener" style="display:none; font-size:28px; color:#1877F2; line-height:1;"><i class="fab fa-facebook"></i></a>
-                    <a id="pubTwitLink" class="social-link-icon" href="#" target="_blank" rel="noopener" style="display:none; font-size:28px; color:#1DA1F2; line-height:1;"><i class="fab fa-twitter"></i></a>
-                </div>
+                                <div id="pubSocialLinks" class="social-links-row" style="display:none;"></div>
+
 
                 <div class="pv-meta">
                     <span><i class="fas fa-calendar"></i> انضم في <span id="pubJoined">—</span></span>
@@ -2363,8 +2571,22 @@
 
 <div class="modal" id="createPostModal">
     <div class="modal-box">
-        <p style="font-weight:bold;font-size:18px;margin-bottom:10px;"><i class="fas fa-camera"></i> إنشاء منشور</p>
-        <div class="profile-field">
+        <p style="font-weight:bold;font-size:18px;margin-bottom:10px;"><i class="fas fa-pen"></i> إنشاء منشور</p>
+        
+        <div class="media-type-tabs">
+            <button type="button" class="media-type-tab active" id="mediaTabImage" onclick="setPostMediaType('image')">
+                <i class="fas fa-images"></i> صور
+            </button>
+            <button type="button" class="media-type-tab" id="mediaTabVideo" onclick="setPostMediaType('video')">
+                <i class="fas fa-video"></i> مقطع
+            </button>
+            <button type="button" class="media-type-tab" id="mediaTabPdf" onclick="setPostMediaType('pdf')">
+                <i class="fas fa-file-pdf"></i> PDF
+            </button>
+        </div>
+
+        <!-- صور -->
+        <div class="profile-field" id="postImageSection">
             <label>الصور (حتى 5 صور)</label>
             <button class="verify-btn" style="width:100%;border-radius:10px;" onclick="document.getElementById('postImageInput').click()">
                 <i class="fas fa-image"></i> اختيار صور (0/5)
@@ -2372,7 +2594,41 @@
             <input type="file" id="postImageInput" accept="image/*" multiple style="display:none" onchange="handlePostImageSelect(event)">
             <div id="postPreview" style="margin-top:10px;display:none;grid-template-columns:repeat(3,1fr);gap:5px;"></div>
         </div>
-        <div class="profile-field"><label>النص / الوصف</label><textarea id="postCaption" rows="3" placeholder="اكتب منشوراً نصياً أو أضف صوراً..."></textarea></div>
+
+        <!-- فيديو -->
+        <div class="profile-field" id="postVideoSection" style="display:none;">
+            <label>المقطع (فيديو)</label>
+            <button class="verify-btn" style="width:100%;border-radius:10px;" onclick="document.getElementById('postVideoInput').click()">
+                <i class="fas fa-video"></i> اختيار مقطع فيديو
+            </button>
+            <input type="file" id="postVideoInput" accept="video/*,.mp4,.webm,.mov,.mkv,.m4v" style="display:none" onchange="handlePostVideoSelect(event)">
+            <div id="postVideoPreview">
+                <video id="postVideoPreviewEl" controls playsinline></video>
+                <p id="postVideoName" style="font-size:12px;opacity:0.7;margin-top:6px;"></p>
+            </div>
+            <div class="upload-progress-bar" id="videoUploadProgress"><div class="bar" id="videoUploadBar"></div></div>
+            <p style="font-size:11px;opacity:0.55;margin-top:6px;">الصيغ المدعومة: MP4, WebM, MOV · الحد الأقصى تقريباً 200 ميجا</p>
+        </div>
+
+        <!-- PDF -->
+        <div class="profile-field" id="postPdfSection" style="display:none;">
+            <label>ملف PDF</label>
+            <button class="verify-btn" style="width:100%;border-radius:10px;" onclick="document.getElementById('postPdfInput').click()">
+                <i class="fas fa-file-pdf"></i> اختيار ملف PDF
+            </button>
+            <input type="file" id="postPdfInput" accept="application/pdf,.pdf" style="display:none" onchange="handlePostPdfSelect(event)">
+            <div id="postPdfPreview" class="post-pdf-wrap" style="cursor:default;">
+                <div class="post-pdf-icon"><i class="fas fa-file-pdf"></i></div>
+                <div class="post-pdf-info">
+                    <div class="post-pdf-name" id="postPdfName">—</div>
+                    <div class="post-pdf-meta" id="postPdfMeta">—</div>
+                </div>
+            </div>
+            <div class="upload-progress-bar" id="pdfUploadProgress"><div class="bar" id="pdfUploadBar"></div></div>
+            <p style="font-size:11px;opacity:0.55;margin-top:6px;">ملفات PDF فقط · يُفضّل أقل من 25 ميجا</p>
+        </div>
+
+        <div class="profile-field"><label>النص / الوصف</label><textarea id="postCaption" rows="3" placeholder="اكتب منشوراً نصياً أو أضف وسائط..."></textarea></div>
         <div class="profile-field">
             <label>الخصوصية</label>
             <div class="post-privacy-toggle">
@@ -2380,15 +2636,18 @@
                 <button id="postPrivacyPrivate" onclick="setPostPrivacy('private')"><i class="fas fa-lock"></i> خاص</button>
             </div>
         </div>
-        <div style="display:flex;gap:8px;margin-top:10px;">
+        <div class="modal-actions-sticky">
+            <div style="display:flex;gap:8px;">
             <button onclick="publishPost()" id="publishPostBtn" style="flex:1;padding:12px;border:none;border-radius:10px;background:var(--tab-active-color);color:#fff;font-weight:bold;font-size:15px;cursor:pointer;">نشر</button>
             <button onclick="closeCreatePost()" style="flex:1;padding:12px;border:none;border-radius:10px;background:#657786;color:#fff;font-weight:bold;font-size:15px;cursor:pointer;">إلغاء</button>
+            </div>
         </div>
     </div>
 </div>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 
 
 <script>
@@ -2397,7 +2656,7 @@ var firebaseConfig = {
     apiKey: "AIzaSyB1A5flcC2cZYQszjvnzrTDXYH3UIKBl4Q",
     authDomain: "doctorai-84595.firebaseapp.com",
     projectId: "doctorai-84595",
-    storageBucket: "doctorai-84595.firebasestorage.app",
+    storageBucket: "doctorai-84595.appspot.com",
     messagingSenderId: "109454873990",
     appId: "1:109454873990:web:bb77554ecb159359984807"
 };
@@ -2455,6 +2714,16 @@ var currentProductCategory = 'all';
 
 /* ==================== CONSTANTS ==================== */
 var IMGBB_API_KEY = "bfc52e6ec5cbdefc753848590f0d14b6";
+/* Cloudflare Stream — ضع ACCOUNT_ID من لوحة Cloudflare (Stream) */
+var CLOUDFLARE_API_TOKEN = "cfut_6mbrClmy3U2Qp3BSZUbsu8QMJwgcMQ44h8pcjyk61afc10d6";
+var CLOUDFLARE_ACCOUNT_ID = ""; /* مثال: "a1b2c3d4e5f6..." من Cloudflare Dashboard → Stream */
+/* Telegram Bot — لرفع الفيديو و PDF إلى قناتك الخاصة */
+var TELEGRAM_BOT_TOKEN = "8801701075:AAEN11tSlRlvTdBwe5FTTqmd060C4mbc7s4";
+var TELEGRAM_CHAT_ID = "-1006071541813"; /* قناة رفع الفيديو والملفات */
+var THEOPLAYER_BASE = null; /* تم استبداله بـ Plyr عبر buildTheoPlayerPageHtml */
+var postMediaType = "image"; /* image | video | pdf */
+var postVideoFile = null;
+var postPdfFile = null;
 var NORMAL_BADGE_URL = 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794862678/Twitter_Verified_Badge.svg_qqheob.png';
 var OWNER_BADGE_URL  = 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1794862679/Twitter_Verified_Badge_Gold.svg_suieqe.png';
 var BLACK_BADGE_URL  = 'https://res.cloudinary.com/dtdnb4yp1/image/upload/v1795016192/Twitter_Verified_Badge_Gray.svg_1_hr48kq.png';
@@ -3515,13 +3784,15 @@ function renderProfileView() {
             var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', currentUserKey));
             if (snap.exists()) {
                 var d = snap.data();
-                var followers = Array.isArray(d.followers) ? d.followers : [];
-                var following = Array.isArray(d.following) ? d.following : [];
+                var counts = (typeof getDisplayFollowCounts === 'function') ? getDisplayFollowCounts(d) : {
+                    followers: Array.isArray(d.followers) ? d.followers.length : 0,
+                    following: Array.isArray(d.following) ? d.following.length : 0
+                };
                 var fc = document.getElementById('pvFollowersCount');
-var gc = document.getElementById('pvFollowingCount');
-if (fc) fc.textContent = followers.length;
-if (gc) gc.textContent = following.length;
-console.log('My profile counts — followers:', followers.length, 'following:', following.length);
+                var gc = document.getElementById('pvFollowingCount');
+                if (fc) fc.textContent = (typeof formatCountNum === 'function') ? formatCountNum(counts.followers) : counts.followers;
+                if (gc) gc.textContent = (typeof formatCountNum === 'function') ? formatCountNum(counts.following) : counts.following;
+                if (typeof renderSocialIcons === 'function') renderSocialIcons(d, 'pv');
             }
         } catch(e){}
     })();
@@ -3747,30 +4018,13 @@ async function loadPublicPosts() {
             mediaUrls = mediaUrls.filter(function(u){ return u && String(u).trim(); });
             var mediaHtml = '';
             if (author.imagesBlocked === true && authorKey !== currentUserKey && currentBadgeType !== 'black') {
-                mediaHtml = '<div style="padding:30px;text-align:center;background:var(--content-bg);opacity:0.6;"><i class="fas fa-ban" style="font-size:30px;margin-bottom:8px;"></i><p>الصور محجوبة من قِبل الإدارة</p></div>';
-            } else if (mediaUrls.length === 0) {
-                mediaHtml = '';
+                mediaHtml = '<div style="padding:30px;text-align:center;background:var(--content-bg);opacity:0.6;"><i class="fas fa-ban" style="font-size:30px;margin-bottom:8px;"></i><p>الوسائط محجوبة من قِبل الإدارة</p></div>';
+            } else if (typeof buildPostMediaHtml === 'function') {
+                mediaHtml = buildPostMediaHtml(p.data);
             } else if (mediaUrls.length === 1) {
                 mediaHtml = '<div class="post-image-wrap" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" alt=""></div>';
-            } else if (mediaUrls.length === 2) {
-                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' +
-                    mediaUrls.map(function(u,i){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + i + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') +
-                    '</div>';
-            } else if (mediaUrls.length === 3) {
-                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;grid-auto-rows:1fr;">' +
-                    '<div style="grid-row:span 2;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" style="width:100%;height:100%;object-fit:cover;"></div>' +
-                    mediaUrls.slice(1).map(function(u,i){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + (i+1) + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') +
-                    '</div>';
-            } else if (mediaUrls.length >= 4) {
-                var displayUrls = mediaUrls.slice(0, 4);
-                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' +
-                    displayUrls.map(function(u,i){
-                        var extra = (i === 3 && mediaUrls.length > 4)
-                            ? '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.65);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:bold;">+' + (mediaUrls.length - 4) + '</div>'
-                            : '';
-                        return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;position:relative;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + i + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;">' + extra + '</div>';
-                    }).join('') +
-                    '</div>';
+            } else if (mediaUrls.length > 1) {
+                mediaHtml = buildPostMediaHtml(Object.assign({}, p.data, { mediaType: 'image', mediaUrls: mediaUrls }));
             }
 
             var dateStr = p.data.createdAt ? new Date(p.data.createdAt).toLocaleString(lang === 'en' ? 'en-US' : 'ar-EG') : '';
@@ -3819,7 +4073,7 @@ var actionsHtml =
                 '<div class="post-header-name">' + escapeHtml(author.name || 'مستخدم') + ' ' + badgeHtml + customIconHtml + '</div>' +
                 '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
                 '</div></div>' +
-                (p.data.caption ? '<div class="post-caption collapsed" id="caption-' + p.id + '">' + (typeof linkifyMentions==='function' ? linkifyMentions(escapeHtml(p.data.caption)) : escapeHtml(p.data.caption)) + '</div><button class="post-caption-toggle" id="toggle-' + p.id + '" onclick="togglePostCaption(\'' + p.id + '\')">عرض المزيد</button>' : '') +
+                (p.data.caption ? '<div class="post-caption collapsed" id="caption-' + p.id + '">' + (typeof linkifyMentions==='function'?linkifyMentions(p.data.caption):escapeHtml(p.data.caption)) + '</div><button class="post-caption-toggle" id="toggle-' + p.id + '" onclick="togglePostCaption(\'' + p.id + '\')">عرض المزيد</button>' : '') +
                 '<div class="post-date"><i class="fas fa-clock"></i> ' + dateStr + '</div>' +
                 mediaHtml +
                 actionsHtml;
@@ -3937,7 +4191,20 @@ async function toggleDislike(postId, btnEl) {
     } catch (e) { console.warn(e); }
 }
 
-/* ==================== CREATE POST ==================== */
+/* ==================== CREATE POST (صور + فيديو + PDF) ==================== */
+function setPostMediaType(type) {
+    postMediaType = type || 'image';
+    ['image','video','pdf'].forEach(function(t){
+        var tab = document.getElementById('mediaTab' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (tab) tab.classList.toggle('active', t === postMediaType);
+    });
+    var imgSec = document.getElementById('postImageSection');
+    var vidSec = document.getElementById('postVideoSection');
+    var pdfSec = document.getElementById('postPdfSection');
+    if (imgSec) imgSec.style.display = postMediaType === 'image' ? 'block' : 'none';
+    if (vidSec) vidSec.style.display = postMediaType === 'video' ? 'block' : 'none';
+    if (pdfSec) pdfSec.style.display = postMediaType === 'pdf' ? 'block' : 'none';
+}
 function openCreatePost() {
     if (!currentUserKey) { alert(t('login_first')); return; }
     document.getElementById('createPostModal').style.display = 'flex';
@@ -3945,21 +4212,31 @@ function openCreatePost() {
     document.getElementById('postPreview').innerHTML = '';
     document.getElementById('postCaption').value = '';
     document.getElementById('postImageInput').value = '';
+    var vi = document.getElementById('postVideoInput'); if (vi) vi.value = '';
+    var pi = document.getElementById('postPdfInput'); if (pi) pi.value = '';
     postImageFiles = [];
+    postVideoFile = null;
+    postPdfFile = null;
+    var vp = document.getElementById('postVideoPreview'); if (vp) vp.style.display = 'none';
+    var pp = document.getElementById('postPdfPreview'); if (pp) pp.style.display = 'none';
+    setPostMediaType('image');
     setPostPrivacy('public');
     var btn = document.querySelector('#createPostModal button[onclick*="postImageInput"]');
-    if (btn) btn.innerHTML = '<i class="fas fa-image"></i> ' + t('choose_images') + ' (0/5)';
+    if (btn) btn.innerHTML = '<i class="fas fa-image"></i> ' + (typeof t === 'function' ? t('choose_images') : 'اختيار صور') + ' (0/5)';
 }
 function closeCreatePost() {
     document.getElementById('createPostModal').style.display = 'none';
 }
 function handlePostImageSelect(event) {
-    var files = Array.from(event.target.files);
+    var files = Array.from(event.target.files || []);
     if (files.length > 5) {
         alert('الحد الأقصى 5 صور');
         files = files.slice(0, 5);
     }
+    postMediaType = 'image';
     postImageFiles = files;
+    postVideoFile = null;
+    postPdfFile = null;
     var preview = document.getElementById('postPreview');
     preview.innerHTML = '';
     preview.style.display = files.length > 0 ? 'grid' : 'none';
@@ -3973,7 +4250,60 @@ function handlePostImageSelect(event) {
         preview.appendChild(div);
     });
     var btn = document.querySelector('#createPostModal button[onclick*="postImageInput"]');
-    if (btn) btn.innerHTML = '<i class="fas fa-image"></i> ' + t('choose_images') + ' (' + files.length + '/5)';
+    if (btn) btn.innerHTML = '<i class="fas fa-image"></i> اختيار صور (' + files.length + '/5)';
+}
+function handlePostVideoSelect(event) {
+    var file = (event.target.files && event.target.files[0]) || null;
+    if (!file) return;
+    if (!file.type.startsWith('video/') && !/\.(mp4|webm|mov|mkv|m4v)$/i.test(file.name)) {
+        alert('يرجى اختيار ملف فيديو صالح');
+        event.target.value = '';
+        return;
+    }
+    if (file.size > 200 * 1024 * 1024) {
+        alert('حجم الفيديو أكبر من 200 ميجا. استخدم ملفاً أصغر أو tus للملفات الكبيرة.');
+        event.target.value = '';
+        return;
+    }
+    postMediaType = 'video';
+    postVideoFile = file;
+    postImageFiles = [];
+    postPdfFile = null;
+    var box = document.getElementById('postVideoPreview');
+    var el = document.getElementById('postVideoPreviewEl');
+    var nameEl = document.getElementById('postVideoName');
+    if (el) {
+        el.src = URL.createObjectURL(file);
+    }
+    if (nameEl) {
+        nameEl.textContent = file.name + ' · ' + (file.size / (1024*1024)).toFixed(1) + ' MB';
+    }
+    if (box) box.style.display = 'block';
+}
+function handlePostPdfSelect(event) {
+    var file = (event.target.files && event.target.files[0]) || null;
+    if (!file) return;
+    var isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+    if (!isPdf) {
+        alert('يرجى اختيار ملف PDF فقط');
+        event.target.value = '';
+        return;
+    }
+    if (file.size > 40 * 1024 * 1024) {
+        alert('حجم ملف PDF كبير جداً (يفضّل أقل من 25–40 ميجا)');
+        event.target.value = '';
+        return;
+    }
+    postMediaType = 'pdf';
+    postPdfFile = file;
+    postImageFiles = [];
+    postVideoFile = null;
+    var box = document.getElementById('postPdfPreview');
+    var nameEl = document.getElementById('postPdfName');
+    var metaEl = document.getElementById('postPdfMeta');
+    if (nameEl) nameEl.textContent = file.name;
+    if (metaEl) metaEl.textContent = (file.size / (1024*1024)).toFixed(2) + ' MB · PDF';
+    if (box) box.style.display = 'flex';
 }
 function setPostPrivacy(mode) {
     postPrivacy = mode;
@@ -3982,48 +4312,759 @@ function setPostPrivacy(mode) {
     if (mode === 'public') { pubBtn.classList.add('active'); privBtn.classList.remove('active'); }
     else { privBtn.classList.add('active'); pubBtn.classList.remove('active'); }
 }
+
+/** ==================== رفع الملفات (فيديو / PDF) ==================== */
+
+function fileToDataUrl(file, onProgress) {
+    return new Promise(function(resolve, reject) {
+        var reader = new FileReader();
+        reader.onprogress = function(e) {
+            if (e.lengthComputable && typeof onProgress === 'function') {
+                onProgress(Math.max(1, Math.round((e.loaded / e.total) * 50)));
+            }
+        };
+        reader.onload = function() {
+            if (typeof onProgress === 'function') onProgress(55);
+            resolve(reader.result);
+        };
+        reader.onerror = function() { reject(new Error('تعذر قراءة الملف')); };
+        reader.readAsDataURL(file);
+    });
+}
+
+/** حفظ ملف كـ base64 داخل Firestore (موثوق بدون Storage) */
+async function uploadFileToFirestoreBlob(file, folder, onProgress) {
+    if (file.size > 700 * 1024) {
+        throw new Error('الملف أكبر من 700 كيلو — فعّل Firebase Storage للملفات الكبيرة');
+    }
+    var dataUrl = await fileToDataUrl(file, onProgress);
+    if (typeof onProgress === 'function') onProgress(70);
+    var fb = await getFB();
+    var docRef = await fb.addDoc(fb.collection(fb.db, 'mediaBlobs'), {
+        author: currentUserKey || null,
+        folder: folder || 'uploads',
+        name: file.name || 'file',
+        type: file.type || 'application/octet-stream',
+        size: file.size || 0,
+        dataUrl: dataUrl,
+        createdAt: new Date().toISOString()
+    });
+    if (typeof onProgress === 'function') onProgress(100);
+    // رابط داخلي يفهمه عارض المنشور
+    return 'firestore-blob:' + docRef.id;
+}
+
+async function getAuthIdToken() {
+    try {
+        var user = firebase.auth().currentUser;
+        if (!user) return null;
+        return await user.getIdToken(true);
+    } catch (e) { return null; }
+}
+
+function xhrUpload(url, file, headers, formBuilder, onProgress, timeoutMs) {
+    return new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        var done = false;
+        var timer = setTimeout(function() {
+            if (done) return;
+            done = true;
+            try { xhr.abort(); } catch (e) {}
+            reject(new Error('انتهت مهلة الرفع'));
+        }, timeoutMs || 25000);
+
+        xhr.open('POST', url, true);
+        if (headers) {
+            Object.keys(headers).forEach(function(k) {
+                try { xhr.setRequestHeader(k, headers[k]); } catch (e) {}
+            });
+        }
+        if (xhr.upload && typeof onProgress === 'function') {
+            xhr.upload.onprogress = function(e) {
+                if (e.lengthComputable && e.total > 0) {
+                    onProgress(Math.max(1, Math.round((e.loaded / e.total) * 100)));
+                }
+            };
+        }
+        xhr.onload = function() {
+            if (done) return;
+            done = true;
+            clearTimeout(timer);
+            resolve({ status: xhr.status, text: xhr.responseText || '', xhr: xhr });
+        };
+        xhr.onerror = function() {
+            if (done) return;
+            done = true;
+            clearTimeout(timer);
+            reject(new Error('خطأ شبكة'));
+        };
+        if (formBuilder === 'raw') {
+            xhr.send(file);
+        } else {
+            var form = formBuilder ? formBuilder() : (function() {
+                var f = new FormData();
+                f.append('file', file);
+                return f;
+            })();
+            xhr.send(form);
+        }
+    });
+}
+
+async function uploadViaFirebaseRest(file, folder, onProgress) {
+    var token = await getAuthIdToken();
+    if (!token) throw new Error('يجب تسجيل الدخول');
+    var safeName = String(file.name || 'file').replace(/[^\w.\-]+/g, '_');
+    var objectPath = (folder || 'uploads') + '/' + (currentUserKey || 'guest') + '/' + Date.now() + '_' + safeName;
+    var buckets = ['doctorai-84595.appspot.com', 'doctorai-84595.firebasestorage.app'];
+    var lastErr = null;
+    for (var i = 0; i < buckets.length; i++) {
+        var bucket = buckets[i];
+        try {
+            var url = 'https://firebasestorage.googleapis.com/v0/b/' + encodeURIComponent(bucket) + '/o?name=' + encodeURIComponent(objectPath) + '&uploadType=media';
+            var res = await xhrUpload(url, file, {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': file.type || 'application/octet-stream'
+            }, 'raw', onProgress, 20000);
+            if (res.status >= 200 && res.status < 300) {
+                var data = JSON.parse(res.text || '{}');
+                var name = data.name || objectPath;
+                var dlToken = data.downloadTokens || '';
+                var dl = 'https://firebasestorage.googleapis.com/v0/b/' + encodeURIComponent(bucket) + '/o/' + encodeURIComponent(name) + '?alt=media';
+                if (dlToken) dl += '&token=' + encodeURIComponent(dlToken);
+                return dl;
+            }
+            lastErr = new Error(res.text || ('HTTP ' + res.status));
+        } catch (e) {
+            lastErr = e;
+        }
+    }
+    throw lastErr || new Error('فشل Storage');
+}
+
+async function uploadViaFirebaseSdk(file, folder, onProgress) {
+    if (typeof firebase === 'undefined' || !firebase.storage) throw new Error('Storage SDK غير متاح');
+    var safeName = String(file.name || 'file').replace(/[^\w.\-]+/g, '_');
+    var objectPath = (folder || 'uploads') + '/' + (currentUserKey || 'guest') + '/' + Date.now() + '_' + safeName;
+    var ref = firebase.storage().ref(objectPath);
+    return await new Promise(function(resolve, reject) {
+        var done = false;
+        var timer = setTimeout(function() {
+            if (done) return;
+            done = true;
+            reject(new Error('مهلة SDK'));
+        }, 20000);
+        var task = ref.put(file, { contentType: file.type || 'application/octet-stream' });
+        task.on('state_changed',
+            function(snap) {
+                if (typeof onProgress === 'function' && snap.totalBytes) {
+                    onProgress(Math.max(1, Math.round((snap.bytesTransferred / snap.totalBytes) * 100)));
+                }
+            },
+            function(err) {
+                if (done) return;
+                done = true;
+                clearTimeout(timer);
+                reject(err);
+            },
+            function() {
+                if (done) return;
+                done = true;
+                clearTimeout(timer);
+                task.snapshot.ref.getDownloadURL().then(resolve).catch(reject);
+            }
+        );
+    });
+}
+
+async function uploadVideoToCloudflareStream(file, onProgress) {
+    if (!CLOUDFLARE_ACCOUNT_ID || !String(CLOUDFLARE_ACCOUNT_ID).trim()) {
+        throw new Error('لا يوجد CLOUDFLARE_ACCOUNT_ID');
+    }
+    var createRes = await fetch('https://api.cloudflare.com/client/v4/accounts/' + CLOUDFLARE_ACCOUNT_ID + '/stream/direct_upload', {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + CLOUDFLARE_API_TOKEN,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ maxDurationSeconds: 3600, meta: { name: file.name || 'video' } })
+    });
+    var createData = await createRes.json();
+    if (!createData.success || !createData.result || !createData.result.uploadURL) {
+        throw new Error((createData.errors && createData.errors[0] && createData.errors[0].message) || 'فشل Stream');
+    }
+    var uploadURL = createData.result.uploadURL;
+    var uid = createData.result.uid;
+    await new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', uploadURL, true);
+        xhr.onload = function() {
+            if (xhr.status >= 200 && xhr.status < 300) resolve();
+            else reject(new Error('HTTP ' + xhr.status));
+        };
+        xhr.onerror = function() { reject(new Error('شبكة Stream')); };
+        if (xhr.upload && typeof onProgress === 'function') {
+            xhr.upload.onprogress = function(e) {
+                if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+            };
+        }
+        var form = new FormData();
+        form.append('file', file);
+        xhr.send(form);
+    });
+    return {
+        uid: uid,
+        hls: 'https://videodelivery.net/' + uid + '/manifest/video.m3u8',
+        playbackUrl: 'https://videodelivery.net/' + uid + '/manifest/video.m3u8',
+        thumbnail: null
+    };
+}
+
+/**
+ * مسار موحّد:
+ * - PDF/ملفات صغيرة: Firestore base64 (يعمل دائماً بدون Storage)
+ * - ثم Firebase Storage
+ * - للفيديو: Stream إن وُجد ACCOUNT_ID
+ */
+
+/** ==================== رفع عبر Telegram Bot ==================== */
+async function telegramApi(method, formData) {
+    var url = 'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/' + method;
+    var res = await fetch(url, { method: 'POST', body: formData });
+    var data = await res.json();
+    if (!data.ok) {
+        throw new Error((data.description || ('Telegram error ' + (data.error_code || ''))) );
+    }
+    return data.result;
+}
+
+async function resolveTelegramChatId() {
+    if (TELEGRAM_CHAT_ID && String(TELEGRAM_CHAT_ID).trim()) {
+        return String(TELEGRAM_CHAT_ID).trim();
+    }
+    var saved = localStorage.getItem('tg_chat_id');
+    if (saved) {
+        TELEGRAM_CHAT_ID = saved;
+        return saved;
+    }
+    // محاولة اكتشاف محادثة من getUpdates (بعد مراسلة البوت أو إضافة للقناة)
+    try {
+        var res = await fetch('https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/getUpdates?limit=20');
+        var data = await res.json();
+        if (data.ok && data.result && data.result.length) {
+            for (var i = data.result.length - 1; i >= 0; i--) {
+                var u = data.result[i];
+                var chat = (u.message && u.message.chat) || (u.channel_post && u.channel_post.chat) || (u.my_chat_member && u.my_chat_member.chat);
+                if (chat && chat.id) {
+                    TELEGRAM_CHAT_ID = String(chat.id);
+                    localStorage.setItem('tg_chat_id', TELEGRAM_CHAT_ID);
+                    return TELEGRAM_CHAT_ID;
+                }
+            }
+        }
+    } catch (e) {
+        console.warn('getUpdates', e);
+    }
+    return null;
+}
+
+async function uploadFileToTelegram(file, onProgress) {
+    if (!TELEGRAM_BOT_TOKEN) throw new Error('لا يوجد TELEGRAM_BOT_TOKEN');
+    var chatId = await resolveTelegramChatId();
+    if (!chatId) {
+        throw new Error('ضع TELEGRAM_CHAT_ID (معرف القناة). أضف البوت @doctor_ai_videos_bot كمشرف في القناة ثم ضع المعرف مثل -100xxxxxxxxxx');
+    }
+
+    if (typeof onProgress === 'function') onProgress(5);
+
+    var isVideo = (file.type || '').indexOf('video/') === 0 || /\.(mp4|webm|mov|mkv|m4v)$/i.test(file.name || '');
+    var isPdf = (file.type === 'application/pdf') || /\.pdf$/i.test(file.name || '');
+
+    // Telegram Bot API limits ~50MB
+    if (file.size > 49 * 1024 * 1024) {
+        throw new Error('حجم الملف أكبر من حد تيليجرام للبوت (~50 ميجا)');
+    }
+
+    var form = new FormData();
+    form.append('chat_id', chatId);
+    if (isVideo) {
+        form.append('video', file, file.name || 'video.mp4');
+        form.append('supports_streaming', 'true');
+    } else if (isPdf) {
+        form.append('document', file, file.name || 'file.pdf');
+    } else {
+        form.append('document', file, file.name || 'file');
+    }
+    form.append('caption', (file.name || '') + ' · ' + ((file.size || 0) / (1024 * 1024)).toFixed(2) + 'MB');
+
+    if (typeof onProgress === 'function') onProgress(15);
+
+    // XHR للتقدم الحقيقي
+    var result = await new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        var method = isVideo ? 'sendVideo' : 'sendDocument';
+        xhr.open('POST', 'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/' + method, true);
+        var done = false;
+        var timer = setTimeout(function() {
+            if (done) return;
+            done = true;
+            try { xhr.abort(); } catch (e) {}
+            reject(new Error('انتهت مهلة الرفع إلى تيليجرام'));
+        }, 180000);
+        if (xhr.upload && typeof onProgress === 'function') {
+            xhr.upload.onprogress = function(e) {
+                if (e.lengthComputable && e.total > 0) {
+                    onProgress(Math.min(90, 15 + Math.round((e.loaded / e.total) * 75)));
+                }
+            };
+        }
+        xhr.onload = function() {
+            if (done) return;
+            done = true;
+            clearTimeout(timer);
+            try {
+                var data = JSON.parse(xhr.responseText || '{}');
+                if (!data.ok) reject(new Error(data.description || 'فشل تيليجرام'));
+                else resolve(data.result);
+            } catch (e) {
+                reject(new Error('استجابة تيليجرام غير صالحة'));
+            }
+        };
+        xhr.onerror = function() {
+            if (done) return;
+            done = true;
+            clearTimeout(timer);
+            reject(new Error('خطأ شبكة أثناء الرفع إلى تيليجرام'));
+        };
+        xhr.send(form);
+    });
+
+    if (typeof onProgress === 'function') onProgress(92);
+
+    // استخراج file_id
+    var fileId = null;
+    if (result.video && result.video.file_id) fileId = result.video.file_id;
+    else if (result.document && result.document.file_id) fileId = result.document.file_id;
+    else if (result.animation && result.animation.file_id) fileId = result.animation.file_id;
+
+    if (!fileId) throw new Error('لم يُرجع تيليجرام file_id');
+
+    // getFile → رابط مباشر
+    var gf = new FormData();
+    // use GET-style
+    var fileInfoRes = await fetch('https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/getFile?file_id=' + encodeURIComponent(fileId));
+    var fileInfo = await fileInfoRes.json();
+    if (!fileInfo.ok || !fileInfo.result || !fileInfo.result.file_path) {
+        throw new Error((fileInfo.description || 'فشل getFile'));
+    }
+    var filePath = fileInfo.result.file_path;
+    var directUrl = 'https://api.telegram.org/file/bot' + TELEGRAM_BOT_TOKEN + '/' + filePath;
+    if (typeof onProgress === 'function') onProgress(100);
+    return {
+        url: directUrl,
+        fileId: fileId,
+        filePath: filePath,
+        messageId: result.message_id || null,
+        chatId: chatId
+    };
+}
+
+
+async function uploadAnyFile(file, folder, onProgress) {
+    // مخصص للفيديو/PDF عبر تيليجرام فقط — الصور تستخدم uploadImageToImgBB
+    if (!file) throw new Error('لا يوجد ملف');
+    var tg = await uploadFileToTelegram(file, onProgress);
+    if (tg && tg.url) return tg.url;
+    throw new Error('فشل الرفع عبر تيليجرام');
+}
+
+/** تحميل blob من Firestore عند العرض */
+async function resolveFirestoreBlobUrl(ref) {
+    if (!ref || String(ref).indexOf('firestore-blob:') !== 0) return ref;
+    var id = String(ref).replace('firestore-blob:', '');
+    try {
+        var fb = await getFB();
+        var snap = await fb.getDoc(fb.doc(fb.db, 'mediaBlobs', id));
+        if (snap.exists && snap.exists()) {
+            var d = snap.data();
+            return d.dataUrl || null;
+        }
+        // modular API style
+        if (snap.data) {
+            var d2 = snap.data();
+            if (d2) return d2.dataUrl || null;
+        }
+    } catch (e) {
+        console.warn('resolve blob', e);
+    }
+    return null;
+}
+
+/** بناء مشغّل الفيديو (Plyr) */
+
+async function openFirestorePdf(ref) {
+    try {
+        toast && toast('جاري فتح الملف...');
+        var url = await resolveFirestoreBlobUrl(ref);
+        if (!url) { alert('تعذر تحميل الملف'); return; }
+        // data URL → open in new tab
+        var w = window.open();
+        if (w) {
+            w.document.write('<iframe src="' + url + '" style="position:fixed;inset:0;width:100%;height:100%;border:none;"></iframe>');
+        } else {
+            // fallback
+            var a = document.createElement('a');
+            a.href = url;
+            a.target = '_blank';
+            a.click();
+        }
+    } catch (e) {
+        alert('خطأ: ' + (e.message || e));
+    }
+}
+
+function buildTheoPlayerUrl(src) {
+    return src || '';
+}
+
+function isHlsUrl(url) {
+    return /\.m3u8(\?|$)/i.test(String(url || ''));
+}
+
+function escapeAttr(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/** فيديو بجودة واحدة (MP4): إظهار زر الجودة وبداخله الجودة الأصلية */
+function showSingleQuality(player, video) {
+    function apply() {
+        try {
+            var st = player.elements.settings;
+            var item = st.buttons.quality;
+            var menu = st.panels.quality.querySelector('[role="menu"]');
+            var label = video.videoHeight ? Math.min(video.videoWidth, video.videoHeight) + 'p (الأصلية)' : 'الأصلية';
+            menu.innerHTML = '<button type="button" class="plyr__control" role="menuitemradio" aria-checked="true"><span>' + label + '</span></button>';
+            var value = item.querySelector('.plyr__menu__value');
+            if (value) value.textContent = label;
+            item.hidden = false;
+            player.elements.buttons.settings.hidden = false;
+        } catch (e) { console.warn('quality menu', e); }
+    }
+    player.on('ready', apply);
+    player.on('loadedmetadata', apply);
+    video.addEventListener('loadedmetadata', apply);
+    setTimeout(apply, 300);
+}
+
+/* زر التحميل يظهر فقط لصاحب التوثيق البني/الأسود */
+setInterval(function() {
+    if (document.body) document.body.classList.toggle('can-download', currentBadgeType === 'black');
+}, 500);
+
+/** تهيئة Plyr على عناصر الفيديو داخل المنشورات */
+function initPostPlyrPlayers(root) {
+    root = root || document;
+    var nodes = root.querySelectorAll('video.js-plyr-player:not([data-plyr-ready="1"])');
+    if (!nodes.length) return;
+    var controls = [
+        'play-large',
+        'rewind',
+        'play',
+        'progress',
+        'duration',
+        'mute',
+        'volume',
+        'settings',
+        'download',
+        'fullscreen'
+    ];
+    nodes.forEach(function(video) {
+        try {
+            video.setAttribute('data-plyr-ready', '1');
+            var src = video.getAttribute('data-src') || video.getAttribute('src') || '';
+            if (!src) {
+                var sourceEl = video.querySelector('source');
+                if (sourceEl) src = sourceEl.getAttribute('src') || '';
+            }
+            src = String(src || '').trim();
+            if (!src) return;
+
+            var startPlyr = function() {
+                if (typeof Plyr === 'undefined') {
+                    // fallback native
+                    video.setAttribute('controls', 'controls');
+                    if (!video.getAttribute('src') && src) video.src = src;
+                    return;
+                }
+                try {
+                    // مستويات الجودة الحقيقية (متاحة لروابط HLS متعددة الجودات فقط)
+                    var heights = [];
+                    if (video._hls && video._hls.levels) {
+                        video._hls.levels.forEach(function(l) {
+                            if (l.height && heights.indexOf(l.height) < 0) heights.push(l.height);
+                        });
+                        heights.sort(function(a, b) { return b - a; });
+                    }
+                    var qualityConfig = { default: 0, options: [0].concat(heights) };
+                    if (heights.length) {
+                        qualityConfig.forced = true;
+                        qualityConfig.onChange = function(q) {
+                            var h = video._hls;
+                            if (!h) return;
+                            var level = -1;
+                            h.levels.forEach(function(l, i) { if (l.height === Number(q)) level = i; });
+                            h.currentLevel = level;
+                        };
+                    }
+                    var player = new Plyr(video, {
+                        controls: controls,
+                        settings: ['quality'],
+                        quality: qualityConfig,
+                        i18n: { settings: 'الإعدادات', quality: 'الجودة', qualityLabel: { 0: 'تلقائي' } },
+                        hideControls: true,
+                        clickToPlay: true,
+                        ratio: '16:9',
+                        blankVideo: 'https://cdn.plyr.io/static/blank.mp4',
+                        keyboard: { focused: true, global: false },
+                        tooltips: { controls: true, seek: true },
+                        fullscreen: { enabled: true, fallback: true, iosNative: true },
+                        storage: { enabled: false }
+                    });
+                    // إجبار الحاوية على احترام الإطار بعد التهيئة
+                    try {
+                        var wrap = video.closest('.post-video-wrap');
+                        if (wrap && player.elements && player.elements.container) {
+                            player.elements.container.style.width = '100%';
+                            player.elements.container.style.height = '100%';
+                            player.elements.container.style.borderRadius = '0';
+                        }
+                    } catch (x) {}
+                    video._plyr = player;
+                    if (!heights.length) showSingleQuality(player, video);
+                } catch (err) {
+                    console.warn('Plyr init error', err);
+                    video.setAttribute('controls', 'controls');
+                    if (!video.src) video.src = src;
+                }
+            };
+
+            if (isHlsUrl(src) && window.Hls && Hls.isSupported()) {
+                var hls = new Hls({ enableWorker: true, lowLatencyMode: false });
+                hls.loadSource(src);
+                hls.attachMedia(video);
+                video._hls = hls;
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    startPlyr();
+                });
+                hls.on(Hls.Events.ERROR, function(e, data) {
+                    if (data && data.fatal) {
+                        console.warn('HLS fatal', data);
+                        try { hls.destroy(); } catch (x) {}
+                        // try native / direct
+                        video.src = src;
+                        startPlyr();
+                    }
+                });
+            } else if (isHlsUrl(src) && video.canPlayType && video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = src;
+                startPlyr();
+            } else {
+                if (!video.getAttribute('src')) video.src = src;
+                // ensure source tag also set
+                var sEl = video.querySelector('source');
+                if (sEl) sEl.setAttribute('src', src);
+                startPlyr();
+            }
+        } catch (e) {
+            console.warn('initPostPlyrPlayers', e);
+            try {
+                video.setAttribute('controls', 'controls');
+            } catch (x) {}
+        }
+    });
+}
+
+/** بناء HTML لمشغل الفيديو داخل المنشور (بدون iframe — يعمل مباشرة) */
+function buildVideoPlayerHtml(playSrc) {
+    if (!playSrc) return '';
+    var src = String(playSrc).trim();
+    if (!src) return '';
+    var safe = escapeAttr(src);
+    var id = 'plyr_' + Math.random().toString(36).slice(2, 11);
+    // video element — Plyr will enhance it after insert
+    return '<div class="post-video-wrap">' +
+        '<video id="' + id + '" class="js-plyr-player" controlsList="nodownload" oncontextmenu="return false" playsinline preload="metadata" data-src="' + safe + '">' +
+        '<source src="' + safe + '" type="' + (isHlsUrl(src) ? 'application/x-mpegURL' : 'video/mp4') + '">' +
+        'متصفحك لا يدعم تشغيل الفيديو. <a href="' + safe + '" target="_blank" rel="noopener" style="color:#1da1f2;">فتح الرابط</a>' +
+        '</video></div>';
+}
+
+/** توافق قديم — لم يعد يستخدم THEOplayer */
+function buildTheoPlayerPageHtml(playSrc, opts) {
+    // يُرجع نفس عنصر الفيديو المباشر
+    return buildVideoPlayerHtml(playSrc);
+}
+
+/** HTML لعرض وسائط المنشور (صور / فيديو / PDF) */
+function buildPostMediaHtml(pData) {
+    pData = pData || {};
+    var mediaType = pData.mediaType || 'image';
+    var mediaUrls = Array.isArray(pData.mediaUrls) ? pData.mediaUrls : (pData.mediaUrl ? [pData.mediaUrl] : []);
+    mediaUrls = mediaUrls.filter(function(u){ return u && String(u).trim(); });
+
+    if (mediaType === 'video' || pData.videoHls || pData.videoUid) {
+        var playSrc = pData.videoHls || pData.playbackUrl || pData.mediaUrl || (mediaUrls[0] || '');
+        if (!playSrc && pData.videoUid) {
+            playSrc = 'https://videodelivery.net/' + pData.videoUid + '/manifest/video.m3u8';
+        }
+        if (!playSrc) return '';
+        return buildVideoPlayerHtml(playSrc);
+    }
+
+    if (mediaType === 'pdf' || (mediaUrls[0] && (/\.pdf(\?|$)/i.test(mediaUrls[0]) || String(mediaUrls[0]).indexOf('firestore-blob:') === 0 || String(pData.pdfUrl||'').indexOf('firestore-blob:') === 0))) {
+        var pdfUrl = pData.pdfUrl || mediaUrls[0] || '';
+        var pdfName = pData.pdfName || 'ملف PDF';
+        var pdfSize = pData.pdfSize ? (Number(pData.pdfSize) / (1024*1024)).toFixed(2) + ' MB' : '';
+        if (!pdfUrl) return '';
+        var openAttr;
+        if (String(pdfUrl).indexOf('firestore-blob:') === 0) {
+            openAttr = 'href="#" onclick="openFirestorePdf(\'' + String(pdfUrl).replace(/'/g, '') + '\');return false;"';
+        } else {
+            openAttr = 'href="' + String(pdfUrl).replace(/"/g, '&quot;') + '" target="_blank" rel="noopener"';
+        }
+        return '<a class="post-pdf-wrap" ' + openAttr + '>' +
+            '<div class="post-pdf-icon"><i class="fas fa-file-pdf"></i><span class="pdf-label">PDF</span></div>' +
+            '<div class="post-pdf-info"><div class="post-pdf-name">' + escapeHtml(pdfName) + '</div>' +
+            '<div class="post-pdf-meta">' + escapeHtml(pdfSize || 'PDF') + '</div></div>' +
+            '<span class="post-pdf-open">فتح <i class="fas fa-external-link-alt"></i></span></a>';
+    }
+
+    // صور (السلوك السابق)
+    if (mediaUrls.length === 0) return '';
+    if (mediaUrls.length === 1) {
+        return '<div class="post-image-wrap" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" alt=""></div>';
+    }
+    if (mediaUrls.length === 2) {
+        return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + mediaUrls.map(function(u,i){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + i + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
+    }
+    if (mediaUrls.length === 3) {
+        return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;grid-auto-rows:1fr;">' +
+            '<div style="grid-row:span 2;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" style="width:100%;height:100%;object-fit:cover;"></div>' +
+            mediaUrls.slice(1).map(function(u,i){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + (i+1) + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') +
+            '</div>';
+    }
+    var displayUrls = mediaUrls.slice(0, 4);
+    return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + displayUrls.map(function(u,i){
+        var extra = (i === 3 && mediaUrls.length > 4) ? '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.65);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:bold;">+' + (mediaUrls.length - 4) + '</div>' : '';
+        return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;position:relative;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + i + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;">' + extra + '</div>';
+    }).join('') + '</div>';
+}
+
 async function publishPost() {
     if (!currentUserKey) { alert(t('login_first')); return; }
     var captionText = (document.getElementById('postCaption').value || '').trim();
-    // السماح بالنشر نص فقط بدون صور
-    if (postImageFiles.length === 0 && !captionText) {
-        alert('اكتب نصاً أو اختر صورة واحدة على الأقل');
+    var hasImages = postImageFiles && postImageFiles.length > 0;
+    var hasVideo = !!postVideoFile;
+    var hasPdf = !!postPdfFile;
+
+    if (!hasImages && !hasVideo && !hasPdf && !captionText) {
+        alert('اكتب نصاً أو أرفق صورة / مقطع / ملف PDF');
         return;
     }
 
     var btn = document.getElementById('publishPostBtn');
     var originalText = btn.textContent;
     btn.disabled = true;
-    btn.textContent = '...';
+    btn.textContent = 'جاري الرفع...';
 
     try {
-        var mediaUrls = [];
-        for (var i = 0; i < postImageFiles.length; i++) {
-            var url = await uploadImageToImgBB(postImageFiles[i]);
-            mediaUrls.push(url);
-        }
-        var fb = await getFB();
-        await fb.addDoc(fb.collection(fb.db, 'posts'), {
+        var payload = {
             author: currentUserKey,
-            mediaUrls: mediaUrls,
-            mediaUrl: mediaUrls.length > 0 ? mediaUrls[0] : null,
+            mediaUrls: [],
+            mediaUrl: null,
+            mediaType: 'text',
             caption: captionText,
             privacy: postPrivacy,
             likes: [],
             dislikes: [],
             views: 0,
             createdAt: new Date().toISOString(),
-            updatedAt: fb.serverTimestamp()
-        });
+            updatedAt: null
+        };
+
+        // ===== فصل واضح للمسارات =====
+        // فيديو / PDF → تيليجرام فقط
+        // صور → ImgBB فقط
+        if (hasVideo) {
+            if (!postVideoFile) { btn.disabled = false; btn.textContent = originalText || 'نشر'; alert('اختر مقطع فيديو'); return; }
+            btn.textContent = 'رفع المقطع...';
+            var barWrap = document.getElementById('videoUploadProgress');
+            var bar = document.getElementById('videoUploadBar');
+            if (barWrap) barWrap.style.display = 'block';
+            if (bar) bar.style.width = '0%';
+            var tgVid = await uploadFileToTelegram(postVideoFile, function(pct) {
+                if (bar) bar.style.width = pct + '%';
+                btn.textContent = 'رفع المقطع... ' + pct + '%';
+            });
+            var playUrl = (tgVid && tgVid.url) ? tgVid.url : null;
+            if (!playUrl) throw new Error('فشل رفع الفيديو إلى تيليجرام');
+            payload.mediaType = 'video';
+            payload.videoUid = tgVid.fileId || null;
+            payload.videoHls = playUrl;
+            payload.playbackUrl = playUrl;
+            payload.mediaUrl = playUrl;
+            payload.mediaUrls = [playUrl];
+            payload.telegramFileId = tgVid.fileId || null;
+            payload.telegramMessageId = tgVid.messageId || null;
+            if (barWrap) barWrap.style.display = 'none';
+        } else if (hasPdf) {
+            if (!postPdfFile) { btn.disabled = false; btn.textContent = originalText || 'نشر'; alert('اختر ملف PDF'); return; }
+            btn.textContent = 'رفع PDF...';
+            var pBarWrap = document.getElementById('pdfUploadProgress');
+            var pBar = document.getElementById('pdfUploadBar');
+            if (pBarWrap) pBarWrap.style.display = 'block';
+            if (pBar) pBar.style.width = '0%';
+            var tgPdf = await uploadFileToTelegram(postPdfFile, function(pct) {
+                if (pBar) pBar.style.width = pct + '%';
+                btn.textContent = 'رفع PDF... ' + pct + '%';
+            });
+            var pdfUrl = (tgPdf && tgPdf.url) ? tgPdf.url : null;
+            if (!pdfUrl) throw new Error('فشل رفع PDF إلى تيليجرام');
+            payload.mediaType = 'pdf';
+            payload.pdfUrl = pdfUrl;
+            payload.pdfName = postPdfFile.name || 'document.pdf';
+            payload.pdfSize = postPdfFile.size || 0;
+            payload.mediaUrl = pdfUrl;
+            payload.mediaUrls = [pdfUrl];
+            payload.telegramFileId = tgPdf.fileId || null;
+            if (pBarWrap) pBarWrap.style.display = 'none';
+        } else if (hasImages) {
+            // صور فقط عبر ImgBB — لا تيليجرام هنا
+            btn.textContent = 'رفع الصور...';
+            var mediaUrls = [];
+            for (var i = 0; i < postImageFiles.length; i++) {
+                btn.textContent = 'رفع الصور... (' + (i + 1) + '/' + postImageFiles.length + ')';
+                var url = await uploadImageToImgBB(postImageFiles[i]);
+                if (!url) throw new Error('فشل رفع صورة رقم ' + (i + 1));
+                mediaUrls.push(url);
+            }
+            payload.mediaType = 'image';
+            payload.mediaUrls = mediaUrls;
+            payload.mediaUrl = mediaUrls.length > 0 ? mediaUrls[0] : null;
+        }
+
+        var fb = await getFB();
+        payload.updatedAt = fb.serverTimestamp();
+        await fb.addDoc(fb.collection(fb.db, 'posts'), payload);
         alert('تم نشر المنشور بنجاح');
         closeCreatePost();
-        loadPublicPosts();
-        loadMyPosts();
+        if (typeof loadPublicPosts === 'function') loadPublicPosts();
+        if (typeof loadMyPosts === 'function') loadMyPosts();
     } catch (e) {
-        alert('خطأ في النشر: ' + e.message);
+        alert('خطأ في النشر: ' + (e.message || e));
     } finally {
         btn.disabled = false;
-        btn.textContent = originalText;
+        btn.textContent = originalText || 'نشر';
     }
 }
 
@@ -5758,13 +6799,46 @@ function initFooterFeatures() {
 }
 
 /* ==================== INIT ==================== */
-document.addEventListener('DOMContentLoaded', function(){
-    applySavedTheme();
-    applyTranslations();
+/* شاشة التحميل: نسبة مئوية + إخفاء مضمون حتى لو حصل خطأ */
+(function runSmartPreloader() {
+    var el = document.getElementById('loaderPercent');
+    var box = document.getElementById('smart-preloader');
+    var p = 0;
+    var done = false;
+    function finish() {
+        if (done) return;
+        done = true;
+        if (el) el.textContent = '100%';
+        setTimeout(function() {
+            if (box) box.classList.add('done');
+        }, 250);
+    }
+    var iv = setInterval(function() {
+        if (done) { clearInterval(iv); return; }
+        p += Math.random() * 12 + 4;
+        if (p >= 92) p = 92;
+        if (el) el.textContent = Math.floor(p) + '%';
+    }, 120);
+    // إخفاء إجباري بعد أقصى 2.5 ثانية
+    setTimeout(finish, 2500);
+    if (document.readyState === 'complete') {
+        setTimeout(finish, 600);
+    } else {
+        window.addEventListener('load', function() { setTimeout(finish, 400); });
+        document.addEventListener('DOMContentLoaded', function() { setTimeout(finish, 900); });
+    }
+})();
 
+document.addEventListener('DOMContentLoaded', function(){
+    try { applySavedTheme(); } catch (e) { console.warn(e); }
+    try { applyTranslations(); } catch (e) { console.warn(e); }
+
+    // احتياطي إضافي لإخفاء التحميل
     setTimeout(function(){
         var preloader = document.getElementById('smart-preloader');
         if (preloader) preloader.classList.add('done');
+        var lp = document.getElementById('loaderPercent');
+        if (lp) lp.textContent = '100%';
     }, 1200);
 
     var menuToggle = document.getElementById('menu-toggle');
@@ -6033,16 +7107,10 @@ async function loadMyPosts() {
             var mediaUrls = Array.isArray(p.data.mediaUrls) ? p.data.mediaUrls : (p.data.mediaUrl ? [p.data.mediaUrl] : []);
             mediaUrls = mediaUrls.filter(function(u){ return u && String(u).trim(); });
             var mediaHtml = '';
-            
-            if (mediaUrls.length === 1) {
+            if (typeof buildPostMediaHtml === 'function') {
+                mediaHtml = buildPostMediaHtml(p.data);
+            } else if (mediaUrls.length === 1) {
                 mediaHtml = '<div class="post-image-wrap" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" alt=""></div>';
-            } else if (mediaUrls.length === 2) {
-                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + mediaUrls.map(function(u,i){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + i + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
-            } else if (mediaUrls.length === 3) {
-                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;grid-auto-rows:1fr;">' + '<div style="grid-row:span 2;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" style="width:100%;height:100%;object-fit:cover;"></div>' + mediaUrls.slice(1).map(function(u,i){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + (i+1) + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
-            } else if (mediaUrls.length >= 4) {
-                var displayUrls = mediaUrls.slice(0, 4);
-                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + displayUrls.map(function(u,i){ var extra = (i === 3 && mediaUrls.length > 4) ? '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.65);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:bold;">+' + (mediaUrls.length - 4) + '</div>' : ''; return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;position:relative;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + i + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;">' + extra + '</div>'; }).join('') + '</div>';
             }
 
             var dateStr = p.data.createdAt ? new Date(p.data.createdAt).toLocaleString(lang === 'en' ? 'en-US' : 'ar-EG') : '';
@@ -6064,7 +7132,7 @@ async function loadMyPosts() {
                 '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
                 '</div></div>' +
                 (p.data.caption ? 
-    '<div class="post-caption-text" id="caption-' + p.id + '" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:6px 0 2px;font-size:15px;line-height:1.5;white-space:pre-wrap;word-break:break-word;">' + escapeHtml(p.data.caption) + '</div>' +
+    '<div class="post-caption-text" id="caption-' + p.id + '" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:6px 0 2px;font-size:15px;line-height:1.5;white-space:pre-wrap;word-break:break-word;">' + (typeof linkifyMentions==='function'?linkifyMentions(p.data.caption):escapeHtml(p.data.caption)) + '</div>' +
     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">' +
         '<button class="post-caption-toggle" id="toggle-' + p.id + '" onclick="togglePostCaption(\'' + p.id + '\', this)" style="display:none;background:none;border:none;color:var(--tab-active-color);font-weight:bold;font-size:13px;cursor:pointer;padding:0;">عرض المزيد...</button>' +
         '<button class="post-translate-btn" onclick="translatePost(\'' + p.id + '\', \'' + escapeHtml(p.data.caption).replace(/'/g, "\\'") + '\', this)"><i class="fas fa-language"></i> ترجمة</button>' +
@@ -6784,20 +7852,6 @@ if (linkEl) {
         modal.classList.add('active');
     }
 }
-var mediaUrls = Array.isArray(p.data.mediaUrls) ? p.data.mediaUrls : (p.data.mediaUrl ? [p.data.mediaUrl] : []);
-            mediaUrls = mediaUrls.filter(function(u){ return u && String(u).trim(); });
-var mediaHtml = '';
-
-if (mediaUrls.length === 1) {
-    mediaHtml = '<div class="post-image-wrap" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" alt=""></div>';
-} else if (mediaUrls.length === 2) {
-    mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + mediaUrls.map(function(u,i){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + i + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
-} else if (mediaUrls.length === 3) {
-    mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;grid-auto-rows:1fr;">' + '<div style="grid-row:span 2;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" style="width:100%;height:100%;object-fit:cover;"></div>' + mediaUrls.slice(1).map(function(u,i){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + (i+1) + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
-} else {
-    var displayUrls = mediaUrls.slice(0, 4);
-    mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + displayUrls.map(function(u,i){ var extra = (i === 3 && mediaUrls.length > 4) ? '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.65);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:bold;">+' + (mediaUrls.length - 4) + '</div>' : ''; return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;position:relative;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + i + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;">' + extra + '</div>'; }).join('') + '</div>';
-}
 async function loadUserPosts(userKey) {
     var section = document.getElementById('pubPostsSection');
     var container = document.getElementById('pubPostsGrid');
@@ -6840,16 +7894,10 @@ async function loadUserPosts(userKey) {
             var mediaUrls = Array.isArray(p.data.mediaUrls) ? p.data.mediaUrls : (p.data.mediaUrl ? [p.data.mediaUrl] : []);
             mediaUrls = mediaUrls.filter(function(u){ return u && String(u).trim(); });
             var mediaHtml = '';
-            
-            if (mediaUrls.length === 1) {
-                mediaHtml = '<div class="post-image-wrap" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" alt=""></div>';
-            } else if (mediaUrls.length === 2) {
-                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + mediaUrls.map(function(u,idx){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + idx + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
-            } else if (mediaUrls.length === 3) {
-                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;grid-auto-rows:1fr;">' + '<div style="grid-row:span 2;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" style="width:100%;height:100%;object-fit:cover;"></div>' + mediaUrls.slice(1).map(function(u,idx){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + (idx+1) + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
-            } else if (mediaUrls.length >= 4) {
-                var displayUrls = mediaUrls.slice(0, 4);
-                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + displayUrls.map(function(u,idx){ var extra = (idx === 3 && mediaUrls.length > 4) ? '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.65);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:bold;">+' + (mediaUrls.length - 4) + '</div>' : ''; return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;position:relative;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + idx + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;">' + extra + '</div>'; }).join('') + '</div>';
+            if (typeof buildPostMediaHtml === 'function') {
+                mediaHtml = buildPostMediaHtml(p.data);
+            } else if (mediaUrls.length === 1) {
+                mediaHtml = '<div class="post-image-wrap" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/\"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" alt=""></div>';
             }
 
             var commentsCount = 0;
@@ -6877,7 +7925,7 @@ async function loadUserPosts(userKey) {
                 '<div class="post-header-name">' + escapeHtml(author.name || 'مستخدم') + ' ' + badgeHtml + '</div>' +
                 '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
                 '</div></div>' +
-                (p.data.caption ? '<div class="post-caption">' + escapeHtml(p.data.caption) + '</div>' : '') +
+                (p.data.caption ? '<div class="post-caption">' + (typeof linkifyMentions==='function'?linkifyMentions(p.data.caption):escapeHtml(p.data.caption)) + '</div>' : '') +
                 '<div class="post-date"><i class="fas fa-clock"></i> ' + dateStr + '</div>' +
                 mediaHtml +
                 '<div class="post-actions">' +
@@ -6894,6 +7942,8 @@ async function loadUserPosts(userKey) {
         container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>خطأ في تحميل المنشورات</p></div>';
     }
 }
+
+
 async function loadMyPosts() {
     if (!currentUserKey) return;
     var container = document.getElementById('myPostsGrid');
@@ -6935,16 +7985,10 @@ async function loadMyPosts() {
             var mediaUrls = Array.isArray(p.data.mediaUrls) ? p.data.mediaUrls : (p.data.mediaUrl ? [p.data.mediaUrl] : []);
             mediaUrls = mediaUrls.filter(function(u){ return u && String(u).trim(); });
             var mediaHtml = '';
-            
-            if (mediaUrls.length === 1) {
-                mediaHtml = '<div class="post-image-wrap" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" alt=""></div>';
-            } else if (mediaUrls.length === 2) {
-                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + mediaUrls.map(function(u,idx){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + idx + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
-            } else if (mediaUrls.length === 3) {
-                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;grid-auto-rows:1fr;">' + '<div style="grid-row:span 2;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" style="width:100%;height:100%;object-fit:cover;"></div>' + mediaUrls.slice(1).map(function(u,idx){ return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + (idx+1) + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;"></div>'; }).join('') + '</div>';
-            } else if (mediaUrls.length >= 4) {
-                var displayUrls = mediaUrls.slice(0, 4);
-                mediaHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">' + displayUrls.map(function(u,idx){ var extra = (idx === 3 && mediaUrls.length > 4) ? '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.65);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:bold;">+' + (mediaUrls.length - 4) + '</div>' : ''; return '<div style="aspect-ratio:1;overflow:hidden;cursor:pointer;position:relative;" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/"/g,"'") + ',' + idx + ')"><img src="' + u + '" style="width:100%;height:100%;object-fit:cover;">' + extra + '</div>'; }).join('') + '</div>';
+            if (typeof buildPostMediaHtml === 'function') {
+                mediaHtml = buildPostMediaHtml(p.data);
+            } else if (mediaUrls.length === 1) {
+                mediaHtml = '<div class="post-image-wrap" onclick="openImageViewer(' + JSON.stringify(mediaUrls).replace(/\"/g,"'") + ',0)"><img src="' + mediaUrls[0] + '" alt=""></div>';
             }
 
             var commentsCount = 0;
@@ -6972,7 +8016,7 @@ async function loadMyPosts() {
                 '<div class="post-header-name">' + escapeHtml(author.name || 'مستخدم') + ' ' + badgeHtml + '</div>' +
                 '<div class="post-header-username">@' + escapeHtml(author.username || 'user') + '</div>' +
                 '</div></div>' +
-                (p.data.caption ? '<div class="post-caption">' + escapeHtml(p.data.caption) + '</div>' : '') +
+                (p.data.caption ? '<div class="post-caption">' + (typeof linkifyMentions==='function'?linkifyMentions(p.data.caption):escapeHtml(p.data.caption)) + '</div>' : '') +
                 '<div class="post-date"><i class="fas fa-clock"></i> ' + dateStr + '</div>' +
                 mediaHtml +
                 '<div class="post-actions">' +
@@ -6989,6 +8033,8 @@ async function loadMyPosts() {
         container.innerHTML = '<div class="empty-state"><p>حدث خطأ في التحميل</p></div>';
     }
 }
+
+
 // تحميل إعدادات الخصوصية
 if (currentUserKey) {
     getFB().then(fb => {
@@ -7204,9 +8250,7 @@ function enhancePosts() {
         
         var textContent = document.createElement('div');
         textContent.className = 'post-text-content';
-        textContent.textContent = originalText;
-        // linkify after plain text set
-        setTimeout(function(){ if (typeof enhanceCaptionMentions === 'function') enhanceCaptionMentions(); }, 50);
+        textContent.innerHTML = linkifyMentions(originalText);
         
         var linksRow = document.createElement('div');
         linksRow.className = 'post-action-links';
@@ -7249,9 +8293,7 @@ function enhancePosts() {
             e.stopPropagation();
             
             if (transBtn.getAttribute('data-translated') === '1') {
-                textContent.textContent = originalText;
-        // linkify after plain text set
-        setTimeout(function(){ if (typeof enhanceCaptionMentions === 'function') enhanceCaptionMentions(); }, 50);
+                textContent.innerHTML = linkifyMentions(originalText);
                 transBtn.innerHTML = '<i class="fas fa-language"></i> ' + ((localStorage.getItem('lang') === 'en') ? 'Translate' : 'ترجمة');
                 transBtn.setAttribute('data-translated', '0');
                 return;
@@ -7277,7 +8319,7 @@ function enhancePosts() {
                         }
                     }
                     if (translatedText.trim() !== '') {
-                        textContent.textContent = translatedText;
+                        textContent.innerHTML = linkifyMentions(translatedText);
                         transBtn.innerHTML = '<i class="fas fa-undo"></i> ' + (isEn ? 'Show Original' : 'إلغاء الترجمة');
                         transBtn.setAttribute('data-translated', '1');
                     } else {
@@ -7407,8 +8449,7 @@ if (originalRenderProfileView) {
         }
     };
 }
-/* fixed: removed broken orphan social block that caused SyntaxError */
-
+/* removed broken orphan social block */
 
 
 
@@ -7454,47 +8495,6 @@ function renderSocialIcons(data, prefix) {
     }
 }
 
-// عشان نضمن إن الدالة بتتنفذ في الوقت الصح، هنربطها بزرار "حسابي"
-// أول ما المستخدم يدوس على "حسابي" وتفتح الصفحة، الأيقونات هتظهر
-document.addEventListener('DOMContentLoaded', function() {
-    // دالة مساعدة لمراقبة فتح صفحة الحساب
-    var observerProfile = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            // لو صفحة البروفايل الشخصي ظهرت
-            if (document.getElementById('profileView').style.display === 'block') {
-                if (currentUserKey) {
-                    getFB().then(function(fb) {
-                        fb.getDoc(fb.doc(fb.db, 'profiles', currentUserKey)).then(function(snap) {
-                            if (snap.exists()) {
-                                renderSocialIcons(snap.data(), 'pv');
-                            }
-                        });
-                    });
-                }
-            }
-            // لو صفحة بروفايل حد تاني ظهرت
-            if (document.getElementById('publicProfilePage').classList.contains('active')) {
-                if (currentViewingProfileKey) {
-                    getFB().then(function(fb) {
-                        fb.getDoc(fb.doc(fb.db, 'profiles', currentViewingProfileKey)).then(function(snap) {
-                            if (snap.exists()) {
-                                renderSocialIcons(snap.data(), 'pub');
-                            }
-                        });
-                    });
-                }
-            }
-        });
-    });
-
-    // نراقب التغييرات في الصفحة كلها
-    var targetNode = document.body; 
-    var config = { attributes: true, childList: false, subtree: false }; 
-    
-    // دي بنراقب فيها تغيير الـ style (اللي بيحصل لما الصفحة تفتح)
-    observerProfile.observe(targetNode, { attributes: true, attributeFilter: ['style', 'class'], subtree: true });
-});
-storyItem.querySelector('.story-ring')?.classList.add('seen');
 // استدعِ هذه الدالة فور إضافة ستوري جديدة لعنصر الاستوري الخاص بالمستخدم
 function triggerNewStoryRingAnimation(storyItemElement) {
     const ring = storyItemElement?.querySelector('.story-ring');
@@ -8698,389 +9698,371 @@ window.adminFetchByProfileLink = async function() {
     };
 })();
 
+</script>
+<script>
 
-
-/* ===== FIX: جلب روابط قوي + منشن قابل للنقر + لوحة نظيفة ===== */
-function adminParsePostIdFromInput(raw) {
-    raw = String(raw || '').trim();
-    if (!raw) return '';
-    try {
-        // full URL
-        if (/^https?:\/\//i.test(raw) || raw.indexOf('?') >= 0 || raw.indexOf('post=') >= 0) {
-            var str = raw;
-            var m = str.match(/[?&#]post=([^&#]+)/i);
-            if (m && m[1]) return decodeURIComponent(m[1]).trim();
-            try {
-                var u = new URL(str, window.location.href);
-                if (u.searchParams.get('post')) return u.searchParams.get('post').trim();
-            } catch (e) {}
-        }
-    } catch (e) {}
-    // plain id (firestore ids can be various lengths)
-    return raw.replace(/^#/, '').trim();
-}
-
-window.adminFetchByPostLink = async function() {
-    try {
-        if (typeof isAdminType === 'function' && !isAdminType(currentBadgeType)) {
-            alert('غير مصرح'); return;
-        }
-        var raw = (document.getElementById('adminPostLinkInput') || {}).value || '';
-        var postId = adminParsePostIdFromInput(raw);
-        if (!postId) { alert('أدخل رابط المنشور أو الآيدي'); return; }
-        var fb = await getFB();
-        var snap = await fb.getDoc(fb.doc(fb.db, 'posts', postId));
-        if (!snap.exists()) {
-            alert('المنشور غير موجود\nID: ' + postId + '\nتأكد أن الرابط يحتوي post= ثم آيدي كامل');
-            return;
-        }
-        var d = snap.data();
-        var cap = (d.caption || 'منشور بدون نص').slice(0, 80);
-        var elId = document.getElementById('adminSelectedPostId');
-        if (elId) elId.value = postId;
-        var fields = document.getElementById('adminPostStatsFields');
-        if (fields) fields.style.display = 'block';
-        var lab = document.getElementById('adminSelectedPostLabel');
-        if (lab) lab.textContent = 'منشور: ' + cap;
-        function setN(id, v){ var el=document.getElementById(id); if(el) el.value = v; }
-        setN('adminFakeLikes', (typeof d.fakeLikesCount === 'number') ? d.fakeLikesCount : (Array.isArray(d.likes)?d.likes.length:0));
-        setN('adminFakeComments', (typeof d.fakeCommentsCount === 'number') ? d.fakeCommentsCount : (d.commentsCount||0));
-        setN('adminFakeShares', (typeof d.fakeSharesCount === 'number') ? d.fakeSharesCount : (d.sharesCount||0));
-        setN('adminFakeViews', (typeof d.fakeViewsCount === 'number') ? d.fakeViewsCount : (d.views||0));
-        var list = document.getElementById('adminPostsList');
-        if (list) list.innerHTML = '<div style="padding:8px;border:1px solid var(--tab-active-color);border-radius:8px;background:var(--card-bg);"><b>' + (typeof escapeHtml==='function'?escapeHtml(cap):cap) + '</b><div style="font-size:11px;opacity:.7;direction:ltr;">' + postId + '</div></div>';
-        if (d.author) {
-            adminTargetKey = d.author;
-            var t = document.getElementById('adminTarget'); if (t) t.value = d.author;
-            var pSnap = await fb.getDoc(fb.doc(fb.db, 'profiles', d.author));
-            if (pSnap.exists()) {
-                var pd = pSnap.data();
-                var pl = document.getElementById('adminProfileTargetLabel');
-                if (pl) pl.textContent = 'بروفايل مستهدف: ' + (pd.name||'') + ' @' + (pd.username||d.author);
-                setN('adminFakeFollowers', (typeof pd.fakeFollowersCount==='number')?pd.fakeFollowersCount:(Array.isArray(pd.followers)?pd.followers.length:0));
-                setN('adminFakeFollowing', (typeof pd.fakeFollowingCount==='number')?pd.fakeFollowingCount:(Array.isArray(pd.following)?pd.following.length:0));
-            }
-        }
-        alert('تم جلب المنشور بنجاح');
-    } catch (e) {
-        alert('خطأ جلب المنشور: ' + (e && e.message ? e.message : e));
-        console.error(e);
-    }
-};
-
-window.adminFetchByProfileLink = async function() {
-    try {
-        if (typeof isAdminType === 'function' && !isAdminType(currentBadgeType)) {
-            alert('غير مصرح'); return;
-        }
-        var raw = String((document.getElementById('adminProfileLinkInput')||{}).value || '').trim();
-        if (!raw) { alert('أدخل رابط البروفايل أو اسم المستخدم أو البريد'); return; }
-        var ident = raw;
-        var m = raw.match(/[?&#]profile=([^&#]+)/i);
-        if (m && m[1]) ident = decodeURIComponent(m[1]).trim();
-        else {
-            try {
-                if (/^https?:\/\//i.test(raw)) {
-                    var u = new URL(raw);
-                    if (u.searchParams.get('profile')) ident = u.searchParams.get('profile').trim();
-                }
-            } catch (e) {}
-        }
-        ident = ident.replace(/^@/, '').trim();
-        var fb = await getFB();
-        var key = null;
-        if (ident.indexOf('@') > 0) {
-            key = (typeof profileKeyFrom === 'function') ? profileKeyFrom(ident) : ident.toLowerCase();
-            var s1 = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
-            if (!s1.exists()) key = null;
-        }
-        if (!key) {
-            var s2 = await fb.getDoc(fb.doc(fb.db, 'profiles', ident.toLowerCase()));
-            if (s2.exists()) key = s2.id;
-        }
-        if (!key) {
-            try {
-                var q = fb.query(fb.collection(fb.db, 'profiles'), fb.where('username', '==', ident.toLowerCase()));
-                var qs = await fb.getDocs(q);
-                if (!qs.empty) key = qs.docs[0].id;
-            } catch (e) {}
-        }
-        if (!key) {
-            var all = await fb.getDocs(fb.collection(fb.db, 'profiles'));
-            all.forEach(function(ds){
-                var u = (ds.data().username || '').toLowerCase();
-                if (u === ident.toLowerCase()) key = ds.id;
-            });
-        }
-        if (!key) { alert('لم يتم العثور على البروفايل: ' + ident); return; }
-        adminTargetKey = key;
-        var t = document.getElementById('adminTarget'); if (t) t.value = key;
-        var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
-        var d = snap.data();
-        var pl = document.getElementById('adminProfileTargetLabel');
-        if (pl) pl.textContent = 'بروفايل مستهدف: ' + (d.name||'') + ' @' + (d.username||key);
-        function setN(id, v){ var el=document.getElementById(id); if(el) el.value = v; }
-        setN('adminFakeFollowers', (typeof d.fakeFollowersCount==='number')?d.fakeFollowersCount:(Array.isArray(d.followers)?d.followers.length:0));
-        setN('adminFakeFollowing', (typeof d.fakeFollowingCount==='number')?d.fakeFollowingCount:(Array.isArray(d.following)?d.following.length:0));
-        var ef = document.getElementById('adminEditFields');
-        if (ef) ef.style.display = 'block';
-        if (document.getElementById('adminEditName')) document.getElementById('adminEditName').value = d.name || '';
-        if (document.getElementById('adminEditUsername')) document.getElementById('adminEditUsername').value = d.username || '';
-        if (document.getElementById('adminEditBio')) document.getElementById('adminEditBio').value = d.bio || '';
-        if (document.getElementById('adminEditAvatar')) document.getElementById('adminEditAvatar').value = d.avatar || '';
-        if (document.getElementById('adminEditCover')) document.getElementById('adminEditCover').value = d.cover || '';
-        if (typeof adminLoadStatsForTarget === 'function') {
-            try { await adminLoadStatsForTarget(d, key); } catch(e){}
-        }
-        alert('تم جلب البروفايل: @' + (d.username || key));
-    } catch (e) {
-        alert('خطأ جلب البروفايل: ' + (e && e.message ? e.message : e));
-        console.error(e);
-    }
-};
-
-/* منشن @username قابل للنقر — إصدار مُصلَّح */
-function linkifyMentions(escapedText) {
-    if (!escapedText) return '';
-    return String(escapedText).replace(/@([A-Za-z0-9_\.\u0600-\u06FF]+)/g, function(m, user) {
-        var safe = String(user).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-        return '<a href="#" class="mention-link" data-username="' + safe + '" onclick="event.preventDefault();event.stopPropagation();openProfileByUsername(\'' + safe + '\');return false;">@' + user + '</a>';
-    });
-}
-window.openProfileByUsername = async function(username) {
-    username = String(username || '').replace(/^@/, '').trim();
-    if (!username) return;
-    try {
-        if (typeof toast === 'function') toast('جاري فتح @' + username + '...');
-        var fb = await getFB();
-        var lower = username.toLowerCase();
-        var found = null;
-        try {
-            var q = fb.query(fb.collection(fb.db, 'profiles'), fb.where('username', '==', lower));
-            var snap = await fb.getDocs(q);
-            if (!snap.empty) found = snap.docs[0].id;
-        } catch (e1) { console.warn(e1); }
-        if (!found) {
-            try {
-                var q2 = fb.query(fb.collection(fb.db, 'profiles'), fb.where('username', '==', username));
-                var snap2 = await fb.getDocs(q2);
-                if (!snap2.empty) found = snap2.docs[0].id;
-            } catch (e2) { console.warn(e2); }
-        }
-        if (!found) {
-            var all = await fb.getDocs(fb.collection(fb.db, 'profiles'));
-            all.forEach(function(ds) {
-                var u = (ds.data().username || '');
-                if (u.toLowerCase() === lower) found = ds.id;
-            });
-        }
-        if (found) {
-            if (typeof openPublicProfile === 'function') openPublicProfile(found);
-            else alert('فتح البروفايل غير متاح');
-        } else {
-            alert('المستخدم غير موجود: @' + username);
-        }
-    } catch (e) {
-        console.error(e);
-        alert('خطأ: ' + (e && e.message ? e.message : e));
-    }
-};
-function enhanceCaptionMentions() {
-    document.querySelectorAll('.post-caption, .post-caption-text, .post-text-content').forEach(function(el) {
-        if (el.getAttribute('data-mentions') === '1') return;
-        var txt = el.textContent || '';
-        if (txt.indexOf('@') < 0) return;
-        el.setAttribute('data-mentions', '1');
-        var esc = (typeof escapeHtml === 'function') ? escapeHtml(txt) : txt.replace(/[&<>"']/g, function(c) {
-            return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);
-        });
-        el.innerHTML = linkifyMentions(esc);
-    });
-}
-window.enhanceCaptionMentions = enhanceCaptionMentions;
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(enhanceCaptionMentions, 600);
-    setTimeout(enhanceCaptionMentions, 1500);
-    setTimeout(enhanceCaptionMentions, 3500);
-});
-try {
-    if (!window.__mentionObserver) {
-        window.__mentionObserver = new MutationObserver(function() {
-            clearTimeout(window.__mentionTimer);
-            window.__mentionTimer = setTimeout(enhanceCaptionMentions, 200);
-        });
-        window.__mentionObserver.observe(document.body, { childList: true, subtree: true });
-    }
-} catch (e) {}
-
-
-
-/* ===== HARD FIX: أزرار جلب المنشور والبروفايل في لوحة التحكم ===== */
+/* ===== تهيئة مشغّل Plyr بعد ظهور المنشورات ===== */
 (function() {
-  function parsePostId(raw) {
-    raw = String(raw || '').trim();
-    if (!raw) return '';
-    var m = raw.match(/[?&#]post=([^&#]+)/i);
-    if (m && m[1]) { try { return decodeURIComponent(m[1]).trim(); } catch(e){ return m[1].trim(); } }
-    try {
-      if (/^https?:\/\//i.test(raw)) {
-        var u = new URL(raw);
-        if (u.searchParams.get('post')) return u.searchParams.get('post').trim();
-      }
-    } catch(e){}
-    return raw.replace(/^#/, '').trim();
-  }
-  function setVal(id, v) {
-    var el = document.getElementById(id);
-    if (el) el.value = (v === undefined || v === null) ? '' : v;
-  }
-  window.adminFetchByPostLink = async function() {
-    try {
-      if (typeof isAdminType === 'function' && !isAdminType(currentBadgeType) && currentBadgeType !== 'black') {
-        alert('هذه الميزة للتوثيق البني فقط. نوعك الحالي: ' + (currentBadgeType || 'none'));
-        return;
-      }
-      var input = document.getElementById('adminPostLinkInput');
-      if (!input) { alert('حقل رابط المنشور غير موجود في الصفحة'); return; }
-      var postId = parsePostId(input.value);
-      if (!postId) { alert('أدخل رابط المنشور أو الآيدي'); return; }
-      var fb = await getFB();
-      var snap = await fb.getDoc(fb.doc(fb.db, 'posts', postId));
-      if (!snap.exists()) {
-        alert('المنشور غير موجود\nID: ' + postId);
-        return;
-      }
-      var d = snap.data();
-      var cap = (d.caption || 'منشور بدون نص').slice(0, 80);
-      setVal('adminSelectedPostId', postId);
-      var fields = document.getElementById('adminPostStatsFields');
-      if (fields) fields.style.display = 'block';
-      var lab = document.getElementById('adminSelectedPostLabel');
-      if (lab) lab.textContent = 'منشور: ' + cap;
-      setVal('adminFakeLikes', (typeof d.fakeLikesCount === 'number') ? d.fakeLikesCount : (Array.isArray(d.likes) ? d.likes.length : 0));
-      setVal('adminFakeComments', (typeof d.fakeCommentsCount === 'number') ? d.fakeCommentsCount : (d.commentsCount || 0));
-      setVal('adminFakeShares', (typeof d.fakeSharesCount === 'number') ? d.fakeSharesCount : (d.sharesCount || 0));
-      setVal('adminFakeViews', (typeof d.fakeViewsCount === 'number') ? d.fakeViewsCount : (d.views || 0));
-      var list = document.getElementById('adminPostsList');
-      if (list) {
-        list.innerHTML = '<div style="padding:8px;border:1px solid var(--tab-active-color);border-radius:8px;background:var(--card-bg);"><b>' +
-          (typeof escapeHtml === 'function' ? escapeHtml(cap) : cap) +
-          '</b><div style="font-size:11px;opacity:.7;direction:ltr;">' + postId + '</div></div>';
-      }
-      if (d.author) {
-        window.adminTargetKey = d.author;
-        setVal('adminTarget', d.author);
-        var pSnap = await fb.getDoc(fb.doc(fb.db, 'profiles', d.author));
-        if (pSnap.exists()) {
-          var pd = pSnap.data();
-          var pl = document.getElementById('adminProfileTargetLabel');
-          if (pl) pl.textContent = 'بروفايل مستهدف: ' + (pd.name || '') + ' @' + (pd.username || d.author);
-          setVal('adminFakeFollowers', (typeof pd.fakeFollowersCount === 'number') ? pd.fakeFollowersCount : (Array.isArray(pd.followers) ? pd.followers.length : 0));
-          setVal('adminFakeFollowing', (typeof pd.fakeFollowingCount === 'number') ? pd.fakeFollowingCount : (Array.isArray(pd.following) ? pd.following.length : 0));
-          if (typeof adminLoadStatsForTarget === 'function') {
-            try { await adminLoadStatsForTarget(pd, d.author); } catch(e){}
-            // restore post selection after load
-            setVal('adminSelectedPostId', postId);
-            if (lab) lab.textContent = 'منشور: ' + cap;
-            if (fields) fields.style.display = 'block';
-            setVal('adminFakeLikes', (typeof d.fakeLikesCount === 'number') ? d.fakeLikesCount : (Array.isArray(d.likes) ? d.likes.length : 0));
-            setVal('adminFakeComments', (typeof d.fakeCommentsCount === 'number') ? d.fakeCommentsCount : (d.commentsCount || 0));
-            setVal('adminFakeShares', (typeof d.fakeSharesCount === 'number') ? d.fakeSharesCount : (d.sharesCount || 0));
-            setVal('adminFakeViews', (typeof d.fakeViewsCount === 'number') ? d.fakeViewsCount : (d.views || 0));
-          }
-        }
-      }
-      alert('تم جلب المنشور بنجاح');
-    } catch (e) {
-      console.error(e);
-      alert('خطأ جلب المنشور: ' + (e && e.message ? e.message : e));
+    function runInit() {
+        try { initPostPlyrPlayers(document); } catch (e) { console.warn(e); }
     }
-  };
-
-  window.adminFetchByProfileLink = async function() {
-    try {
-      if (typeof isAdminType === 'function' && !isAdminType(currentBadgeType) && currentBadgeType !== 'black') {
-        alert('هذه الميزة للتوثيق البني فقط. نوعك الحالي: ' + (currentBadgeType || 'none'));
-        return;
-      }
-      var input = document.getElementById('adminProfileLinkInput');
-      if (!input) { alert('حقل رابط البروفايل غير موجود'); return; }
-      var raw = String(input.value || '').trim();
-      if (!raw) { alert('أدخل رابط البروفايل أو اسم المستخدم أو البريد'); return; }
-      var ident = raw;
-      var m = raw.match(/[?&#]profile=([^&#]+)/i);
-      if (m && m[1]) {
-        try { ident = decodeURIComponent(m[1]).trim(); } catch(e){ ident = m[1].trim(); }
-      } else {
-        try {
-          if (/^https?:\/\//i.test(raw)) {
-            var u = new URL(raw);
-            if (u.searchParams.get('profile')) ident = u.searchParams.get('profile').trim();
-          }
-        } catch(e){}
-      }
-      ident = ident.replace(/^@/, '').trim();
-      var fb = await getFB();
-      var key = null;
-      if (ident.indexOf('@') > 0) {
-        key = (typeof profileKeyFrom === 'function') ? profileKeyFrom(ident) : ident.toLowerCase();
-        var s1 = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
-        if (!s1.exists()) key = null;
-      }
-      if (!key) {
-        var s2 = await fb.getDoc(fb.doc(fb.db, 'profiles', ident.toLowerCase()));
-        if (s2.exists()) key = s2.id;
-      }
-      if (!key) {
-        try {
-          var q = fb.query(fb.collection(fb.db, 'profiles'), fb.where('username', '==', ident.toLowerCase()));
-          var qs = await fb.getDocs(q);
-          if (!qs.empty) key = qs.docs[0].id;
-        } catch(e){}
-      }
-      if (!key) {
-        try {
-          var q3 = fb.query(fb.collection(fb.db, 'profiles'), fb.where('username', '==', ident));
-          var qs3 = await fb.getDocs(q3);
-          if (!qs3.empty) key = qs3.docs[0].id;
-        } catch(e){}
-      }
-      if (!key) {
-        var all = await fb.getDocs(fb.collection(fb.db, 'profiles'));
-        all.forEach(function(ds) {
-          var u = (ds.data().username || '');
-          if (u.toLowerCase() === ident.toLowerCase()) key = ds.id;
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(runInit, 400);
+            setTimeout(runInit, 1500);
         });
-      }
-      if (!key) { alert('لم يتم العثور على البروفايل: ' + ident); return; }
-      window.adminTargetKey = key;
-      setVal('adminTarget', key);
-      var snap = await fb.getDoc(fb.doc(fb.db, 'profiles', key));
-      var d = snap.data();
-      var pl = document.getElementById('adminProfileTargetLabel');
-      if (pl) pl.textContent = 'بروفايل مستهدف: ' + (d.name || '') + ' @' + (d.username || key);
-      setVal('adminFakeFollowers', (typeof d.fakeFollowersCount === 'number') ? d.fakeFollowersCount : (Array.isArray(d.followers) ? d.followers.length : 0));
-      setVal('adminFakeFollowing', (typeof d.fakeFollowingCount === 'number') ? d.fakeFollowingCount : (Array.isArray(d.following) ? d.following.length : 0));
-      var sec = document.getElementById('adminStatsSection');
-      if (sec) { sec.style.display = 'block'; sec.style.visibility = 'visible'; }
-      var ef = document.getElementById('adminEditFields');
-      if (ef) ef.style.display = 'block';
-      setVal('adminEditName', d.name || '');
-      setVal('adminEditUsername', d.username || '');
-      setVal('adminEditBio', d.bio || '');
-      setVal('adminEditAvatar', d.avatar || '');
-      setVal('adminEditCover', d.cover || '');
-      if (typeof adminLoadStatsForTarget === 'function') {
-        try { await adminLoadStatsForTarget(d, key); } catch(e){ console.warn(e); }
-      }
-      alert('تم جلب البروفايل: @' + (d.username || key));
-    } catch (e) {
-      console.error(e);
-      alert('خطأ جلب البروفايل: ' + (e && e.message ? e.message : e));
+    } else {
+        setTimeout(runInit, 400);
+        setTimeout(runInit, 1500);
     }
-  };
+    try {
+        var mo = new MutationObserver(function() {
+            clearTimeout(window.__plyrInitTimer);
+            window.__plyrInitTimer = setTimeout(runInit, 250);
+        });
+        mo.observe(document.body, { childList: true, subtree: true });
+    } catch (e) {}
+    // wrap common loaders
+    ['loadPublicPosts', 'loadMyPosts', 'loadUserPosts'].forEach(function(fn) {
+        if (typeof window[fn] === 'function') {
+            var orig = window[fn];
+            window[fn] = async function() {
+                var r = await orig.apply(this, arguments);
+                setTimeout(runInit, 300);
+                setTimeout(runInit, 900);
+                return r;
+            };
+        }
+    });
 })();
 
 </script>
+
+<script>
+/* APP FIX PACK stable-order */
+(function(){
+  // Fixed order so buttons never jump
+  var PLATFORM_ORDER = ['instagram','whatsapp','facebook','twitter','tiktok','youtube','telegram','snapchat','linkedin','discord','reddit','github','twitch','pinterest','threads'];
+  var SOCIAL_PLATFORMS = {
+    instagram: { name: 'Instagram', icon: 'fab fa-instagram', color: '#E1306C', build: function(v){ return 'https://instagram.com/'+encodeURIComponent(v); } },
+    whatsapp:  { name: 'WhatsApp', icon: 'fab fa-whatsapp', color: '#25D366', build: function(v){ var d=String(v).replace(/\D/g,''); return d?('https://wa.me/'+d):''; } },
+    facebook:  { name: 'Facebook', icon: 'fab fa-facebook', color: '#1877F2', build: function(v){ return 'https://facebook.com/'+encodeURIComponent(v); } },
+    twitter:   { name: 'Twitter', icon: 'fab fa-twitter', color: '#1DA1F2', build: function(v){ return 'https://twitter.com/'+encodeURIComponent(v); } },
+    tiktok:    { name: 'TikTok', icon: 'fab fa-tiktok', color: '#111', build: function(v){ return 'https://www.tiktok.com/@'+encodeURIComponent(v); } },
+    youtube:   { name: 'YouTube', icon: 'fab fa-youtube', color: '#FF0000', build: function(v){ return /^https?:/i.test(v)?v:('https://www.youtube.com/'+encodeURIComponent(v)); } },
+    telegram:  { name: 'Telegram', icon: 'fab fa-telegram', color: '#229ED9', build: function(v){ return 'https://t.me/'+encodeURIComponent(v); } },
+    snapchat:  { name: 'Snapchat', icon: 'fab fa-snapchat', color: '#C9B400', build: function(v){ return 'https://www.snapchat.com/add/'+encodeURIComponent(v); } },
+    linkedin:  { name: 'LinkedIn', icon: 'fab fa-linkedin', color: '#0A66C2', build: function(v){ return 'https://www.linkedin.com/in/'+encodeURIComponent(v); } },
+    discord:   { name: 'Discord', icon: 'fab fa-discord', color: '#5865F2', build: function(v){ return /^https?:/i.test(v)?v:('https://discord.com/users/'+encodeURIComponent(v)); } },
+    reddit:    { name: 'Reddit', icon: 'fab fa-reddit', color: '#FF4500', build: function(v){ return 'https://www.reddit.com/user/'+encodeURIComponent(v); } },
+    github:    { name: 'GitHub', icon: 'fab fa-github', color: '#555', build: function(v){ return 'https://github.com/'+encodeURIComponent(v); } },
+    twitch:    { name: 'Twitch', icon: 'fab fa-twitch', color: '#9146FF', build: function(v){ return 'https://www.twitch.tv/'+encodeURIComponent(v); } },
+    pinterest: { name: 'Pinterest', icon: 'fab fa-pinterest', color: '#E60023', build: function(v){ return 'https://www.pinterest.com/'+encodeURIComponent(v); } },
+    threads:   { name: 'Threads', icon: 'fab fa-threads', color: '#111', build: function(v){ return 'https://www.threads.net/@'+encodeURIComponent(v); } }
+  };
+
+  function stripHandle(val){
+    if(!val) return '';
+    val=String(val).trim();
+    try{
+      if(/^https?:\/\//i.test(val)){
+        var u=new URL(val);
+        var parts=u.pathname.split('/').filter(Boolean);
+        if(u.hostname.indexOf('wa.me')>=0) return (parts[0]||'').replace(/\D/g,'');
+        if(parts.length) return parts[parts.length-1].replace(/^@/,'');
+      }
+    }catch(e){}
+    return val.replace(/^@/,'').trim();
+  }
+  function ensureHttps(u){
+    u=String(u||'').trim();
+    if(!u) return '';
+    if(/^https?:\/\//i.test(u)) return u;
+    return 'https://'+u.replace(/^\/+/,'');
+  }
+
+  // Keep insertion order stable via array of keys
+  window.__profileSocials = window.__profileSocials || {};
+  window.__profileSocialOrder = window.__profileSocialOrder || [];
+
+  function orderedKeys(map){
+    var out=[];
+    // prefer saved order
+    (window.__profileSocialOrder||[]).forEach(function(k){
+      if(map[k] && SOCIAL_PLATFORMS[k] && out.indexOf(k)<0) out.push(k);
+    });
+    // then fixed platform order for any remaining
+    PLATFORM_ORDER.forEach(function(k){
+      if(map[k] && SOCIAL_PLATFORMS[k] && out.indexOf(k)<0) out.push(k);
+    });
+    return out;
+  }
+
+  function syncHidden(){
+    var s=window.__profileSocials||{};
+    function set(id,v){ var el=document.getElementById(id); if(el) el.value=v||''; }
+    set('pfInstagram', s.instagram||'');
+    set('pfWhatsapp', s.whatsapp||'');
+    set('pfFacebook', s.facebook||'');
+    set('pfTwitter', s.twitter||'');
+  }
+
+  window.renderSocialEditorList=function(){
+    var list=document.getElementById('pfSocialList');
+    if(!list) return;
+    list.innerHTML='';
+    var s=window.__profileSocials||{};
+    orderedKeys(s).forEach(function(k){
+      var p=SOCIAL_PLATFORMS[k];
+      var row=document.createElement('div');
+      row.className='pf-social-item';
+      row.innerHTML='<i class="'+p.icon+'" style="color:'+p.color+'"></i><span class="pf-s-name">'+p.name+'</span><span class="pf-s-val">'+String(s[k]).replace(/</g,'&lt;')+'</span><button type="button" onclick="removeSocialFromEditor(\''+k+'\')"><i class="fas fa-trash"></i></button>';
+      list.appendChild(row);
+    });
+    syncHidden();
+  };
+
+  window.addSocialFromEditor=function(){
+    var sel=document.getElementById('pfSocialSelect');
+    var inp=document.getElementById('pfSocialValue');
+    if(!sel||!inp) return;
+    var k=sel.value;
+    var v=stripHandle(inp.value);
+    if(!k){ alert('اختر منصة أولاً'); return; }
+    if(!v){ alert('اكتب اليوزرنيم أو الرابط'); return; }
+    var isNew=!window.__profileSocials[k];
+    window.__profileSocials[k]=v;
+    if(isNew){
+      if(!window.__profileSocialOrder) window.__profileSocialOrder=[];
+      if(window.__profileSocialOrder.indexOf(k)<0) window.__profileSocialOrder.push(k);
+    }
+    inp.value='';
+    sel.value='';
+    renderSocialEditorList();
+  };
+
+  window.removeSocialFromEditor=function(k){
+    if(window.__profileSocials) delete window.__profileSocials[k];
+    if(window.__profileSocialOrder){
+      window.__profileSocialOrder=window.__profileSocialOrder.filter(function(x){ return x!==k; });
+    }
+    // clear legacy hidden fields so save does not resurrect removed platforms
+    var hiddenMap = {instagram:'pfInstagram',whatsapp:'pfWhatsapp',facebook:'pfFacebook',twitter:'pfTwitter'};
+    if (hiddenMap[k]) {
+      var el = document.getElementById(hiddenMap[k]);
+      if (el) el.value = '';
+    }
+    renderSocialEditorList();
+    // live-update profile chips if visible
+    try {
+      var payload = { socials: Object.assign({}, window.__profileSocials||{}), socialOrder: (window.__profileSocialOrder||[]).slice() };
+      PLATFORM_ORDER.forEach(function(pk){ payload[pk] = (window.__profileSocials&&window.__profileSocials[pk]) || ''; });
+      renderSocialIcons(payload, 'pv');
+    } catch(e) {}
+  };
+
+  window.loadSocialsIntoEditor=function(data){
+    var s={};
+    var order=[];
+    if(!data) data={};
+    if(Array.isArray(data.socialOrder)) order=data.socialOrder.slice();
+    if(data.socials && typeof data.socials==='object'){
+      Object.keys(data.socials).forEach(function(k){ if(data.socials[k]) s[k]=stripHandle(data.socials[k]); });
+    }
+    PLATFORM_ORDER.forEach(function(k){
+      if(data[k] && !s[k]) s[k]=stripHandle(data[k]);
+    });
+    // build order: saved order first, then platform order
+    var finalOrder=[];
+    order.forEach(function(k){ if(s[k] && finalOrder.indexOf(k)<0) finalOrder.push(k); });
+    PLATFORM_ORDER.forEach(function(k){ if(s[k] && finalOrder.indexOf(k)<0) finalOrder.push(k); });
+    window.__profileSocials=s;
+    window.__profileSocialOrder=finalOrder;
+    window.__socialsLoadedFor=currentUserKey;
+    renderSocialEditorList();
+  };
+
+  window.renderSocialIcons=function(data, prefix){
+    var container=document.getElementById(prefix+'SocialLinks');
+    if(!container) return;
+    // Build map
+    var s={};
+    var order=[];
+    if(data && Array.isArray(data.socialOrder)) order=data.socialOrder.slice();
+    if(data && data.socials && typeof data.socials==='object'){
+      Object.keys(data.socials).forEach(function(k){ if(data.socials[k]) s[k]=data.socials[k]; });
+    }
+    if(data){
+      PLATFORM_ORDER.forEach(function(k){ if(data[k] && !s[k]) s[k]=data[k]; });
+    }
+    // Stable key list
+    var keys=[];
+    order.forEach(function(k){ if(s[k] && SOCIAL_PLATFORMS[k] && keys.indexOf(k)<0) keys.push(k); });
+    PLATFORM_ORDER.forEach(function(k){ if(s[k] && SOCIAL_PLATFORMS[k] && keys.indexOf(k)<0) keys.push(k); });
+
+    // Avoid flicker: only rebuild if content changed
+    var signature=keys.map(function(k){ return k+':'+(s[k]||''); }).join('|');
+    if(container.getAttribute('data-sig')===signature && container.children.length===keys.length){
+      container.style.setProperty('display', keys.length?'flex':'none','important');
+      return;
+    }
+    container.setAttribute('data-sig', signature);
+    container.innerHTML='';
+    if(!keys.length){
+      container.style.setProperty('display','none','important');
+      return;
+    }
+    keys.forEach(function(k){
+      var p=SOCIAL_PLATFORMS[k];
+      var raw=String(s[k]||'');
+      var val=stripHandle(raw);
+      var url=/^https?:\/\//i.test(raw)?raw:p.build(val);
+      if(!url) return;
+      var a=document.createElement('a');
+      a.className='social-chip';
+      a.setAttribute('data-k',k);
+      a.href=url;
+      a.target='_blank';
+      a.rel='noopener noreferrer';
+      a.innerHTML='<i class="'+p.icon+'"></i><span>'+p.name+'</span>';
+      a.addEventListener('click', function(e){
+        e.preventDefault(); e.stopPropagation();
+        window.open(url,'_blank','noopener');
+      });
+      container.appendChild(a);
+    });
+    container.style.setProperty('display','flex','important');
+  };
+
+  // الإشارة إلى الحساب @username
+  window.linkifyMentions=function(text){
+    var safe=String(text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return safe.replace(/(^|[^A-Za-z0-9_.\/@\u0621-\u065F])@([A-Za-z0-9_.\u0621-\u065F]*[A-Za-z0-9_\u0621-\u065F])/g,
+      function(m,before,user){ return before+'<a class="mention-link" data-mention="'+user+'" dir="auto">@'+user+'</a>'; });
+  };
+  window.openProfileByUsername=async function(username){
+    var name=String(username||'').replace(/^@+/,'').trim();
+    if(!name) return;
+    try{
+      var fb=await getFB();
+      var col=fb.collection(fb.db,'profiles');
+      var key=null;
+      var tries=[name, name.toLowerCase()];
+      for(var i=0;i<tries.length && !key;i++){
+        var q=await fb.getDocs(fb.query(col, fb.where('username','==',tries[i])));
+        if(!q.empty) key=q.docs[0].id;
+      }
+      if(!key){
+        // بحث بدون حساسية لحالة الأحرف
+        var all=await fb.getDocs(col);
+        all.forEach(function(d){
+          var u=String(d.data().username||'').replace(/^@+/,'').trim().toLowerCase();
+          if(!key && u===name.toLowerCase()) key=d.id;
+        });
+      }
+      if(!key){ alert('لم يتم العثور على الحساب @'+name); return; }
+      if(typeof closeCommentsSheet==='function') closeCommentsSheet();
+      window.openPublicProfile(key);
+    }catch(e){ console.warn(e); alert('تعذر فتح الحساب، حاول مرة أخرى'); }
+  };
+  document.addEventListener('click', function(e){
+    var a=e.target.closest && e.target.closest('.mention-link');
+    if(!a) return;
+    e.preventDefault(); e.stopPropagation();
+    window.openProfileByUsername(a.getAttribute('data-mention'));
+  }, true);
+
+  // حفظ واحد فقط: mergeFields تستبدل الحقل socials بالكامل فتختفي المنصات المحذوفة
+  window.saveProfile=async function(){
+    if(!currentUserKey){ alert('يجب تسجيل الدخول أولاً'); return; }
+    try{
+      var fb=await getFB();
+      function val(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
+      var dc=document.getElementById('pfDisableChat');
+      var payload={
+        name: val('pfName'), username: val('pfUsername').replace(/^@+/,''), bio: val('pfBio'),
+        website: val('pfWebsite'), email: val('pfEmail'), privacy: val('pfPrivacy'),
+        disableChat: dc?dc.checked:false, hideFromSearch: false,
+        updatedAt: fb.serverTimestamp()
+      };
+      // لا نلمس روابط التواصل إلا إذا تم تحميلها في المحرر (حتى لا تُمسح بالخطأ)
+      if(window.__socialsLoadedFor===currentUserKey){
+        var socials={};
+        PLATFORM_ORDER.forEach(function(k){
+          var v=(window.__profileSocials||{})[k];
+          if(v) socials[k]=v;
+          payload[k]=v||'';
+        });
+        payload.socials=socials;
+        payload.socialOrder=(window.__profileSocialOrder||[]).filter(function(k){ return !!socials[k]; });
+      }
+      await fb.setDoc(fb.doc(fb.db,'profiles',currentUserKey), payload, { mergeFields: Object.keys(payload) });
+      alert('تم حفظ البيانات بنجاح');
+      renderProfileView();
+      showProfileView();
+    }catch(e){ alert(e.message||String(e)); }
+  };
+
+  var _sep=window.showEditProfile;
+  if(typeof _sep==='function'){
+    window.showEditProfile=function(){
+      _sep.apply(this,arguments);
+      if(!currentUserKey) return;
+      getFB().then(function(fb){ return fb.getDoc(fb.doc(fb.db,'profiles',currentUserKey)); })
+        .then(function(snap){ if(snap&&snap.exists()) loadSocialsIntoEditor(snap.data()); })
+        .catch(function(){});
+    };
+  }
+
+  var _rpv=window.renderProfileView;
+  if(typeof _rpv==='function'){
+    window.renderProfileView=function(){
+      _rpv.apply(this,arguments);
+      if(!currentUserKey) return;
+      getFB().then(function(fb){ return fb.getDoc(fb.doc(fb.db,'profiles',currentUserKey)); })
+        .then(function(snap){
+          if(!snap||!snap.exists()) return;
+          var d=snap.data();
+          renderSocialIcons(d,'pv');
+          if(typeof getDisplayFollowCounts==='function'){
+            var counts=getDisplayFollowCounts(d);
+            var fc=document.getElementById('pvFollowersCount');
+            var gc=document.getElementById('pvFollowingCount');
+            if(fc) fc.textContent=(typeof formatCountNum==='function')?formatCountNum(counts.followers):counts.followers;
+            if(gc) gc.textContent=(typeof formatCountNum==='function')?formatCountNum(counts.following):counts.following;
+          }
+          if(d.website){
+            var a=document.getElementById('pvWebsite');
+            var row=document.getElementById('pvWebsiteRow');
+            if(a&&row){
+              var href=ensureHttps(d.website);
+              a.textContent=String(d.website).replace(/^https?:\/\//i,'');
+              a.href=href; a.target='_blank'; a.rel='noopener noreferrer';
+              row.style.display='block';
+            }
+          }
+        }).catch(function(){});
+    };
+  }
+
+  var _opp=window.openPublicProfile;
+  if(typeof _opp==='function'){
+    window.openPublicProfile=async function(targetKey){
+      await _opp.apply(this,arguments);
+      try{
+        var key=String(targetKey||(typeof currentViewingProfileKey!=='undefined'?currentViewingProfileKey:'')||'').toLowerCase().trim();
+        if(!key) return;
+        var fb=await getFB();
+        var snap=await fb.getDoc(fb.doc(fb.db,'profiles',key));
+        if(!snap.exists()) return;
+        renderSocialIcons(snap.data(),'pub');
+      }catch(e){}
+    };
+  }
+
+  console.log('[APP FIX PACK] stable-order + mentions ready');
+})();
+</script>
+
 </body>
 </html>
