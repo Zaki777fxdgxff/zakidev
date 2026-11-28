@@ -1639,7 +1639,7 @@
 #adminModal #adminPostsList, #adminModal #adminAppealsList, #adminModal #adminList { max-height: none !important; overflow: visible !important; }
 </style>
 <style>
-body:not(.can-download) .plyr [data-plyr="download"] { display: none !important; }
+.plyr [data-plyr="download"], .post-fake-stats-btn { display: none !important; }
 .plyr__menu__container { max-height: 150px; overflow-y: auto; }
 @media (max-width: 600px) { .post-video-wrap .plyr__volume input[type="range"] { display: none !important; } .post-video-wrap .plyr__volume { min-width: 0 !important; width: auto !important; flex: 0 0 auto !important; } }
 </style>
@@ -2607,7 +2607,7 @@ body:not(.can-download) .plyr [data-plyr="download"] { display: none !important;
                 <p id="postVideoName" style="font-size:12px;opacity:0.7;margin-top:6px;"></p>
             </div>
             <div class="upload-progress-bar" id="videoUploadProgress"><div class="bar" id="videoUploadBar"></div></div>
-            <p style="font-size:11px;opacity:0.55;margin-top:6px;">الصيغ المدعومة: MP4, WebM, MOV · الحد الأقصى تقريباً 200 ميجا</p>
+            <p style="font-size:11px;opacity:0.55;margin-top:6px;">الصيغ المدعومة: MP4 (الأفضل), WebM, MOV</p>
         </div>
 
         <!-- PDF -->
@@ -2625,7 +2625,7 @@ body:not(.can-download) .plyr [data-plyr="download"] { display: none !important;
                 </div>
             </div>
             <div class="upload-progress-bar" id="pdfUploadProgress"><div class="bar" id="pdfUploadBar"></div></div>
-            <p style="font-size:11px;opacity:0.55;margin-top:6px;">ملفات PDF فقط · يُفضّل أقل من 25 ميجا</p>
+            <p style="font-size:11px;opacity:0.55;margin-top:6px;">ملفات PDF فقط · حتى 20 ميجا</p>
         </div>
 
         <div class="profile-field"><label>النص / الوصف</label><textarea id="postCaption" rows="3" placeholder="اكتب منشوراً نصياً أو أضف وسائط..."></textarea></div>
@@ -2636,6 +2636,7 @@ body:not(.can-download) .plyr [data-plyr="download"] { display: none !important;
                 <button id="postPrivacyPrivate" onclick="setPostPrivacy('private')"><i class="fas fa-lock"></i> خاص</button>
             </div>
         </div>
+        <label class="zx-check" style="margin:0 0 12px"><input type="checkbox" id="postAllowDownload"> السماح للآخرين بتنزيل الصور والمقاطع</label>
         <div class="modal-actions-sticky">
             <div style="display:flex;gap:8px;">
             <button onclick="publishPost()" id="publishPostBtn" style="flex:1;padding:12px;border:none;border-radius:10px;background:var(--tab-active-color);color:#fff;font-weight:bold;font-size:15px;cursor:pointer;">نشر</button>
@@ -3109,7 +3110,7 @@ function isSwipeIgnored(target) {
     if (target.closest('#imageViewer') || target.closest('#storyViewer')) return true;
     if (target.closest('.categories-bar') || target.closest('#storiesBar')) return true;
     if (target.closest('#postActionSheet')) return true;
-    if (target.closest('#commentsSheet')) return true;
+    if (target.closest('#commentsSheet, #zxReels, #zxDetail, .zx-modal, #shareSheet')) return true;
     return false;
 }
 
@@ -3605,20 +3606,6 @@ function showProfileView() {
     document.getElementById('profileView').style.display = 'block';
     renderProfileView();
     if (currentUserKey) loadMyPosts();
-    // ✨ تحديث عدادات التعليقات في ملفي الشخصي
-setTimeout(async function() {
-    var fb = await getFB();
-    var allCommentBtns = document.querySelectorAll('.post-action-btn .count[id^="comments-count-"]');
-    for (var i = 0; i < allCommentBtns.length; i++) {
-        var btn = allCommentBtns[i];
-        var postId = btn.id.replace('comments-count-', '');
-        try {
-            var cQ = fb.query(fb.collection(fb.db, 'comments'), fb.where('postId', '==', postId));
-            var cSnap = await fb.getDocs(cQ);
-            btn.textContent = cSnap.size;
-        } catch (e) {}
-    }
-}, 1000);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     
     // ✨ الضغط على الصورة الدائرية يفتحها في نافذة
@@ -4221,6 +4208,7 @@ function openCreatePost() {
     var pp = document.getElementById('postPdfPreview'); if (pp) pp.style.display = 'none';
     setPostMediaType('image');
     setPostPrivacy('public');
+    var dl = document.getElementById('postAllowDownload'); if (dl) dl.checked = localStorage.getItem('allowDownloadDefault') === 'on';
     var btn = document.querySelector('#createPostModal button[onclick*="postImageInput"]');
     if (btn) btn.innerHTML = '<i class="fas fa-image"></i> ' + (typeof t === 'function' ? t('choose_images') : 'اختيار صور') + ' (0/5)';
 }
@@ -4260,8 +4248,9 @@ function handlePostVideoSelect(event) {
         event.target.value = '';
         return;
     }
-    if (file.size > 200 * 1024 * 1024) {
-        alert('حجم الفيديو أكبر من 200 ميجا. استخدم ملفاً أصغر أو tus للملفات الكبيرة.');
+    var limit = cloudinaryReady() ? 2048 * 1024 * 1024 : TELEGRAM_MAX;
+    if (file.size > limit) {
+        alert(tooBigMessage(file));
         event.target.value = '';
         return;
     }
@@ -4568,7 +4557,60 @@ async function resolveTelegramChatId() {
     return null;
 }
 
+/* ====== استضافة الفيديوهات الكبيرة (اختياري) ======
+   أنشئ حساباً في cloudinary.com ثم Settings > Upload > Upload presets > أضف preset بنوع Unsigned
+   وضع هنا اسم السحابة (Cloud name) واسم الـ preset. عند تعبئتهما تُرفع كل الفيديوهات إليه. */
+var CLOUDINARY_CLOUD = '';
+var CLOUDINARY_PRESET = '';
+var TELEGRAM_MAX = 20 * 1024 * 1024; // أقصى حجم يسمح تيليجرام بتشغيله عبر البوت
+function cloudinaryReady() { return !!(CLOUDINARY_CLOUD && CLOUDINARY_PRESET); }
+function tooBigMessage(file) {
+    var mb = (file.size / 1048576).toFixed(1);
+    return localStorage.getItem('lang') === 'en'
+        ? 'This file is ' + mb + ' MB. The current host (Telegram) cannot serve files over 20 MB. A video host must be set up for larger files.'
+        : 'حجم الملف ' + mb + ' ميجا. الاستضافة الحالية (تيليجرام) لا تستطيع تشغيل ملف أكبر من 20 ميجا. لرفع ملفات أكبر يجب إعداد استضافة الفيديو.';
+}
+async function uploadToCloudinary(file, onProgress) {
+    var url = 'https://api.cloudinary.com/v1_1/' + encodeURIComponent(CLOUDINARY_CLOUD) + '/video/upload';
+    var size = 6 * 1024 * 1024, id = 'zx' + Date.now() + Math.random().toString(36).slice(2, 8), result = null;
+    function send(start, end) {
+        return new Promise(function(resolve, reject) {
+            var xhr = new XMLHttpRequest(), form = new FormData();
+            form.append('file', file.slice(start, end), file.name || 'video.mp4');
+            form.append('upload_preset', CLOUDINARY_PRESET);
+            xhr.open('POST', url, true);
+            if (file.size > size) {
+                xhr.setRequestHeader('X-Unique-Upload-Id', id);
+                xhr.setRequestHeader('Content-Range', 'bytes ' + start + '-' + (end - 1) + '/' + file.size);
+            }
+            xhr.timeout = 600000;
+            xhr.upload.onprogress = function(e) {
+                if (onProgress && e.lengthComputable) onProgress(Math.min(99, Math.round((start + e.loaded / e.total * (end - start)) / file.size * 100)));
+            };
+            xhr.onload = function() {
+                var data = {}; try { data = JSON.parse(xhr.responseText); } catch (e) {}
+                if (xhr.status >= 200 && xhr.status < 300) resolve(data);
+                else { var err = new Error((data.error && data.error.message) || ('HTTP ' + xhr.status)); err.fatal = xhr.status >= 400 && xhr.status < 500; reject(err); }
+            };
+            xhr.onerror = xhr.ontimeout = function() { reject(new Error('Network error')); };
+            xhr.send(form);
+        });
+    }
+    for (var start = 0; start < file.size; start += size) {
+        for (var attempt = 1; ; attempt++) {
+            try { result = await send(start, Math.min(file.size, start + size)); break; }
+            catch (e) { if (e.fatal || attempt >= 3) throw e; await new Promise(function(r) { setTimeout(r, 1500 * attempt); }); }
+        }
+    }
+    if (!result || !result.secure_url) throw new Error('Cloudinary: no URL');
+    if (onProgress) onProgress(100);
+    return { url: result.secure_url, fileId: null, messageId: null, poster: result.secure_url.replace('/upload/', '/upload/so_0/').replace(/\.[a-z0-9]+$/i, '.jpg') };
+}
+
 async function uploadFileToTelegram(file, onProgress) {
+    var wantsVideo = (file.type || '').indexOf('video/') === 0 || /\.(mp4|webm|mov|mkv|m4v)$/i.test(file.name || '');
+    if (wantsVideo && cloudinaryReady()) return uploadToCloudinary(file, onProgress);
+    if (file.size > TELEGRAM_MAX) throw new Error(tooBigMessage(file));
     if (!TELEGRAM_BOT_TOKEN) throw new Error('لا يوجد TELEGRAM_BOT_TOKEN');
     var chatId = await resolveTelegramChatId();
     if (!chatId) {
@@ -4579,11 +4621,6 @@ async function uploadFileToTelegram(file, onProgress) {
 
     var isVideo = (file.type || '').indexOf('video/') === 0 || /\.(mp4|webm|mov|mkv|m4v)$/i.test(file.name || '');
     var isPdf = (file.type === 'application/pdf') || /\.pdf$/i.test(file.name || '');
-
-    // Telegram Bot API limits ~50MB
-    if (file.size > 49 * 1024 * 1024) {
-        throw new Error('حجم الملف أكبر من حد تيليجرام للبوت (~50 ميجا)');
-    }
 
     var form = new FormData();
     form.append('chat_id', chatId);
@@ -4610,7 +4647,7 @@ async function uploadFileToTelegram(file, onProgress) {
             done = true;
             try { xhr.abort(); } catch (e) {}
             reject(new Error('انتهت مهلة الرفع إلى تيليجرام'));
-        }, 180000);
+        }, 600000);
         if (xhr.upload && typeof onProgress === 'function') {
             xhr.upload.onprogress = function(e) {
                 if (e.lengthComputable && e.total > 0) {
@@ -4755,11 +4792,6 @@ function showSingleQuality(player, video) {
     video.addEventListener('loadedmetadata', apply);
     setTimeout(apply, 300);
 }
-
-/* زر التحميل يظهر فقط لصاحب التوثيق البني/الأسود */
-setInterval(function() {
-    if (document.body) document.body.classList.toggle('can-download', currentBadgeType === 'black');
-}, 500);
 
 /** تهيئة Plyr على عناصر الفيديو داخل المنشورات */
 function initPostPlyrPlayers(root) {
@@ -4989,7 +5021,9 @@ async function publishPost() {
             dislikes: [],
             views: 0,
             createdAt: new Date().toISOString(),
-            updatedAt: null
+            updatedAt: null,
+            moderated: true,
+            allowDownload: !!(document.getElementById('postAllowDownload') || {}).checked
         };
 
         // ===== فصل واضح للمسارات =====
@@ -5016,6 +5050,7 @@ async function publishPost() {
             payload.mediaUrls = [playUrl];
             payload.telegramFileId = tgVid.fileId || null;
             payload.telegramMessageId = tgVid.messageId || null;
+            payload.posterUrl = tgVid.poster || await zxMakePoster(postVideoFile);
             if (barWrap) barWrap.style.display = 'none';
         } else if (hasPdf) {
             if (!postPdfFile) { btn.disabled = false; btn.textContent = originalText || 'نشر'; alert('اختر ملف PDF'); return; }
@@ -5269,19 +5304,6 @@ actionsRow.style.zIndex = '5';
     }
 
     loadUserPosts(tKey);
-    // ✨ تحديث عدادات التعليقات في البروفايل
-setTimeout(async function() {
-    var allCommentBtns = document.querySelectorAll('.post-action-btn .count[id^="comments-count-"]');
-    for (var i = 0; i < allCommentBtns.length; i++) {
-        var btn = allCommentBtns[i];
-        var postId = btn.id.replace('comments-count-', '');
-        try {
-            var cQ = fb.query(fb.collection(fb.db, 'comments'), fb.where('postId', '==', postId));
-            var cSnap = await fb.getDocs(cQ);
-            btn.textContent = cSnap.size;
-        } catch (e) {}
-    }
-}, 1000);
 } catch (e) {
     alert('خطأ: ' + e.message);
 }
@@ -6357,6 +6379,9 @@ if (data.caption && !isLive) {
         clearTimeout(storyTimer);
         storyTimer = null;
         updateProgressBars();
+    } else if (data.videoUrl) {
+        clearTimeout(storyTimer);
+        updateProgressBars();
     } else if (data.imageUrl || data.avatar) {
         var img = document.createElement('img');
         img.src = data.imageUrl || data.avatar;
@@ -6881,7 +6906,7 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 loadStories();
-setInterval(loadStories, 60 * 1000);
+setInterval(function(){ if (!document.hidden) loadStories(); }, 90 * 1000);
 /* ==================== SEARCH SYSTEM ==================== */
 async function searchUsers(query) {
     var resultsDiv = document.getElementById('searchResults');
@@ -7045,24 +7070,6 @@ window.addEventListener('load', function() {
             }
         }
         
-        var postId = params.get('post');
-        if (postId) {
-            switchTab('morePage');
-            setTimeout(function() {
-                var postEl = document.querySelector('.post-card button[onclick*="openCommentsSheet(\'' + postId + '\')"]');
-                if (postEl) {
-                    var card = postEl.closest('.post-card');
-                    if(card) {
-                        card.style.transition = 'background 0.5s';
-                        card.style.background = 'rgba(29,161,242,0.15)';
-                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        setTimeout(function() {
-                            card.style.background = '';
-                        }, 3000);
-                    }
-                }
-            }, 1500); 
-        }
     }, 1000); 
 });
 async function loadMyPosts() {
@@ -7158,6 +7165,7 @@ async function loadMyPosts() {
 document.addEventListener('DOMContentLoaded', function() {
     
     function updateProfileCommentCounts() {
+        return; // العدّادات تُحسب مرة واحدة عند رسم المنشور
         // البحث عن أي زر تعليق في صفحات البروفايل
         var commentBtns = document.querySelectorAll('#publicPostsGrid .post-action-btn, #myPostsGrid .post-action-btn');
         
@@ -7188,14 +7196,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // مراقبة التغييرات في الصفحة (عندما يتم تحميل منشورات جديدة)
-    var observer = new MutationObserver(function(mutations) {
-        updateProfileCommentCounts();
-    });
-
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
 });
 async function deleteCurrentStory(storyId) {
     var idToDelete = storyId || (storiesList[currentStoryIndex] ? storiesList[currentStoryIndex].id : null);
@@ -7329,6 +7329,9 @@ window.showStory = function() {
         content.appendChild(iframe);
         clearTimeout(storyTimer);
         storyTimer = null;
+        updateProgressBars();
+    } else if (data.videoUrl) {
+        clearTimeout(storyTimer);
         updateProgressBars();
     } else if (data.imageUrl || data.avatar) {
         var img = document.createElement('img');
@@ -8524,7 +8527,11 @@ function getDisplayFollowCounts(d) {
     return { followers: showFollowers, following: showFollowing, realFollowers: realFollowers, realFollowing: realFollowing, badge: bt };
 }
 function formatCountNum(n) {
-    try { return Number(n).toLocaleString('en-US'); } catch (e) { return String(n); }
+    n = Number(n) || 0;
+    var u = n >= 1e9 ? [1e9, 'B'] : n >= 1e6 ? [1e6, 'M'] : n >= 1e3 ? [1e3, 'K'] : null;
+    if (!u) return String(n);
+    var v = n / u[0];
+    return (v < 10 ? Math.floor(v * 10) / 10 : Math.floor(v)) + u[1];
 }
 var FAKE_NAMES = ['أحمد محمد','سارة علي','خالد حسن','نور الهدى','يوسف إبراهيم','مريم سعيد','عمر فهد','ليان رامي','كريم عادل','هدى ناصر','باسم طارق','رنا محمود','زياد سمير','داليا كريم','فارس وليد','لينا جابر','ماجد سامي','تالا وائل','إياد نبيل','جنى حسام','أنس بدر','سلمى راشد','نادر عماد','ميساء فوزي','حسين ياسر','غادة كمال','رامي نجم','أسماء فهد','طلال عوني','ياسمين مراد'];
 var FAKE_USERNAMES = ['ahmed_m','sara_ali','khaled_h','noor_h','yousef_i','mariam_s','omar_f','layan_r','kareem_a','huda_n','basem_t','rana_m','ziad_s','dalia_k','fares_w','lina_j','majed_s','tala_w','eyad_n','jana_h','anas_b','salma_r','nader_e','maisa_f','hussein_y','ghada_k','rami_n','asma_f','talal_a','yasmin_m'];
@@ -8983,9 +8990,7 @@ function injectPostStatsBtn(card, postId) {
     card.style.position = 'relative';
     card.appendChild(btn);
 }
-function scanAndEnhancePosts() {
-    document.querySelectorAll('.post-card').forEach(enhancePostCardStats);
-}
+function scanAndEnhancePosts() {}
 var __postStatsObserver = new MutationObserver(function() {
     scanAndEnhancePosts();
 });
@@ -9302,14 +9307,6 @@ async function forceRefreshSocialIcons(profileKey, prefix) {
             setTimeout(function(){ forceRefreshSocialIcons(key, 'pub'); }, 600);
         };
     }
-})();
-
-// إخفاء أزرار الرسم البياني على المنشورات — التحكم من اللوحة
-(function() {
-    var obs = new MutationObserver(function() {
-        document.querySelectorAll('.post-fake-stats-btn').forEach(function(b){ b.style.display = 'none'; });
-    });
-    try { obs.observe(document.body, { childList: true, subtree: true }); } catch(e){}
 })();
 
 async function adminLoadStatsForTarget(d, key) {
@@ -10046,12 +10043,12 @@ window.adminFetchByProfileLink = async function() {
 <style>
 @property --story-angle { syntax: '<angle>'; inherits: true; initial-value: 360deg; }
 #communityGate { position: fixed; inset: 0; z-index: 100000; background: #000; color: #fff; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 24px 32px; overflow-y: auto; text-align: center; }
-#communityGate .cg-logo { width: min(55vw, 230px); max-height: 32vh; object-fit: contain; margin-bottom: auto; margin-top: auto; }
-#communityGate h2 { font-size: 24px; font-weight: 800; color: #fff; margin: 0; }
-#communityGate button { width: 100%; max-width: 380px; padding: 15px; border-radius: 40px; font-size: 17px; font-weight: 800; cursor: pointer; font-family: inherit; }
+#communityGate .cg-logo { width: min(30vw, 120px); max-height: 18vh; object-fit: contain; margin-bottom: auto; margin-top: auto; }
+#communityGate h2 { font-size: 18px; font-weight: 800; color: #fff; margin: 0; }
+#communityGate button { width: 100%; max-width: 290px; padding: 11px; border-radius: 40px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: inherit; }
 #cgGuest { background: #fff; color: #000; border: 0; box-shadow: 0 0 22px rgba(255,255,255,.35); }
 #cgSignin { background: #000; color: #fff; border: 1px solid #333; margin-bottom: 12px; }
-#communityGate p { color: #fff; font-weight: 700; margin: 8px 0 0; }
+#communityGate p { color: #fff; font-size: 13px; font-weight: 700; margin: 8px 0 0; }
 #menusToggle { display: none; position: fixed; top: 8px; left: 50%; transform: translateX(-50%); z-index: 1200; padding: 7px 16px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); box-shadow: 0 2px 8px rgba(0,0,0,.25); font: bold 13px inherit; font-family: inherit; cursor: pointer; white-space: nowrap; }
 body.on-community #menusToggle { display: block; }
 body.on-community.menus-hidden #header-wrapper, body.on-community.menus-hidden footer { display: none !important; }
@@ -10078,7 +10075,9 @@ body.on-community.menus-hidden { padding-top: 0 !important; padding-bottom: 0 !i
   function store(k, v){ try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch(e){ return null; } }
 
   var menusHidden = true;
+  var GATE_LOGO_URL = ''; // ضع رابط اللوجو الخاص بك هنا
   function paint(){
+    if (GATE_LOGO_URL) $('communityGate').querySelector('.cg-logo').src = GATE_LOGO_URL;
     $('cgTitle').textContent = tx('شاهد ما يحدث الآن', 'See what’s happening');
     $('cgGuest').textContent = tx('المتابعة بدون حساب', 'Continue without an account');
     $('cgHave').textContent = tx('لديك حساب بالفعل؟', 'Already have an account?');
@@ -10105,9 +10104,9 @@ body.on-community.menus-hidden { padding-top: 0 !important; padding-bottom: 0 !i
     if (community) { menusHidden = true; document.body.classList.add('menus-hidden'); }
     else $('communityGate').style.display = 'none';
     paint(); placeToggle();
-    if (community && !signedIn() && !store('communityGateSeen')) {
-      $('communityGate').style.display = 'flex';
-      authReady.then(function(u){ if (u || signedIn()) $('communityGate').style.display = 'none'; });
+    // لا تظهر الشاشة إلا بعد التأكد أن المستخدم غير مسجل
+    if (community && !signedIn() && !store('communityGateSeen') && !store('app_last_profile_key')) {
+      authReady.then(function(u){ if (!u && !signedIn() && !window.zxDeepPost && !store('app_last_profile_key') && document.body.classList.contains('on-community')) $('communityGate').style.display = 'flex'; });
     }
   }
   var _switch = window.switchTab;
@@ -10138,7 +10137,7 @@ body.on-community.menus-hidden { padding-top: 0 !important; padding-bottom: 0 !i
     lastAsk = Date.now();
     if (window.confirm(tx('يجب تسجيل الدخول للتفاعل. هل تريد تسجيل الدخول الآن؟', 'Sign in to interact. Do you want to sign in now?'))) goSignIn();
   }
-  var BLOCK = '.post-action-btn, #fab-container, #postCreateBtn, .pv-action-btn, #commentsSheet, #commentsSheetBody, #storyViewerCaptionInput, #storyCaptionContainer button';
+  var BLOCK = '.post-action-btn, .zx-dots, #fab-container, #postCreateBtn, .pv-action-btn, #commentsSheet, #commentsSheetBody, #storyViewerCaptionInput, #storyCaptionContainer button';
   ['click','focusin','keydown'].forEach(function(type){
     document.addEventListener(type, function(e){
       if (signedIn() || !e.target.closest || !e.target.closest(BLOCK)) return;
@@ -10159,27 +10158,6 @@ body.on-community.menus-hidden { padding-top: 0 !important; padding-bottom: 0 !i
   /* الستوري: تأثير للحلقة، وبعد المشاهدة تختفي وتنتقل لآخر الصف */
   function seenKey(){ return 'seenStories_' + (currentUserKey || 'guest'); }
   function seenList(){ try { return JSON.parse(store(seenKey()) || '[]'); } catch(e){ return []; } }
-  var items = [];
-  function arrange(){
-    var bar = $('storiesBar'); if (!bar) return;
-    var seen = seenList();
-    var read = [];
-    items.forEach(function(it){
-      if (seen.indexOf(it.id) > -1) { markStoryAsRead(it.el); read.push(it.el); }
-    });
-    read.forEach(function(el){ bar.appendChild(el); });
-  }
-  var _load = window.loadStories;
-  window.loadStories = async function(){
-    await _load.apply(this, arguments);
-    var bar = $('storiesBar'); if (!bar) return;
-    var els = bar.querySelectorAll('.story-item');
-    if (els.length !== storiesList.length) return;
-    items = Array.prototype.map.call(els, function(el, i){ return { el: el, id: storiesList[i].id }; });
-    var seen = seenList();
-    items.forEach(function(it){ if (seen.indexOf(it.id) < 0) triggerNewStoryRingAnimation(it.el); });
-    arrange();
-  };
   // النقر لا يعلّم القراءة إلا للستوري المفتوحة فعلاً
   var _show = window.showStory;
   window.showStory = function(){
@@ -10191,7 +10169,7 @@ body.on-community.menus-hidden { padding-top: 0 !important; padding-bottom: 0 !i
     return _show.apply(this, arguments);
   };
   var _close = window.closeStoryViewer;
-  window.closeStoryViewer = function(){ var r = _close.apply(this, arguments); arrange(); return r; };
+  window.closeStoryViewer = function(){ var r = _close.apply(this, arguments); if (window.zxRenderStories) zxRenderStories(); return r; };
 
   window.addEventListener('resize', placeToggle);
   window.addEventListener('app-language', function(){ paint(); });
@@ -10202,7 +10180,7 @@ body.on-community.menus-hidden { padding-top: 0 !important; padding-bottom: 0 !i
 /* ===== ترجمة كل نصوص الواجهة (لا تلمس ما يكتبه المستخدمون) ===== */
 (function(){
   var DICT = Object.create(null);
-  "نسخ الرابط|Copy link\nواتساب|WhatsApp\nتطبيقات أخرى|Other apps\n| اظهار نصوص القائمة السفلية || Bottom bar labels\nبث مباشر|Live\nنص أو تعليق (اختياري)|Text or comment (optional)\n* ملاحظة: الروابط العادية (مثل فيديوهات اليوتيوب القديمة) سيتم رفضها. يجب أن يكون الرابط لبث مباشر.|* Regular video links are rejected. The link must be a live stream.\nسياسة الخصوصية وشروط التطبيق|Privacy policy and app terms\nاختار لغتك المفضلة للتطبيق|Choose your app language\nاشترك للحصول على مميزات حصرية بدون إعلانات|Subscribe for exclusive ad-free features\nاشترك الآن|Subscribe now\nاستمتع بأحدث الألعاب|Enjoy the latest games\nإنشاء الحساب وإرسال رابط التفعيل|Create account and send activation link\nتم إرسال رابط تفعيل الحساب|Activation link sent\nلقد أرسلنا رابطاً لتفعيل حسابك إلى البريد:|We sent an activation link to:\nافتح بريدك واضغط على رابط التفعيل، ثم عُد للتطبيق.|Open your email, tap the link, then return to the app.\nإعادة إرسال الرابط|Resend link\nالانتقال لتسجيل الدخول|Go to sign in\nتفعيل الحساب مطلوب|Account activation required\nتم إرسال رابط التفعيل إلى بريدك.|An activation link was sent to your email.\nافتح الرابط ثم اضغط \"لقد فعّلت حسابي\".|Open the link, then tap \"I activated my account\".\nلقد فعّلت حسابي|I activated my account\nإعادة إرسال رابط التفعيل|Resend activation link\nصلاحية التوثيق البني|Brown badge permission\nتعديل عدد المتابعين والمتابَعين|Edit follower and following counts\nرجوع للملف الشخصي|Back to profile\nصورة الغلاف|Cover photo\nروابط التواصل الاجتماعي|Social links\nاختر منصة...|Choose a platform...\nإضافة|Add\nاختر المنصة واكتب اليوزرنيم ثم إضافة. تظهر فقط المنصات المضافة.|Pick a platform, type the username, then Add. Only added platforms appear.\nيوزرنيم أو رابط|Username or link\nمنع استقبال الرسائل (إخفاء زر المراسلة)|Block messages (hide the Message button)\nصلاحيات التوثيق البني فقط|Brown badge permissions only\nتعديل عدد المتابعين / المتابَعين|Edit follower / following counts\nلتعديل لايكات/تعليقات منشور: افتح المنشور واضغط أيقونة الرسم البياني 📊|To edit a post's engagement, open it and tap the chart icon 📊\nهذا الحساب خاص. تابع المستخدم لعرض المحتوى.|This account is private. Follow to see its content.\nصور|Images\nمقطع|Video\nالصور (حتى 5 صور)|Images (up to 5)\nالمقطع (فيديو)|Video\nاختيار مقطع فيديو|Choose a video\nالصيغ المدعومة: MP4, WebM, MOV · الحد الأقصى تقريباً 200 ميجا|Formats: MP4, WebM, MOV · about 200 MB max\nاختيار ملف PDF|Choose a PDF\nملفات PDF فقط · يُفضّل أقل من 25 ميجا|PDF only · under 25 MB preferred\nالنص / الوصف|Text / description\nالخصوصية|Privacy\nاكتب اسمك|Type your name\n6 أحرف على الأقل|At least 6 characters\nاكتب نبذة...|Write a bio...".split('\n').forEach(function(l){ var i = l.indexOf('|', l.charAt(0) === '|' ? l.indexOf('|', 1) + 1 : 0); if (l.charAt(0) === '|') i = l.indexOf('||') + 1; DICT[l.slice(0, i)] = l.slice(i + 1); });
+  "نسخ الرابط|Copy link\nواتساب|WhatsApp\nتطبيقات أخرى|Other apps\n| اظهار نصوص القائمة السفلية || Bottom bar labels\nبث مباشر|Live\nنص أو تعليق (اختياري)|Text or comment (optional)\n* ملاحظة: الروابط العادية (مثل فيديوهات اليوتيوب القديمة) سيتم رفضها. يجب أن يكون الرابط لبث مباشر.|* Regular video links are rejected. The link must be a live stream.\nسياسة الخصوصية وشروط التطبيق|Privacy policy and app terms\nاختار لغتك المفضلة للتطبيق|Choose your app language\nاشترك للحصول على مميزات حصرية بدون إعلانات|Subscribe for exclusive ad-free features\nاشترك الآن|Subscribe now\nاستمتع بأحدث الألعاب|Enjoy the latest games\nإنشاء الحساب وإرسال رابط التفعيل|Create account and send activation link\nتم إرسال رابط تفعيل الحساب|Activation link sent\nلقد أرسلنا رابطاً لتفعيل حسابك إلى البريد:|We sent an activation link to:\nافتح بريدك واضغط على رابط التفعيل، ثم عُد للتطبيق.|Open your email, tap the link, then return to the app.\nإعادة إرسال الرابط|Resend link\nالانتقال لتسجيل الدخول|Go to sign in\nتفعيل الحساب مطلوب|Account activation required\nتم إرسال رابط التفعيل إلى بريدك.|An activation link was sent to your email.\nافتح الرابط ثم اضغط \"لقد فعّلت حسابي\".|Open the link, then tap \"I activated my account\".\nلقد فعّلت حسابي|I activated my account\nإعادة إرسال رابط التفعيل|Resend activation link\nصلاحية التوثيق البني|Brown badge permission\nتعديل عدد المتابعين والمتابَعين|Edit follower and following counts\nرجوع للملف الشخصي|Back to profile\nصورة الغلاف|Cover photo\nروابط التواصل الاجتماعي|Social links\nاختر منصة...|Choose a platform...\nإضافة|Add\nاختر المنصة واكتب اليوزرنيم ثم إضافة. تظهر فقط المنصات المضافة.|Pick a platform, type the username, then Add. Only added platforms appear.\nيوزرنيم أو رابط|Username or link\nمنع استقبال الرسائل (إخفاء زر المراسلة)|Block messages (hide the Message button)\nصلاحيات التوثيق البني فقط|Brown badge permissions only\nتعديل عدد المتابعين / المتابَعين|Edit follower / following counts\nلتعديل لايكات/تعليقات منشور: افتح المنشور واضغط أيقونة الرسم البياني 📊|To edit a post's engagement, open it and tap the chart icon 📊\nهذا الحساب خاص. تابع المستخدم لعرض المحتوى.|This account is private. Follow to see its content.\nصور|Images\nمقطع|Video\nالصور (حتى 5 صور)|Images (up to 5)\nالمقطع (فيديو)|Video\nاختيار مقطع فيديو|Choose a video\nالصيغ المدعومة: MP4 (الأفضل), WebM, MOV|Supported formats: MP4 (best), WebM, MOV\nاختيار ملف PDF|Choose a PDF\nملفات PDF فقط · حتى 20 ميجا|PDF files only · up to 20 MB\nالنص / الوصف|Text / description\nالخصوصية|Privacy\nاكتب اسمك|Type your name\n6 أحرف على الأقل|At least 6 characters\nاكتب نبذة...|Write a bio...".split('\n').forEach(function(l){ var i = l.indexOf('|', l.charAt(0) === '|' ? l.indexOf('|', 1) + 1 : 0); if (l.charAt(0) === '|') i = l.indexOf('||') + 1; DICT[l.slice(0, i)] = l.slice(i + 1); });
   "ر.س|SAR\n?post=xxxx أو الرابط أو الآيدي|?post=xxxx, link or ID\n?profile=username أو الرابط أو البريد|?profile=username, link or email\nStorage SDK غير متاح|Storage SDK unavailable\nالأصلية|Original\nأخضر / Green|Green\nأدخل البريد|Enter the email\nأدخل البريد وكلمة المرور|Enter email and password\nأدخل بريدك أولاً|Enter your email first\nأدخل رابط البث|Enter the stream link\nأدخل رابط البروفايل أو اسم المستخدم أو البريد|Enter a profile link, username or email\nأدخل رابط المنشور أو الآيدي|Enter the post link or ID\nأدخل رابط صورة أو اختر صورة|Enter an image link or choose an image\nأدخل صورة للستوري|Add an image for the story\nأرقام المتابعين الوهمية|Custom follower numbers\nأزرق|Blue\nأزرق / Blue|Blue\nأضف تعليقاً...|Add a comment...\nأضف للسلة|Add to cart\nأيقونة مخصصة|Custom icon\nإخفاء النصوص|Hide labels\nإدارة الحسابات والأرقام الوهمية|Manage accounts and custom numbers\nإظهار النصوص|Show labels\nإعدادات الشات|Chat settings\nإغلاق|Close\nإكسسوارات|Accessories\nإلغاء|Cancel\nإلغاء التثبيت|Unpin\nإلغاء الترجمة|Show original\nإلغاء المتابعة|Unfollow\nإلكترونيات|Electronics\nإنشاء حساب|Create account\nإنشاء منشور|Create post\nابحث عن مستخدم...|Search for a user...\nابدأ المحادثة...|Start the conversation...\nابدأ اللعب|Start playing\nاجلب مستخدماً أولاً|Fetch a user first\nاختر مستخدم أولاً|Choose a user first\nاختر مقطع فيديو|Choose a video\nاختر ملف PDF|Choose a PDF file\nاختر منشوراً من القائمة|Choose a post from the list\nاختر منصة أولاً|Choose a platform first\nاختيار صور|Choose images\nاختيار صور (|Choose images (\nارفع صورة من الجهاز:|Upload an image from your device:\nاستجابة تيليجرام غير صالحة|Invalid Telegram response\nاستمر|Continue\nاسم المستخدم|Username\nاسم المستخدم (بدون @)|Username (without @)\nاشتري لي القهوة|Buy me a coffee\nاطلب الآن|Order now\nافتح بروفايل شخص واضغط \"مراسلة\"|Open a profile and tap \"Message\"\nافتراضي / Default|Default\nاكتب اليوزرنيم أو الرابط|Enter the username or link\nاكتب رسالة...|Type a message...\nاكتب شيئاً...|Write something...\nاكتب نصاً أو أرفق صورة / مقطع / ملف PDF|Write text or attach an image, video or PDF\nالأرقام الوهمية|Custom numbers\nالأرقام الوهمية تظهر للجميع. التعليقات الوهمية في القائمة غير قابلة للتفاعل.|Custom numbers are visible to everyone. Placeholder comments are not interactive.\nالأشخاص المثبتون|Pinned people\nالألعاب|Games\nالإشعارات|Notifications\nالإعجابات (لايك)|Likes\nالإعدادات|Settings\nالإعدادات والدعم|Settings & support\nالاسم|Name\nالاسم الكامل|Full name\nالبروفايل غير موجود|Profile not found\nالبريد أو اسم المستخدم|Email or username\nالبريد أو كلمة المرور غير صحيحة.|Incorrect email or password.\nالبريد الإلكتروني|Email\nالبريد الإلكتروني غير صالح.|Invalid email address.\nالبريد غير صالح|Invalid email\nالتحقق من الحساب|Account verification\nالترجمة فارغة|Empty translation\nالتعليقات|Comments\nالجميع|Everyone\nالجودة|Quality\nالحد الأقصى 5 صور|Maximum 5 images\nالدردشات|Chats\nالرئيسية|Home\nالرد على|Reply to\nالرسائل|Messages\nالصفحة الرئيسية|Home page\nالصق رابط المنشور أو البروفايل، أو اكتب الآيدي / اسم المستخدم مباشرة.|Paste a post or profile link, or type the ID / username.\nالعربية|Arabic\nالكل|All\nاللغة|Language\nالمتابعون|Followers\nالمتجر|Store\nالمجتمع|Community\nالمزيد من التطبيقات|More apps\nالمستخدم غير موجود|User not found\nالمشاركات|Shares\nالمشاهدات|Views\nالملف أكبر من 700 كيلو — فعّل Firebase Storage للملفات الكبيرة|File is over 700 KB — enable Firebase Storage for large files\nالمنتجات|Products\nالمنشور غير موجود|Post not found\nالمنشور غير موجود:|Post not found:\nالنبذة|Bio\nالوسائط محجوبة من قِبل الإدارة|Media blocked by the administration\nانتهت مهلة الرفع|Upload timed out\nانتهت مهلة الرفع إلى تيليجرام|Telegram upload timed out\nانضم في|Joined\nبدون|None\nبروفايل مستهدف:|Target profile:\nبروفايل مستهدف: —|Target profile: —\nبروفايل:|Profile:\nبريميوم|Premium\nبني / مالك|Brown / Owner\nتثبيت|Pin\nتجاهل|Ignore\nترجمة|Translate\nتسجيل الدخول|Sign in\nدخول|Sign in\nتطبيقي - واجهة عرض المنتجات|My app - Products\nتظهر هذه الأرقام في البروفايل. الحسابات الوهمية في القائمة غير قابلة للنقر.|These numbers appear on the profile. Placeholder accounts in the list are not clickable.\nتعديل|Edit\nتعديل التفاعل|Edit engagement\nتعديل بيانات المستخدم|Edit user data\nتعديل تفاعل المنشور|Edit post engagement\nتعديل:|Edit:\nتعذر الإرسال:|Could not send:\nتعذر الاتصال بـ Firebase|Could not connect to Firebase\nتعذر تحميل الملف|Could not load the file\nتعذر فتح الحساب، حاول مرة أخرى|Could not open the account, try again\nتعذر قراءة الملف|Could not read the file\nتعليق|Comment\nتعليقات|Comments\nتغيير الخلفية|Change background\nتقديم طلب مراجعة|Request a review\nتلقائي|Auto\nتم|Done\nتم إرسال رابط إعادة تعيين كلمة المرور.|Password reset link sent.\nتم إرسال طلب المراجعة|Review request sent\nتم إزالة التوثيق|Verification removed\nتم إضافة المنتج إلى السلة|Product added to cart\nتم إعادة إرسال رابط التفعيل إلى بريدك.|Activation link resent to your email.\nتم إلغاء التثبيت|Unpinned\nتم الإرسال|Sent\nتم التثبيت|Pinned\nتم التحديث|Updated\nتم التحقق من هذا الحساب لأنه تابع لمنظمة رسمية.|This account is verified because it belongs to an official organization.\nتم التعليق|Done\nتم الحذف|Deleted\nتم الحفظ|Saved\nتم النشر بنجاح|Published successfully\nتم النشر بنجاح — سيختفي بعد 24 ساعة|Published — disappears after 24 hours\nتم تحديث الصورة الشخصية|Profile photo updated\nتم تحديث صورة الغلاف|Cover photo updated\nتم تسجيل الخروج.|Signed out.\nتم تسجيل الدخول!|Signed in!\nتم تفعيل حسابك بنجاح!|Your account is now active!\nتم توثيق هذا الحساب لأنه حساب المالك الرسمي.|This account is verified as the official owner account.\nتم جلب البروفايل:|Profile loaded:\nتم جلب المستخدم|User loaded\nتم جلب المنشور|Post loaded\nتم حذف التعليق|Comment deleted\nتم حذف الستوري|Story deleted\nتم حظر الصور|Images blocked\nتم حفظ أرقام التفاعل|Engagement numbers saved\nتم حفظ أرقام المتابعة:|Follow numbers saved:\nتم حفظ الأرقام الوهمية|Custom numbers saved\nتم حفظ البيانات بنجاح|Data saved successfully\nتم حفظ تفاعل المنشور|Post engagement saved\nتم فك التعليق|Suspension lifted\nتم فك الحظر|Unblocked\nتم نسخ اسم المستخدم ✅|Username copied ✅\nتم نسخ الرابط بنجاح|Link copied\nتم نشر المنشور بنجاح|Post published\nتواصل مع من تتابعهم|Chat with people you follow\nجاري التحميل...|Loading...\nجاري الرفع...|Uploading...\nجاري تحميل المنشورات...|Loading posts...\nجاري جلب المنشورات...|Fetching posts...\nجاري فتح الملف...|Opening file...\nجاكيت شتوي|Winter jacket\nجلب|Fetch\nجلب البروفايل|Fetch profile\nجلب المنشور|Fetch post\nجلب مستخدم|Fetch user\nحجم الصورة أكبر من 5 ميجا|Image is larger than 5 MB\nحجم الفيديو أكبر من 200 ميجا. استخدم ملفاً أصغر أو tus للملفات الكبيرة.|Video is over 200 MB. Use a smaller file.\nحجم الملف أكبر من حد تيليجرام للبوت (~50 ميجا)|File exceeds the Telegram bot limit (~50 MB)\nحجم ملف PDF كبير جداً (يفضّل أقل من 25–40 ميجا)|PDF is too large (under 25–40 MB preferred)\nحدث خطأ أثناء الترجمة، حاول مرة أخرى.|Translation failed, try again.\nحدث خطأ في التحميل|Loading error\nحدث خطأ في جلب الإشعارات|Could not load notifications\nحذف|Delete\nحذف الحساب نهائياً|Delete account permanently\nحذف الحساب نهائياً؟|Delete account permanently?\nحذف المحادثة|Delete chat\nحذف المستخدم|Delete user\nحساب موثق|Verified account\nحسابك معلّق. السبب:|Your account is suspended. Reason:\nحسابي|My account\nحفظ|Save\nحفظ أرقام المتابعة|Save follow numbers\nحفظ البيانات|Save\nحفظ تفاعل المنشور|Save post engagement\nحقيبة جلدية|Leather bag\nحول إزالة علامة التوثيق|About removing verification\nخاص|Private\nخروج|Sign out\nتسجيل الخروج|Sign out\nخصوصية البروفايل|Profile privacy\nخطأ أثناء فحص الخصوصية:|Privacy check error:\nخطأ شبكة|Network error\nخطأ شبكة أثناء الرفع إلى تيليجرام|Network error during Telegram upload\nخطأ في إضافة التعليق:|Error adding comment:\nخطأ في الحذف:|Delete error:\nخطأ في المتابعة:|Follow error:\nخطأ في النشر:|Publish error:\nخطأ في تحميل التعليقات|Error loading comments\nخطأ في تحميل المنشورات|Error loading posts\nخطأ في حذف التعليق:|Error deleting comment:\nخطأ:|Error:\nخلفية المحادثة|Chat background\nداكن|Dark\nداكن / Dark|Dark\nذهبي|Gold\nرابط / آيدي المنشور|Post link / ID\nرابط البروفايل / يوزرنيم / بريد|Profile link / username / email\nرابط البث المباشر (YouTube Live / Twitch)|Live stream link (YouTube Live / Twitch)\nرابط الصورة|Image link\nرابط الغلاف|Cover link\nرابط الموقع الإلكتروني|Website URL\nرجوع|Back\nرد|Reply\nرد جديد على تعليقك|New reply to your comment\nرد جديد:|New reply:\nرد عليك:|Replied to you:\nرداً على|Replying to\nرفع PDF...|Uploading PDF...\nرفع الصور...|Uploading images...\nرفع الصور... (|Uploading images... (\nرفع المقطع...|Uploading video...\nرفع...|Uploading...\nساعة يد|Wristwatch\nسبب التعليق:|Suspension reason:\nسبب طلب المراجعة:|Reason for review:\nستوري|Story\nستوري منتهي|expired stories\nسجل الدخول أولاً|Sign in first\nسماعات لاسلكية|Wireless earbuds\nسياسة الخصوصية|Privacy policy\nشارك صور مع وصف|Share photos with a description\nشاهد هذا المنشور|Check out this post\nشبكة Stream|Stream network\nشروحات طبية|Medical lessons\nشروط الخدمة|Terms of service\nصورة أو بث مباشر يختفي بعد 24 ساعة|A photo or live stream that disappears after 24 hours\nطلب التوثيق|Verification request\nطلبات المراجعة|Review requests\nعام|Public\nعدد المتابعين المعروض|Displayed followers\nعدد المتابَعين المعروض|Displayed following\nعذراً، هذا المستخدم قام بتعطيل خاصية استقبال الرسائل.|Sorry, this user has turned off messages.\nعذراً، يجب أن يكون الرابط بثاً مباشراً (يحتوي على كلمة live).|The link must be a live stream (containing \"live\").\nعرض أقل|Show less\nعرض المزيد|Show more\nعرض المزيد.|Show more.\nعرض المزيد...|Show more...\nعنوان الرسالة:|Message title:\nغير مصرح|Not authorized\nفاتح|Light\nفتح|Open\nفتح الرابط|Open link\nفشل Storage|Storage failed\nفشل Stream|Stream failed\nفشل getFile|getFile failed\nفشل الرفع عبر تيليجرام|Telegram upload failed\nفشل تيليجرام|Telegram failed\nفشل رفع PDF إلى تيليجرام|PDF upload to Telegram failed\nفشل رفع الصورة|Image upload failed\nفشل رفع الصورة:|Image upload failed:\nفشل رفع الغلاف:|Cover upload failed:\nفشل رفع الفيديو إلى تيليجرام|Video upload to Telegram failed\nفشل رفع صورة رقم|Failed to upload image number\nفشل في قراءة الترجمة|Could not read the translation\nفك التعليق|Unsuspend\nقم بتسجيل الدخول إلى حسابك أو أنشئ حساباً جديداً.|Sign in to your account or create a new one.\nقميص قطني|Cotton shirt\nكتب طبية|Medical books\nكلمة المرور|Password\nكلمة المرور 6 أحرف على الأقل|Password must be at least 6 characters\nكلمة المرور ضعيفة جداً.|Password is too weak.\nلا تظهر مرة أخرى|Don't show again\nلا توجد إشعارات حالياً|No notifications yet\nلا توجد تعليقات بعد. كن أول من يعلق!|No comments yet. Be the first!\nلا توجد رسائل|No messages\nلا توجد طلبات|No requests\nلا توجد محادثات بعد|No chats yet\nلا توجد منتجات في هذه الفئة|No products in this category\nلا توجد منشورات|No posts\nلا توجد منشورات بعد|No posts yet\nلا توجد منشورات عامة|No public posts\nلا توجد منشورات لهذا المستخدم|This user has no posts\nلا توجد نتائج|No results\nلا يتابع أحداً بعد|Not following anyone yet\nلا يمكنك متابعة نفسك|You can't follow yourself\nلا يمكنك مراسلة نفسك|You can't message yourself\nلا يوجد CLOUDFLARE_ACCOUNT_ID|Missing CLOUDFLARE_ACCOUNT_ID\nلا يوجد TELEGRAM_BOT_TOKEN|Missing TELEGRAM_BOT_TOKEN\nلا يوجد متابعون بعد|No followers yet\nلا يوجد مثبتون بعد|Nothing pinned yet\nلا يوجد مستخدم|No user\nلا يوجد ملف|No file\nلايكات|Likes\nلم يتم العثور على الحساب @|Account not found @\nلم يتم العثور على مستخدم بهذا الاسم.|No user found with that name.\nلم يتم العثور على هذا البروفايل|Profile not found\nلم يتم تفعيل البريد بعد. افتح الرابط ثم حاول مرة أخرى.|Email not verified yet. Open the link and try again.\nلم يتم حفظ عداد المشاركة|Share count was not saved\nلم يُرجع تيليجرام file_id|Telegram returned no file_id\nلوحة التحكم|Admin panel\nلوحة تحكم المالك|Owner panel\nليس الآن|Not now\nليس لديك حساب؟|Don't have an account?\nما رأيك بشراء القهوة لمطور التطبيق؟|How about buying the developer a coffee?\nماذا تريد أن تنشر؟|What do you want to post?\nمالك|Owner\nمتابع|Following\nمتابعة|Follow\nمتصفحك لا يدعم تشغيل الفيديو.|Your browser can't play this video.\nمتوقف|Stopped\nمخالفة الشروط|Terms violation\nمراسلة|Message\nمرحباً بك|Welcome\nمساعدة AI|AI assistant\nمستخدم|User\nمشاركات|Shares\nمشاركة|Share\nمشاركة البروفايل|Share profile\nمشاهدات|Views\nمظهر التطبيق|App theme\nمعلومات|Info\nملابس|Clothes\nملف PDF|PDF file\nمنتج مميز بأفضل سعر وجودة عالية|A great product at the best price and high quality\nمنشور|Post\nمنشور بدون نص|Post without text\nمنشور:|Post:\nمنشورات المستخدم|User posts\nمنشوراتي|My posts\nمهلة SDK|SDK timeout\nموافق|OK\nنبذة تعريفية|Bio\nنسيت كلمة المرور؟|Forgot password?\nنشر|Publish\nنشر جديد|New post\nنص الرسالة:|Message text:\nنمط 1 / Pattern 1|Pattern 1\nنمط 2 / Pattern 2|Pattern 2\nنوع التوثيق|Verification type\nهاتف ذكي|Smartphone\nهذا البريد مستخدم بالفعل. جرّب تسجيل الدخول.|This email is already in use. Try signing in.\nهذا الحساب موثق.|This account is verified.\nهذا المستخدم قام بتعطيل خاصية استقبال الرسائل.|This user has turned off messages.\nهذه الميزة متاحة فقط لحسابات التوثيق البني|Only available to brown-verified accounts\nهذه الميزة متاحة فقط لحسابات التوثيق البني (المالك).|Only available to brown-verified (owner) accounts.\nهل أنت متأكد من الحذف؟|Are you sure you want to delete?\nهل أنت متأكد من حذف هذا الستوري نهائياً؟|Delete this story permanently?\nهل يعجبك التطبيق؟|Enjoying the app?\nوردي / Pink|Pink\nيتابع|Following\nيجب اختيار صورة|You must choose an image\nيجب تسجيل الدخول|You must sign in\nيجب تسجيل الدخول أولاً|You must sign in first\nيرجى اختيار ملف PDF فقط|Please choose a PDF file\nيرجى اختيار ملف فيديو صالح|Please choose a valid video\nيرجى تسجيل الدخول أولاً.|Please sign in first.\nيرجى ملء جميع الحقول|Please fill in all fields\nيمكنك تعديل منشوراتك فقط|You can only edit your own posts".split('\n').forEach(function(line){ var i = line.lastIndexOf('|'); if (i > 0) DICT[line.slice(0, i)] = line.slice(i + 1); });
   var PREFIXES = Object.keys(DICT).filter(function(k){ return /[:(@]$|^(انضم في|رداً على|الرد على|فشل رفع صورة رقم)$/.test(k); }).sort(function(a,b){ return b.length - a.length; });
   // محتوى المستخدمين: لا يُترجم تلقائياً
@@ -10302,7 +10280,7 @@ body.on-community.menus-hidden { padding-top: 0 !important; padding-bottom: 0 !i
 /* إطار المنشور وزر النشر */
 #publicPostsContainer .post-card, .posts-container .post-card { border-radius: 22px !important; border: 1px solid var(--border-color) !important; overflow: hidden; }
 #publicPostsContainer { padding-left: 8px; padding-right: 8px; }
-.fab-main-btn, .post-create-btn { box-shadow: 0 8px 24px rgba(0,0,0,.45), 0 0 0 6px rgba(29,161,242,.18) !important; }
+.fab-main-btn, .post-create-btn, .fab-option { box-shadow: 0 6px 14px rgba(0,0,0,.6), 0 2px 5px rgba(0,0,0,.45) !important; }
 .fab-container, .post-create-btn { transition: transform .25s, opacity .25s; }
 body.zx-scrolling .fab-container, body.zx-scrolling .post-create-btn { transform: translateY(160px); opacity: 0; pointer-events: none; }
 .zx-url { color: var(--tab-active-color); text-decoration: underline; word-break: break-all; position: relative; z-index: 20; }
@@ -10347,14 +10325,15 @@ body.zx-settings #header-wrapper, body.zx-settings footer, body.zx-settings #fab
 .post-actions .post-action-btn { min-width: 0; padding-left: 3px !important; padding-right: 3px !important; position: relative; z-index: 2; }
 /* تأثيرات المناسبات: لا تستقبل اللمس */
 body[data-occasion] .post-actions { position: relative; overflow: hidden; border-radius: 14px; }
-body[data-occasion] .post-actions::after { content: var(--oc-art); position: absolute; left: 0; right: 0; top: -100%; height: 200%; white-space: pre; text-align: center; font-size: 12px; line-height: 22px; letter-spacing: 14px; overflow: hidden; opacity: .3; filter: blur(.7px); pointer-events: none; z-index: 1; animation: zxFall 7s linear infinite; }
+body[data-occasion] .post-actions::after { content: var(--oc-art); position: absolute; left: 0; right: 0; top: -100%; height: 200%; white-space: pre; text-align: center; font-size: 12px; line-height: 22px; letter-spacing: 14px; overflow: hidden; opacity: .22; pointer-events: none; z-index: 1; animation: zxFall 7s linear infinite; }
 @keyframes zxFall { from { transform: translateY(0); } to { transform: translateY(50%); } }
 @media (prefers-reduced-motion: reduce) { body[data-occasion] .post-actions::after { animation: none; } }
 </style>
 <script>
 (function(){
 var $ = function(id){ return document.getElementById(id); };
-var en = function(){ return localStorage.getItem('lang') === 'en'; };
+var forceEn = false;
+var en = function(){ return forceEn || localStorage.getItem('lang') === 'en'; };
 var tx = function(a, b){ return en() ? b : a; };
 var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return '&#' + c.charCodeAt(0) + ';'; }); };
 var arr = function(a){ return Array.isArray(a) ? a : []; };
@@ -10415,13 +10394,18 @@ function badges(a){
   return ' <img class="post-header-badge" src="' + esc(badgeSrc(bt)) + '">' + (bt === 'black' && a.customIcon ? '<img class="post-header-badge zx-mini" style="pointer-events:none" src="' + esc(a.customIcon) + '">' : '');
 }
 async function buildCard(id, p){
-  var a = await person(p.author);
-  var c = el('<div class="post-card" data-zx-id="' + esc(id) + '"><div class="post-header"><img class="post-header-avatar" src="' + esc(a.avatar || DEFAULT_AVATAR) + '"><div class="post-header-info"><div class="post-header-name">' + esc(a.name || 'User') + badges(a) + '</div><div class="post-header-username">@' + esc(a.username || 'user') + '</div></div></div>' +
+  var a = await person(p.author), bt = getBadgeTypeFromData(a);
+  var st = getPostDisplayStats(p, p.commentsCount || 0), q = "'" + esc(id) + "'";
+  var media = buildPostMediaHtml(p);
+  if (a.imagesBlocked === true && p.author !== currentUserKey && currentBadgeType !== 'black') media = '<div class="zx-note"><i class="fas fa-ban"></i><p>' + tx('الوسائط محجوبة من قِبل الإدارة', 'Media hidden by moderators') + '</p></div>';
+  function btn(cls, icon, call, count, cid){ return '<button class="post-action-btn' + cls + '"' + (call ? ' onclick="' + call + '"' : '') + '><i class="fas ' + icon + '"></i><span class="count"' + (cid ? ' id="' + cid + esc(id) + '"' : '') + '>' + formatCountNum(count) + '</span></button>'; }
+  var c = el('<div class="post-card" data-zx-id="' + esc(id) + '"><div class="post-header"><img class="post-header-avatar" loading="lazy" src="' + esc(a.avatar || DEFAULT_AVATAR) + '"><div class="post-header-info"><div class="post-header-name">' + esc(a.name || 'User') + badges(a) + '</div><div class="post-header-username">@' + esc(a.username || 'user') + '</div></div></div>' +
     (p.caption ? '<div class="post-caption">' + linkifyMentions(p.caption) + '</div>' : '') +
-    '<div class="post-date"><i class="fas fa-clock"></i> ' + esc(fmtDate(p.createdAt)) + '</div>' + buildPostMediaHtml(p) +
-    '<div class="post-actions">' + [['fa-heart','toggleLike',arr(p.likes).length, arr(p.likes).indexOf(currentUserKey) > -1 ? ' liked' : ''],['fa-thumbs-down','toggleDislike',arr(p.dislikes).length, arr(p.dislikes).indexOf(currentUserKey) > -1 ? ' disliked' : ''],['fa-comment','openCommentsSheet',p.commentsCount || 0, ''],['fa-eye','',p.views || 0, '']].map(function(b){
-      return '<button class="post-action-btn' + b[3] + '"' + (b[1] ? ' onclick="' + b[1] + '(\'' + esc(id) + '\'' + (b[1] === 'openCommentsSheet' ? '' : ',this') + ')"' : '') + '><i class="fas ' + b[0] + '"></i><span class="count">' + b[2] + '</span></button>'; }).join('') + '</div></div>');
-  c.querySelector('.post-header').onclick = function(){ closeDetail(); openPublicProfile(p.author); };
+    '<div class="post-date"><i class="fas fa-clock"></i> ' + esc(fmtDate(p.createdAt)) + (p.edited && bt !== 'black' ? ' <span class="zx-edited">· ' + tx('تم التعديل', 'Edited') + '</span>' : '') + '</div>' + media +
+    '<div class="post-actions">' + btn(arr(p.likes).indexOf(currentUserKey) > -1 ? ' liked' : '', 'fa-heart', 'toggleLike(' + q + ',this)', st.likes) + btn(arr(p.dislikes).indexOf(currentUserKey) > -1 ? ' disliked' : '', 'fa-thumbs-down', 'toggleDislike(' + q + ',this)', st.dislikes) + btn(' comment-btn', 'fa-comment', 'openCommentsSheet(' + q + ')', st.comments, 'comments-count-') + btn('', 'fa-eye', '', st.views, 'views-') + '</div></div>');
+  if (p.mediaType === 'video' || p.videoHls || p.videoUid) c.dataset.zxVideo = '1';
+  c.querySelector('.post-header').onclick = function(){ closeDetail(); if (window.zxCloseReels) zxCloseReels(); openPublicProfile(p.author); };
+  if (window.zxWatch) zxWatch(c, id, p);
   return c;
 }
 function cardId(card){
@@ -10446,14 +10430,16 @@ async function decorate(card){
   var eye = bar.querySelector('.fa-eye'), eyeBtn = eye && eye.closest('button');
   if (eyeBtn) { eyeBtn.removeAttribute('onclick'); eyeBtn.classList.add('zx-eye'); eyeBtn.after(bm); bar.insertBefore(rp, eyeBtn); } else bar.append(rp, bm);
   try {
-    card.classList.toggle('zx-del', !!card.querySelector('.post-delete-btn'));
     var p = await getPost(id); if (!p) return;
     card.dataset.zxAuthor = p.author;
+    if (p.moderated) card.dataset.zxModerated = '1';
+    card.classList.toggle('zx-sensitive', !!p.sensitive);
     paintRepost(rp, p);
     var m = await me(); paintSaved(bm, m.saved.indexOf(id) > -1);
     var a = await person(p.author);
-    if (head && getBadgeTypeFromData(a) !== 'black' && p.author !== currentUserKey && !head.querySelector('.zx-dots')) head.appendChild(el('<button class="zx-dots" aria-label="' + tx('المزيد', 'More') + '"><i class="fas fa-ellipsis-h"></i></button>'));
-    feedFilter();
+    var mine = p.author === currentUserKey;
+    var useful = mine || isAdminType(currentBadgeType) || (p.allowDownload && arr(p.mediaUrls).length) || getBadgeTypeFromData(a) !== 'black';
+    if (head && useful && !head.querySelector('.zx-dots')) head.appendChild(el('<button type="button" class="zx-dots" aria-label="' + tx('المزيد', 'More') + '"><i class="fas fa-ellipsis-h"></i></button>'));
   } catch(e){ console.warn(e); }
 }
 function paintSaved(b, on){ b.classList.toggle('zx-on', on); b.querySelector('i').className = (on ? 'fas' : 'far') + ' fa-bookmark'; }
@@ -10503,7 +10489,8 @@ function report(id, p){
 /* ---------- صفحة المنشور ---------- */
 var sheetHome = null;
 function closeDetail(){
-  var d = $('zxDetail'); if (!d) return;
+  var d = $('zxDetail'); if (!d) return; window.zxDeepPost = null;
+  d.querySelectorAll('video').forEach(function(v){ v.pause(); v.removeAttribute('src'); v.load(); });
   if (sheetHome) { sheetHome.appendChild($('commentsSheetBody')); sheetHome = null; }
   d.remove(); currentPostIdForComments = null;
 }
@@ -10513,11 +10500,16 @@ async function openDetail(id){
   var d = el('<div id="zxDetail"><div class="zx-bar"><button aria-label="back"><i class="fas ' + (en() ? 'fa-arrow-left' : 'fa-arrow-right') + '"></i></button>' + tx('المنشور', 'Post') + '</div></div>');
   d.querySelector('button').onclick = closeDetail;
   document.body.appendChild(d);
-  d.appendChild(await buildCard(id, p));
+  var card = await buildCard(id, p);
+  d.appendChild(card);
+  if (card.dataset.zxVideo && window.zxInlineVideo) zxInlineVideo(card, p);
   var body = $('commentsSheetBody'); sheetHome = $('commentsSheet'); sheetHome.style.display = 'none';
   d.appendChild(body); currentPostIdForComments = id; loadComments(id);
 }
 window.zxOpenPost = openDetail;
+window.zxBuildCard = async function(id, p){ posts[id] = p; return buildCard(id, p); };
+window.zx = { buildCard: buildCard, getPost: getPost, posts: posts, allPosts: allPosts, person: person, people: people, modal: modal, save: save, me: me, profile: profile, report: report, closeDetail: closeDetail,
+  feed: function(){ return feed; }, forget: function(key){ delete people[key]; } };
 var _openComments = window.openCommentsSheet;
 window.openCommentsSheet = function(id){ if ($('zxDetail') && currentPostIdForComments === id) { $('commentInput').focus(); return; } return _openComments.apply(this, arguments); };
 var sheet = $('commentsSheet'); if (sheet && sheet.firstElementChild) sheet.firstElementChild.id = 'commentsSheetBody';
@@ -10533,11 +10525,11 @@ document.addEventListener('click', function(e){
     if (btn.matches('.zx-share')) sharePost(id, '');
     else if (btn.matches('.zx-rp')) repost(id, btn).catch(function(x){ alert(x.message); });
     else if (btn.matches('.zx-bm')) toggleSave(id, btn).catch(function(x){ alert(x.message); });
-    else if (btn.matches('.zx-dots')) getPost(id).then(function(p){ report(id, p); });
+    else if (btn.matches('.zx-dots')) zxPostMenu(id);
     return;
   }
-  if ($('zxDetail') && $('zxDetail').contains(card)) return;
-  if (t.closest('a,button,input,video,img,.plyr,.post-header,.post-actions,.post-video-wrap,.post-image-wrap,.post-pdf-wrap,[onclick]') && !t.closest('.post-card[onclick]')) return;
+  if (t.closest('#zxReels') || ($('zxDetail') && $('zxDetail').contains(card))) return;
+  if (t.closest('a,button,input,video,img,.zx-vthumb,.plyr,.post-header,.post-actions,.post-video-wrap,.post-image-wrap,.post-pdf-wrap,[onclick]') && !t.closest('.post-card[onclick]')) return;
   openDetail(id);
 }, true);
 
@@ -10549,17 +10541,12 @@ function tabs(items, onPick){
   return n;
 }
 var feedNote = el('<div class="zx-note zx-hidden"></div>');
-function feedFilter(){
-  var cards = document.querySelectorAll('#publicPostsContainer .post-card'), shown = 0;
-  cards.forEach(function(c){ var hide = feed === 'following' && myData.following.indexOf(c.dataset.zxAuthor) < 0; c.classList.toggle('zx-hidden', hide); if (!hide) shown++; });
-  feedNote.classList.toggle('zx-hidden', !(feed === 'following' && !shown));
-  feedNote.textContent = tx('لا توجد منشورات من حسابات تتابعها', 'No posts from accounts you follow');
-}
+function feedFilter(){}
 var feedTabs = tabs([['all', 'لك', 'For you'], ['following', 'المتابَعون', 'Following']], async function(k){
   if (k === 'following' && !need()) { feedTabs.firstChild.click(); return; }
-  feed = k; await me(true); feedFilter();
+  feed = k; loadPublicPosts();
 });
-$('publicPostsContainer').before(feedTabs, feedNote);
+$('publicPostsContainer').before(feedTabs);
 
 /* ---------- تبويبات البروفايل ---------- */
 async function fillList(box, kind, key){
@@ -10700,7 +10687,7 @@ async function downloadData(){
   if (!need()) return;
   var d = await profile(currentUserKey);
   var rows = [['name','الاسم','Name'],['username','اسم المستخدم','Username'],['email','البريد','Email'],['bio','النبذة','Bio'],['website','الموقع','Website'],['privacy','الخصوصية','Privacy'],['joined','تاريخ الانضمام','Joined']].concat(FIELDS);
-  var text = rows.map(function(r){ return tx(r[1], r[2]) + ': ' + (label(r[0], d[r[0]]) || '—'); });
+  var text; forceEn = true; try { text = rows.map(function(r){ return r[2] + ': ' + (label(r[0], d[r[0]]) || '—'); }); } finally { forceEn = false; }
   Object.keys(d.socials || {}).forEach(function(k){ text.push(k + ': ' + d.socials[k]); });
   var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + text.join('\r\n')], { type: 'text/plain;charset=utf-8' })); a.download = 'my-data.txt'; document.body.appendChild(a); a.click(); a.remove();
 }
@@ -10763,7 +10750,8 @@ window.publishStory = async function(){
       }
     } else {
       var f = fileIn.files[0]; if (!f) throw new Error(tx('اختر صورة أو فيديو', 'Choose an image or video'));
-      if (f.type.indexOf('video/') === 0) story.videoUrl = (await uploadFileToTelegram(f)).url; else story.imageUrl = await uploadImageToImgBB(f);
+      if (f.type.indexOf('video/') === 0) { var up = await uploadFileToTelegram(f); story.videoUrl = up.url; story.telegramFileId = up.fileId || null; story.posterUrl = up.poster || await zxMakePoster(f); }
+      else story.imageUrl = await uploadImageToImgBB(f);
       story.caption = $('storyCaptionInput').value.trim();
     }
     var fb = await getFB(); await fb.addDoc(fb.collection(fb.db, 'stories'), story);
@@ -10776,7 +10764,8 @@ wrap('showStory', function(){
   if (d.videoUrl && !d.liveUrl) {
     clearTimeout(storyTimer);
     box.querySelectorAll('img,video').forEach(function(n){ n.remove(); });
-    var v = el('<video playsinline autoplay controls style="width:100%;height:100%;object-fit:contain"></video>'); v.src = d.videoUrl; v.onended = nextStory; box.prepend(v); v.play().catch(function(){});
+    var v = el('<video playsinline autoplay controls style="width:100%;height:100%;object-fit:contain"></video>'); if (d.posterUrl) v.poster = d.posterUrl; v.onended = nextStory; box.prepend(v);
+    zxMediaUrl(d.videoUrl, d.telegramFileId, d.createdAt).then(function(u){ if (!v.isConnected) return; v.src = u; v.play().catch(function(){ v.muted = true; v.play().catch(function(){}); }); });
     setTimeout(function(){ if (storiesList[currentStoryIndex] === s) clearTimeout(storyTimer); }, 50);
   }
   if (d.caption) {
@@ -10786,19 +10775,6 @@ wrap('showStory', function(){
   }
   $('storyAuthorName').textContent = d.displayName || d.username || d.name || '';
 });
-wrap('loadStories', function(){
-  document.querySelectorAll('#storiesBar .story-item').forEach(function(item){
-    if (item.querySelector('.story-name')) return;
-    var s = null, handler = item.onclick;
-    var all = Array.prototype.slice.call($('storiesBar').children);
-    s = item.zxStory; if (!s) return;
-    var d = s.data, n = el('<span class="story-name zx-user"></span>'); n.textContent = d.displayName || d.username || d.name || '';
-    item.appendChild(n);
-    if (d.ringImage) item.querySelector('.story-avatar').src = d.ringImage;
-    if (!d.displayName && !d.username) person(d.author).then(function(p){ n.textContent = p.username || p.name || d.name || ''; });
-  });
-});
-
 /* ---------- الإعدادات ---------- */
 function buildSettings(){
   var page = $('settingsPage'), theme = $('themeBtnLight').parentElement, lang = $('langBtnAr').parentElement;
@@ -10813,6 +10789,9 @@ function buildSettings(){
   row('fa-circle-check', 'طلب التوثيق', 'Request verification', 'علامة التوثيق للحساب', 'Get a verified badge', function(){ location.href = 'https://zakidev.shop/what-is-the-verification-mark'; });
   row('fa-circle-info', 'حول إزالة علامة التوثيق', 'About badge removal', 'الأسباب والشروط', 'Reasons and rules', function(){ window.open('https://www.zakidev.shop/about-removing-the-verification-badge', '_blank'); });
   row('fa-download', 'تنزيل المعلومات', 'Download my data', 'ملف TXT ببيانات بروفايلك', 'A TXT file of your profile data', function(){ downloadData().catch(function(e){ alert(e.message); }); });
+  var dl = row('fa-file-arrow-down', 'السماح بتنزيل وسائطي', 'Allow downloading my media', '', '', function(){ localStorage.setItem('allowDownloadDefault', localStorage.getItem('allowDownloadDefault') === 'on' ? 'off' : 'on'); paintDl(); });
+  function paintDl(){ var on = localStorage.getItem('allowDownloadDefault') === 'on', sm = dl.querySelector('small'); sm.dataset.ar = on ? 'مفعّل للمنشورات الجديدة (يمكن تغييره قبل النشر)' : 'متوقف للمنشورات الجديدة (يمكن تغييره قبل النشر)'; sm.dataset.en = on ? 'On for new posts (can be changed before publishing)' : 'Off for new posts (can be changed before publishing)'; sm.textContent = tx(sm.dataset.ar, sm.dataset.en); dl.querySelector('em').textContent = on ? '✓' : '✕'; }
+  paintDl();
   row('fa-user-slash', 'حذف الحساب', 'Delete account', 'حذف نهائي بعد التأكيد', 'Permanent, asks to confirm', deleteAccount);
   head('إعدادات التطبيق', 'App settings');
   row('fa-moon', 'مظهر التطبيق', 'App theme', 'فاتح، داكن، أزرق', 'Light, dark, blue');
@@ -10880,6 +10859,889 @@ function scan(){ pending = null; document.querySelectorAll('.post-card:not([data
 new MutationObserver(function(){ if (!pending) pending = setTimeout(scan, 150); }).observe(document.body, { childList: true, subtree: true }); scan();
 
 if (localStorage.getItem('startPage') === 'morePage' && !/[?&](post|profile)=/.test(location.search)) window.addEventListener('load', function(){ setTimeout(function(){ if (currentPage === 'homePage') switchTab('morePage'); }, 50); });
+})();
+</script>
+<style>
+/* ===== v5: الشات ===== */
+body.zx-room { overflow: hidden; }
+body.zx-room #header-wrapper, body.zx-room footer { display: none !important; }
+#chatRoomPage.active { position: fixed !important; inset: 0; z-index: 900; display: flex !important; flex-direction: column; background: var(--card-bg); margin: 0 !important; padding: 0 !important; min-height: 0 !important; height: 100vh; height: 100dvh; }
+#chatRoomPage > div:first-child { display: none !important; }
+#chatRoomPage .chat-header-card { margin: 0; border-radius: 0; padding: 10px 12px; border-bottom: 1px solid var(--border-color); cursor: pointer; flex-shrink: 0; }
+#chatRoomPage .chat-header-card > div { flex: 1; min-width: 0; text-align: start; }
+.zx-icbtn { background: none; border: 0; color: var(--text-color); font-size: 20px; padding: 6px 10px; cursor: pointer; }
+#chatRoomPage #chatMessages { flex: 1; height: auto !important; border-radius: 0 !important; padding: 12px 10px; gap: 4px; overflow-x: hidden; background-size: cover; background-position: center; }
+#chatRoomPage .chat-msg-row { transition: transform .18s; touch-action: pan-y; }
+#chatRoomPage .chat-msg-row.me { justify-content: flex-start !important; flex-direction: row-reverse; }
+#chatRoomPage .chat-msg-row.other { justify-content: flex-start !important; flex-direction: row; }
+#chatRoomPage .chat-msg { max-width: 80%; padding: 7px 11px; border-radius: 18px !important; box-shadow: 0 1px 2px rgba(0,0,0,.18); align-self: auto !important; white-space: pre-wrap; text-align: start; cursor: default; }
+#chatRoomPage .chat-msg.me { border-end-start-radius: 4px !important; }
+#chatRoomPage .chat-msg.other { border-end-end-radius: 4px !important; }
+#chatRoomPage .msg-time { text-align: end; direction: ltr; }
+#chatRoomPage .chat-msg .zx-url, #chatRoomPage .chat-msg.me .mention-link { color: inherit !important; }
+.zx-day { align-self: center; background: var(--card-bg); color: var(--text-color); font-size: 11px; padding: 4px 12px; border-radius: 12px; margin: 8px 0; opacity: .85; }
+.zx-reply-quote { border-inline-start: 3px solid currentColor; background: rgba(0,0,0,.12); border-radius: 8px; padding: 4px 8px; margin-bottom: 4px; font-size: 12px; opacity: .85; max-height: 46px; overflow: hidden; cursor: pointer; }
+.zx-shared { display: block; background: rgba(0,0,0,.14); border-radius: 12px; padding: 8px; min-width: 190px; cursor: pointer; }
+.zx-shared img, .zx-shared video { width: 100%; max-height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 6px; pointer-events: none; }
+.zx-flash { filter: brightness(1.35); }
+.zx-replybtn { background: none; border: 0; color: var(--tab-color); opacity: .0; cursor: pointer; align-self: center; }
+@media (hover: hover) { .chat-msg-row:hover .zx-replybtn { opacity: 1; } }
+#zxReplyBar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-top: 1px solid var(--border-color); font-size: 13px; }
+#zxReplyBar div { flex: 1; border-inline-start: 3px solid var(--tab-active-color); padding-inline-start: 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+#chatRoomPage .chat-input-row { margin: 0; padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); background: var(--card-bg); flex-shrink: 0; }
+#chatRoomPage .chat-input-row input { min-width: 0; border-color: var(--border-color); }
+#chatListContainer > div:not(.empty-state) { border-radius: 16px !important; margin-bottom: 4px !important; }
+.zx-bgs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; } .zx-bgs button { height: 74px; padding: 0 !important; background-size: cover; }
+/* ===== التشويش ===== */
+body.zx-blur-on .zx-sensitive :is(img:not(.post-header-avatar):not(.post-header-badge), video), body.zx-blur-on img.zx-flag, body.zx-blur-on video.zx-flag { filter: blur(32px) !important; }
+body.zx-blur-on .zx-sensitive :is(.post-image-wrap, .post-video-wrap), body.zx-blur-on .zx-sensitive .zx-reel { overflow: hidden; }
+#zxChecking { position: fixed; top: 14px; left: 50%; transform: translateX(-50%); z-index: 100003; background: #000c; color: #fff; padding: 9px 18px; border-radius: 20px; font-size: 13px; white-space: nowrap; }
+</style>
+<script>
+(function(){
+var $ = function(id){ return document.getElementById(id); };
+var en = function(){ return localStorage.getItem('lang') === 'en'; };
+var tx = function(a, b){ return en() ? b : a; };
+var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return '&#' + c.charCodeAt(0) + ';'; }); };
+function el(h){ var d = document.createElement('div'); d.innerHTML = h.trim(); return d.firstChild; }
+function modal(inner){ var m = el('<div class="zx-modal"><div class="zx-box">' + inner + '</div></div>'); m.onclick = function(e){ if (e.target === m || e.target.closest('[data-close]')) m.remove(); }; document.body.appendChild(m); return m; }
+function signedIn(){ if (currentUserKey) return true; alert(tx('يجب تسجيل الدخول أولاً', 'Please sign in first')); return false; }
+async function read(col, id){ var fb = await getFB(); var s = await fb.getDoc(fb.doc(fb.db, col, id)); return s.exists() ? s.data() : null; }
+function chatId(p){ return [currentUserKey, p].sort().join('__'); }
+
+/* ==================== الشات ==================== */
+function art(bg, fg, shape){ return 'url("data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72"><rect width="72" height="72" fill="' + bg + '"/><g fill="none" stroke="' + fg + '" stroke-width="2">' + shape + '</g></svg>') + '")'; }
+var MED = '<path d="M14 8v14M7 15h14"/><circle cx="52" cy="20" r="7"/><path d="M12 52c6-12 12 12 20 0"/><rect x="46" y="46" width="16" height="8" rx="4" transform="rotate(-35 54 50)"/>';
+var WALLS = [art('#e9f1f7', '#c3d6e6', MED), art('#0e1621', '#1d2b3a', MED), art('#efe7dc', '#d8cbb8', MED), art('#e6f4ea', '#bcdcc6', '<circle cx="36" cy="36" r="14"/><circle cx="0" cy="0" r="10"/><circle cx="72" cy="72" r="10"/>'), art('#1b1430', '#352a58', '<path d="M0 36l18-18 18 18 18-18 18 18"/>'), 'linear-gradient(160deg,#1da1f2,#7b61ff)', 'linear-gradient(160deg,#ffecd2,#fcb69f)', 'linear-gradient(160deg,#0f2027,#2c5364)'];
+function applyWall(){
+  var box = $('chatMessages'), w = null; try { w = localStorage.getItem('zxWall'); } catch(e){}
+  if (w === null) w = document.documentElement.getAttribute('data-theme') === 'light' || !document.documentElement.getAttribute('data-theme') ? '0' : '1';
+  box.style.background = w.indexOf('data:') === 0 ? 'url("' + w + '") center/cover' : (WALLS[+w] || WALLS[0]);
+  if (/^[67]$|^5$/.test(w) || w.indexOf('data:') === 0) box.style.backgroundSize = 'cover';
+}
+window.applyChatBackground = applyWall;
+function pickWall(){
+  var m = modal('<b>' + tx('خلفية المحادثة', 'Chat wallpaper') + '</b><div class="zx-bgs"></div><label>' + tx('أو اختر صورة من جهازك', 'Or choose your own photo') + '<input type="file" accept="image/*" class="zx-input"></label><button data-close>' + tx('إغلاق', 'Close') + '</button>');
+  WALLS.forEach(function(w, i){ var b = el('<button type="button"></button>'); b.style.background = w; b.onclick = function(){ localStorage.setItem('zxWall', i); applyWall(); m.remove(); }; m.querySelector('.zx-bgs').appendChild(b); });
+  m.querySelector('input').onchange = function(){
+    var f = this.files[0]; if (!f) return; var img = new Image();
+    img.onload = function(){ var k = Math.min(1, 1000 / Math.max(img.width, img.height)), c = document.createElement('canvas'); c.width = img.width * k; c.height = img.height * k; c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); try { localStorage.setItem('zxWall', c.toDataURL('image/jpeg', .75)); } catch(e){ alert(tx('الصورة كبيرة جداً', 'Image too large')); } applyWall(); m.remove(); };
+    img.src = URL.createObjectURL(f);
+  };
+}
+var reply = null, head = document.querySelector('#chatRoomPage .chat-header-card');
+var back = el('<button type="button" class="zx-icbtn" aria-label="back">➜</button>'), wallBtn = el('<button type="button" class="zx-icbtn" aria-label="wallpaper">🎨</button>');
+head.prepend(back); head.appendChild(wallBtn);
+back.onclick = function(e){ e.stopPropagation(); closeChatRoom(); };
+wallBtn.onclick = function(e){ e.stopPropagation(); pickWall(); };
+head.onclick = function(){ if (currentChatPartner) openPublicProfile(currentChatPartner); };
+var bar = el('<div id="zxReplyBar" class="zx-hidden"><div></div><button type="button" class="zx-icbtn">✕</button></div>');
+document.querySelector('#chatRoomPage .chat-input-row').before(bar);
+bar.querySelector('button').onclick = function(){ setReply(null); };
+function setReply(r){ reply = r; bar.classList.toggle('zx-hidden', !r); if (r) { bar.querySelector('div').textContent = r.text; $('chatInput').focus(); } }
+
+function bubbleFor(id, m){
+  var mine = m.from === currentUserKey, row = el('<div class="chat-msg-row ' + (mine ? 'me' : 'other') + '"><div class="chat-msg ' + (mine ? 'me' : 'other') + '"></div><button type="button" class="zx-replybtn" aria-label="reply">↩</button></div>');
+  var b = row.firstChild, d = m.createdAt ? new Date(m.createdAt) : null;
+  row.dataset.id = id;
+  if (m.replyTo) { var q = el('<div class="zx-reply-quote zx-user"></div>'); q.textContent = m.replyTo.text; q.onclick = function(){ var t = $('chatMessages').querySelector('[data-id="' + m.replyTo.id + '"]'); if (t) { t.scrollIntoView({ block: 'center' }); t.classList.add('zx-flash'); setTimeout(function(){ t.classList.remove('zx-flash'); }, 900); } }; b.appendChild(q); }
+  if (m.postId) {
+    var card = el('<div class="zx-shared"><b>📄 ' + tx('منشور', 'Post') + '</b></div>'); b.appendChild(card);
+    card.onclick = function(){ switchTab('morePage'); var g = $('communityGate'); if (g) g.style.display = 'none'; zxOpenPost(m.postId); };
+    read('posts', m.postId).then(function(p){
+      if (!p || p.privacy === 'private') { card.textContent = tx('المنشور غير متاح', 'Post unavailable'); return; }
+      var media = '', u = (p.mediaUrls || [])[0] || p.mediaUrl;
+      if (u && p.mediaType === 'image') media = '<img src="' + esc(u) + '">';
+      if (u && p.mediaType === 'video') media = '<video muted playsinline preload="metadata" src="' + esc(u) + '#t=0.1"></video>';
+      card.innerHTML = media + '<div class="zx-user">' + esc((p.caption || '').slice(0, 90)) + '</div><b>' + tx('فتح المنشور', 'Open post') + '</b>';
+      card.classList.toggle('zx-sensitive', !!p.sensitive);
+    }).catch(function(){});
+  } else b.appendChild(el('<span class="zx-user">' + (linkifyMentions(m.text || '') || ' ') + '</span>'));
+  if (d) b.appendChild(el('<span class="msg-time">' + d.toLocaleTimeString(en() ? 'en-US' : 'ar-EG-u-nu-latn', { hour: '2-digit', minute: '2-digit' }) + (mine ? (m.read ? ' ✓✓' : ' ✓') : '') + '</span>'));
+  var pick = function(){ setReply({ id: id, from: m.from, text: m.postId ? tx('منشور', 'Post') : String(m.text || '').slice(0, 120) }); };
+  row.querySelector('.zx-replybtn').onclick = pick;
+  b.ondblclick = pick;
+  var x = 0, y = 0, dx = 0;
+  row.addEventListener('touchstart', function(e){ x = e.touches[0].clientX; y = e.touches[0].clientY; dx = 0; row.style.transition = 'none'; }, { passive: true });
+  row.addEventListener('touchmove', function(e){ var a = e.touches[0].clientX - x; if (Math.abs(a) > Math.abs(e.touches[0].clientY - y) && Math.abs(a) > 10) { dx = Math.max(-90, Math.min(90, a)); row.style.transform = 'translateX(' + dx + 'px)'; e.stopPropagation(); } }, { passive: true });
+  function end(){ row.style.transition = ''; row.style.transform = ''; if (Math.abs(dx) > 55) pick(); dx = 0; }
+  row.addEventListener('touchend', end); row.addEventListener('touchcancel', function(){ dx = 0; end(); });
+  return row;
+}
+window.openChatWith = async function(partner){
+  if (!signedIn()) return;
+  if (partner === currentUserKey) { alert(tx('لا يمكنك مراسلة نفسك', "You can't message yourself")); return; }
+  try {
+    var fb = await getFB(), d = await read('profiles', partner) || {};
+    if (d.disableChat === true && currentBadgeType !== 'black') { alert(tx('هذا المستخدم قام بتعطيل خاصية استقبال الرسائل.', 'This user has turned off messages.')); return; }
+    if (currentChatPartner !== partner) setReply(null);
+    currentChatPartner = partner; currentChatPartnerName = d.name || 'User';
+    var bt = getBadgeTypeFromData(d); currentChatPartnerBadge = bt;
+    $('chatRoomAvatar').src = d.avatar || DEFAULT_AVATAR;
+    $('chatRoomName').innerHTML = '<span class="zx-user">' + esc(currentChatPartnerName) + '</span>' + (bt !== 'none' ? ' <img class="chat-badge" src="' + esc(badgeSrc(bt)) + '">' : '');
+    $('chatRoomUsername').textContent = '@' + (d.username || 'user');
+    $('chatMessages').innerHTML = '';
+    switchTab('chatRoomPage'); applyWall();
+    var id = chatId(partner);
+    if (chatUnsubscribe) chatUnsubscribe();
+    chatUnsubscribe = fb.onSnapshot(fb.query(fb.collection(fb.db, 'chats', id, 'messages'), fb.orderBy('createdAt', 'asc')), function(snap){
+      var box = $('chatMessages'), near = !box.children.length || box.scrollHeight - box.scrollTop - box.clientHeight < 120, day = '';
+      box.innerHTML = snap.empty ? '<div class="zx-day">' + tx('ابدأ المحادثة...', 'Start the conversation...') + '</div>' : '';
+      snap.forEach(function(ds){
+        var m = ds.data(), k = m.createdAt ? new Date(m.createdAt).toLocaleDateString(en() ? 'en-US' : 'ar-EG-u-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+        if (k && k !== day) { day = k; box.appendChild(el('<div class="zx-day">' + k + '</div>')); }
+        box.appendChild(bubbleFor(ds.id, m));
+      });
+      if (near) box.scrollTop = box.scrollHeight;
+      if (currentPage === 'chatRoomPage') markChatAsRead(id);
+    });
+  } catch(e){ console.error(e); alert(e.message); }
+};
+async function send(partner, data, preview){
+  var fb = await getFB(), now = new Date().toISOString(), id = chatId(partner);
+  await fb.addDoc(fb.collection(fb.db, 'chats', id, 'messages'), Object.assign({ from: currentUserKey, to: partner, createdAt: now, read: false }, data));
+  await fb.setDoc(fb.doc(fb.db, 'chats', id), { participants: [currentUserKey, partner], lastMessage: preview, lastAt: now, lastFrom: currentUserKey }, { merge: true });
+}
+window.sendChatMessage = async function(){
+  if (!currentUserKey || !currentChatPartner) return;
+  var i = $('chatInput'), text = i.value.trim(); if (!text) return;
+  var data = { text: text }, r = reply; if (r) data.replyTo = r;
+  i.value = ''; setReply(null);
+  try { await send(currentChatPartner, data, text); } catch(e){ i.value = text; setReply(r); alert(e.message); }
+};
+var _switch = window.switchTab;
+window.switchTab = function(id){ var r = _switch.apply(this, arguments); if (window.zxCloseReels) zxCloseReels(); document.body.classList.toggle('zx-room', id === 'chatRoomPage'); return r; };
+
+/* ---------- إرسال منشور لمستخدم في الشات ---------- */
+var sendBtn = el('<button type="button" class="zx-row zx-hidden" style="justify-content:center;font-weight:bold"><i class="fas fa-paper-plane"></i> <b></b></button>');
+var sheetBox = $('shareTitle').parentElement; sheetBox.appendChild(sendBtn);
+var _openShare = window.openShareSheet;
+window.openShareSheet = function(url){ var r = _openShare.apply(this, arguments); sendBtn.classList.toggle('zx-hidden', !/[?&]post=/.test(url)); sendBtn.querySelector('b').textContent = tx('إرسال في المحادثة', 'Send in chat'); return r; };
+sendBtn.onclick = async function(e){
+  e.stopPropagation();
+  var postId = new URL(currentShareUrl, location.href).searchParams.get('post'); closeShareSheet(); if (!signedIn()) return;
+  var m = modal('<b>' + tx('إرسال إلى', 'Send to') + '</b><input class="zx-input" type="search" placeholder="' + tx('ابحث بالاسم أو اسم المستخدم', 'Search name or username') + '"><div class="zx-people"></div><button data-close>' + tx('إغلاق', 'Close') + '</button>'), list = m.querySelector('.zx-people');
+  list.textContent = '...';
+  try {
+    var p = await read('posts', postId); if (!p || p.privacy === 'private') { list.textContent = tx('لا يمكن إرسال هذا المنشور', "This post can't be sent"); return; }
+    var fb = await getFB(), all = [], me = await read('profiles', currentUserKey) || {};
+    (await fb.getDocs(fb.collection(fb.db, 'profiles'))).forEach(function(d){ if (d.id !== currentUserKey) all.push({ key: d.id, d: d.data() }); });
+    var close = (me.following || []).concat(me.followers || []);
+    function draw(q){
+      var found = all.filter(function(u){ return q ? (String(u.d.name) + ' ' + String(u.d.username)).toLowerCase().indexOf(q) > -1 : close.indexOf(u.key) > -1; }).slice(0, 30);
+      list.innerHTML = found.length ? '' : '<div class="zx-note">' + tx('ابحث عن مستخدم لإرسال المنشور', 'Search for a user') + '</div>';
+      found.forEach(function(u){
+        var b = el('<button type="button" style="margin-bottom:6px;text-align:start"><span class="zx-user"></span></button>'); b.firstChild.textContent = (u.d.name || 'User') + '  @' + (u.d.username || '');
+        b.onclick = async function(){
+          if (u.d.disableChat && currentBadgeType !== 'black') { alert(tx('هذا المستخدم قام بتعطيل خاصية استقبال الرسائل.', 'This user has turned off messages.')); return; }
+          b.disabled = true;
+          try { await send(u.key, { text: tx('منشور', 'Post'), postId: postId }, '📄 ' + tx('منشور', 'Post')); await fb.setDoc(fb.doc(fb.db, 'posts', postId), { sharesCount: (p.sharesCount || 0) + 1 }, { merge: true }); b.textContent = tx('تم الإرسال ✓', 'Sent ✓'); } catch(x){ b.disabled = false; alert(x.message); }
+        };
+        list.appendChild(b);
+      });
+    }
+    m.querySelector('input').oninput = function(){ draw(this.value.trim().replace(/^@/, '').toLowerCase()); }; draw('');
+  } catch(x){ list.textContent = x.message; }
+};
+
+/* ==================== الرقابة على الصور والفيديو ==================== */
+// يمكنك وضع رابط نموذج مستضاف عندك هنا (مجلد فيه model.json) واتركه فارغاً للنموذج الافتراضي
+var MODEL_URL = '';
+var modelPromise = null;
+function script(src){ return new Promise(function(ok, no){ var s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
+function model(){
+  if (window.zxModel) return Promise.resolve(window.zxModel);
+  if (!modelPromise) modelPromise = (async function(){
+    try { var m = await import('https://esm.sh/nsfwjs@4.2.1'); return await (m.load || m.default.load)(MODEL_URL || 'MobileNetV2'); }
+    catch(first){
+      console.warn('nsfwjs esm', first);
+      await script('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js');
+      await script('https://cdn.jsdelivr.net/npm/nsfwjs@2.4.2/dist/nsfwjs.min.js');
+      return await (MODEL_URL ? nsfwjs.load(MODEL_URL) : nsfwjs.load());
+    }
+  })().catch(function(e){ modelPromise = null; throw e; });
+  return modelPromise;
+}
+async function score(node){
+  var m = await model(), res = await m.classify(node), s = {};
+  res.forEach(function(r){ s[r.className] = r.probability; });
+  var porn = (s.Porn || 0) + (s.Hentai || 0);
+  return { block: porn > .6, sensitive: porn > .3 || (s.Sexy || 0) > .7 };
+}
+function once(node, ok){ return new Promise(function(res, rej){ var t = setTimeout(function(){ rej(new Error('timeout')); }, 20000); node.addEventListener(ok, function(){ clearTimeout(t); res(); }, { once: true }); node.addEventListener('error', function(){ clearTimeout(t); rej(new Error('media')); }, { once: true }); }); }
+function openVideo(url){
+  var v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = 'auto';
+  v.style.cssText = 'position:fixed;left:0;top:0;width:2px;height:2px;opacity:.01;pointer-events:none';
+  document.body.appendChild(v);
+  v.zxReady = new Promise(function(ok, no){
+    var t = setTimeout(function(){ no(new Error('unreadable')); }, 30000);
+    function ready(){ if (v.readyState >= 2) { clearTimeout(t); v.pause(); ok(); } }
+    v.addEventListener('loadeddata', ready); v.addEventListener('canplay', ready);
+    v.addEventListener('error', function(){ clearTimeout(t); no(new Error('unreadable')); });
+    v.src = url; v.load();
+    var p = v.play(); if (p) p.then(ready).catch(function(){});
+  });
+  return v;
+}
+function seekTo(v, time){
+  return new Promise(function(ok, no){
+    if (Math.abs(v.currentTime - time) < .05) return ok();
+    var t = setTimeout(function(){ v.removeEventListener('seeked', done); no(new Error('seek')); }, 12000);
+    function done(){ clearTimeout(t); ok(); }
+    v.addEventListener('seeked', done, { once: true }); v.currentTime = time;
+  });
+}
+window.zxMakePoster = async function(file){
+  var url = URL.createObjectURL(file), v = openVideo(url);
+  try {
+    await v.zxReady;
+    if (isFinite(v.duration) && v.duration > .4) await seekTo(v, Math.min(1, v.duration / 3));
+    var k = Math.min(1, 720 / Math.max(v.videoWidth, v.videoHeight)), c = document.createElement('canvas');
+    c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k); c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+    var blob = await new Promise(function(r){ c.toBlob(r, 'image/jpeg', .8); });
+    return await uploadImageToImgBB(new File([blob], 'cover.jpg', { type: 'image/jpeg' }));
+  } catch(e){ console.warn('poster', e); return null; }
+  finally { v.pause(); v.removeAttribute('src'); v.load(); v.remove(); URL.revokeObjectURL(url); }
+};
+async function inspect(file){
+  var url = URL.createObjectURL(file), out = { block: false, sensitive: false };
+  function add(r){ out.block = out.block || r.block; out.sensitive = out.sensitive || r.sensitive; }
+  try {
+    if (/^video\//.test(file.type) || /\.(mp4|webm|mov|mkv|m4v)$/i.test(file.name || '')) {
+      var v = openVideo(url);
+      try {
+        await v.zxReady;
+        var d = isFinite(v.duration) && v.duration > 0 ? v.duration : 0;
+        var n = d ? Math.min(30, Math.max(6, Math.ceil(d / 5))) : 1, seen = 0;
+        for (var i = 0; i < n && !out.block; i++) {
+          try {
+            if (d) await seekTo(v, d * (i + .5) / n);
+            if (!v.videoWidth) continue;
+            var c = document.createElement('canvas'); c.width = c.height = 299; c.getContext('2d').drawImage(v, 0, 0, 299, 299); add(await score(c)); seen++;
+          } catch(x){ console.warn('frame', x); }
+        }
+        // لا نسمح بالنشر إذا لم نتمكن من فحص نصف اللقطات على الأقل
+        if (!out.block && seen < Math.ceil(n / 2)) throw new Error('unreadable');
+      } finally { v.pause(); v.removeAttribute('src'); v.load(); v.remove(); }
+    } else {
+      if (file.type === 'image/gif' && window.ImageDecoder) {
+        var dec = new ImageDecoder({ data: await file.arrayBuffer(), type: file.type }); await dec.tracks.ready; await dec.completed;
+        var total = dec.tracks.selectedTrack.frameCount, step = Math.max(1, Math.floor(total / 12));
+        for (var f = 0; f < total && !out.block; f += step) { var fr = (await dec.decode({ frameIndex: f })).image, cv = document.createElement('canvas'); cv.width = cv.height = 299; cv.getContext('2d').drawImage(fr, 0, 0, 299, 299); fr.close(); add(await score(cv)); }
+      } else { var img = new Image(); var done = once(img, 'load'); img.src = url; await done; add(await score(img)); }
+    }
+  } finally { URL.revokeObjectURL(url); }
+  return out;
+}
+var flagged = new Set();
+function guard(name){
+  var original = window[name];
+  window[name] = async function(file){
+    var isPdf = file && (file.type === 'application/pdf' || /\.pdf$/i.test(file.name || ''));
+    if (isPdf) return original.apply(this, arguments);
+    var note = el('<div id="zxChecking">' + tx('جاري فحص المحتوى...', 'Checking content...') + '</div>'); document.body.appendChild(note);
+    var result;
+    try { result = await inspect(file); }
+    catch(e){ console.warn('moderation', e); throw new Error(e && e.message === 'unreadable' ? tx('تعذر قراءة هذا المقطع للفحص. حوّله إلى MP4 (H.264) وحاول مرة أخرى', 'This video could not be read for checking. Convert it to MP4 (H.264) and try again') : tx('تعذر فحص المحتوى، تأكد من الإنترنت وحاول مرة أخرى', 'Could not check the content. Check your connection and try again')); }
+    finally { note.remove(); }
+    if (result.block) throw new Error(tx('تم منع الرفع: المحتوى غير لائق', 'Upload blocked: inappropriate content'));
+    var up = await original.apply(this, arguments);
+    if (result.sensitive) flagged.add(typeof up === 'string' ? up : up && up.url);
+    return up;
+  };
+}
+guard('uploadImageToImgBB'); guard('uploadFileToTelegram');
+// وسم المنشور أو الستوري كمحتوى حساس عند الحفظ
+getFB().then(function(fb){
+  var add = fb.addDoc;
+  fb.addDoc = function(ref, data){
+    var urls = [].concat(data.mediaUrls || [], data.imageUrl || [], data.videoUrl || [], data.mediaUrl || []);
+    if (urls.some(function(u){ return flagged.has(u); })) data = Object.assign({}, data, { sensitive: true });
+    return add.call(this, ref, data);
+  };
+}).catch(function(){});
+var blurOn = function(){ return localStorage.getItem('blurSensitive') !== 'off'; };
+function paintBlur(){ document.body.classList.toggle('zx-blur-on', blurOn()); }
+paintBlur();
+// فحص الصور المعروضة (المنشورات القديمة) عند تفعيل التشويش
+var queue = Promise.resolve(), scores = {}, lastScroll = 0;
+window.addEventListener('scroll', function(){ lastScroll = Date.now(); }, { passive: true, capture: true });
+function calm(){ return new Promise(function(ok){ (function wait(){ if (Date.now() - lastScroll < 700) return setTimeout(wait, 700); (window.requestIdleCallback || setTimeout)(function(){ ok(); }, { timeout: 2500 }); })(); }); }
+var seeing = new IntersectionObserver(function(list){
+  list.forEach(function(e){
+    if (!e.isIntersecting) return; var img = e.target; seeing.unobserve(img);
+    queue = queue.then(async function(){
+      if (!(img.src in scores)) { await calm(); var copy = new Image(); copy.crossOrigin = 'anonymous'; var done = once(copy, 'load'); copy.src = img.src; await done; scores[img.src] = (await score(copy)).sensitive; }
+      if (scores[img.src]) img.classList.add('zx-flag');
+    }).catch(function(){});
+  });
+});
+// تُفحص فقط المنشورات القديمة التي لم تُفحص عند رفعها
+function scanImages(){
+  if (!blurOn()) return;
+  document.querySelectorAll('.post-card:not([data-zx-moderated]) .post-image-wrap img:not([data-zx-scan]), #storyContent img:not([data-zx-scan])').forEach(function(img){
+    if (!/^https?:/.test(img.src)) return;
+    img.dataset.zxScan = '1'; seeing.observe(img);
+  });
+}
+var wait;
+new MutationObserver(function(){ clearTimeout(wait); wait = setTimeout(scanImages, 600); }).observe(document.body, { childList: true, subtree: true });
+var _show = window.showStory;
+window.showStory = function(){ var r = _show.apply(this, arguments); var s = storiesList[currentStoryIndex]; $('storyContent').classList.toggle('zx-sensitive', !!(s && s.data.sensitive)); return r; };
+// زر التشويش في إعدادات المجتمع
+var anchor = Array.prototype.filter.call(document.querySelectorAll('.zx-set h3'), function(h){ return h.dataset.en === 'App settings'; })[0];
+var row = el('<button type="button" class="zx-row"><i class="fas fa-eye-slash"></i><span><b></b><small></small></span><em></em></button>');
+anchor.before(row);
+function paintRow(){ row.querySelector('b').textContent = tx('تشويش المحتوى غير اللائق', 'Blur sensitive content'); row.querySelector('small').textContent = tx('للصور والمقاطع الحساسة', 'For sensitive images and videos'); row.querySelector('em').textContent = blurOn() ? tx('مفعّل', 'On') : tx('متوقف', 'Off'); }
+row.onclick = function(){ localStorage.setItem('blurSensitive', blurOn() ? 'off' : 'on'); paintBlur(); paintRow(); scanImages(); };
+window.addEventListener('app-language', paintRow); paintRow();
+})();
+</script>
+<style>
+/* ===== v6: فواصل المنشورات وشريط الأزرار ===== */
+#publicPostsContainer .post-card, .posts-container .post-card { margin: 0 auto 14px !important; box-shadow: 0 3px 12px rgba(0,0,0,.16) !important; content-visibility: auto; contain-intrinsic-size: auto 430px; }
+.post-card .post-actions { display: flex !important; flex-wrap: nowrap; gap: 0 !important; width: 100%; box-sizing: border-box; }
+.post-card .post-actions .post-action-btn { flex: 1 1 0 !important; min-width: 0 !important; gap: 3px !important; padding: 8px 1px !important; white-space: nowrap; }
+.post-card .post-actions .count { font-size: 12px !important; min-width: 0 !important; }
+.post-card .post-actions .zx-bm, .post-card .post-actions .zx-share { flex: 0 0 34px !important; }
+/* الزر العائم: ظل خلفه، أسفل قليلاً، وجهته حسب اللغة */
+.fab-container, .post-create-btn { left: auto !important; right: 18px !important; bottom: calc(70px + env(safe-area-inset-bottom)) !important; }
+html[dir="rtl"] .fab-container, html[dir="rtl"] .post-create-btn { right: auto !important; left: 18px !important; }
+body.on-community.menus-hidden .fab-container, body.on-community.menus-hidden .post-create-btn { bottom: calc(18px + env(safe-area-inset-bottom)) !important; }
+.fab-options { left: 3px; }
+body.on-community #footerLabelsToggle { display: none !important; }
+/* الستوري */
+#storiesBar .story-item { height: auto !important; flex-shrink: 0; }
+#storiesBar video.story-avatar { object-fit: cover; pointer-events: none; }
+/* غلاف المقطع */
+.post-card .post-video-wrap.zx-vthumb { position: relative; width: 100%; aspect-ratio: 4 / 3; max-height: 480px; background: #0b0b0b; border-radius: 16px; overflow: hidden; cursor: pointer; margin: 4px 0 10px; }
+.zx-vthumb > img, .zx-vthumb > video { position: absolute; inset: 0; width: 100% !important; height: 100% !important; object-fit: contain; pointer-events: none; }
+.zx-play { position: absolute; inset: 0; margin: auto; width: 58px; height: 58px; border-radius: 50%; background: rgba(29,155,240,.92); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; pointer-events: none; }
+.zx-inline video { width: 100%; max-height: 70vh; background: #000; border-radius: 14px; }
+.zx-pin { padding: 8px 14px 0; font-size: 12px; font-weight: bold; opacity: .65; }
+.zx-edited { margin-inline-start: 3px; }
+@media (min-width: 900px) {
+  #zxDetail { display: grid; grid-template-columns: minmax(0, 1fr) 400px; grid-template-rows: auto minmax(0, 1fr); overflow: hidden; }
+  #zxDetail .zx-bar { grid-column: 1 / -1; }
+  #zxDetail .post-card { overflow-y: auto !important; align-self: start; max-height: calc(100% - 16px); }
+  #zxDetail #commentsSheetBody { height: 100%; max-width: none !important; box-sizing: border-box; border-inline-start: 1px solid var(--border-color); }
+}
+/* ===== الريلز ===== */
+#zxReels { position: fixed; inset: 0; height: 100vh; height: 100dvh; z-index: 9980; background: #000; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; }
+.zx-track { position: absolute; inset: 0; transition: transform .28s ease; will-change: transform; }
+.zx-reel { position: absolute; left: 0; width: 100%; height: 100%; overflow: hidden; }
+.zx-reel > video, .zx-reel > .zx-poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.zx-reel > video { z-index: 2; }
+#zxReels .zx-reel .post-card { position: absolute !important; z-index: 3; left: 0; right: 0; bottom: 0; max-width: 600px; margin: 0 auto !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; background: linear-gradient(transparent, rgba(0,0,0,.55) 30%, rgba(0,0,0,.9)) !important; color: #fff; padding: 36px 12px calc(6px + env(safe-area-inset-bottom)) !important; }
+#zxReels .post-card :is(.post-header-name, .post-header-username, .post-caption, .post-caption *, .post-date, .post-action-btn, .post-action-btn *, .zx-dots) { color: #fff !important; }
+#zxReels .post-card .post-action-btn.liked, #zxReels .post-card .post-action-btn.liked * { color: #ff4d7d !important; }
+#zxReels .post-card .post-action-btn.zx-on, #zxReels .post-card .post-action-btn.zx-on * { color: #4fc3ff !important; }
+#zxReels .post-card .post-header { padding-left: 0; padding-right: 0; }
+#zxReels .post-card .post-caption { max-height: 42px; overflow: hidden; margin: 2px 0 !important; padding-left: 0; padding-right: 0; }
+#zxReels .post-card .post-caption.zx-open { max-height: 35vh; overflow-y: auto; touch-action: pan-y; }
+#zxReels .post-card .post-date { display: none; }
+#zxReels .post-card .post-actions { padding: 0 !important; }
+.zx-ctl { display: flex; align-items: center; gap: 6px; direction: ltr; color: #fff; font-size: 11px; padding: 2px 0; }
+.zx-ctl input { flex: 1; min-width: 40px; height: 22px; accent-color: #1d9bf0; touch-action: none; margin: 0; }
+.zx-ctl button { background: none; border: 0; color: #fff; font: bold 13px inherit; min-width: 28px; height: 34px; padding: 0 3px; cursor: pointer; }
+.zx-ctl button i { font-size: 15px; } .zx-ctl button.on { color: #1d9bf0; }
+#zxReelsClose { position: absolute; top: calc(10px + env(safe-area-inset-top)); inset-inline-start: 12px; z-index: 6; width: 42px; height: 42px; border-radius: 50%; border: 0; background: rgba(0,0,0,.5); color: #fff; font-size: 19px; cursor: pointer; }
+.zx-spin, .zx-msg { position: absolute; z-index: 4; left: 50%; top: 42%; transform: translate(-50%, -50%); color: #fff; pointer-events: none; }
+.zx-spin { font-size: 38px; } .zx-msg { background: rgba(0,0,0,.7); padding: 10px 16px; border-radius: 20px; font-size: 13px; text-align: center; width: max-content; max-width: 85%; }
+button.zx-msg { pointer-events: auto; border: 0; top: 14%; cursor: pointer; }
+body.zx-reels-open { overflow: hidden; }
+body.zx-reels-open #commentsSheet, body.zx-reels-open #shareSheet { z-index: 100001 !important; }
+body.zx-reels-open :is(#menusToggle, #fab-container) { display: none !important; }
+body.zx-blur-on .zx-sensitive :is(video, .zx-poster) { filter: blur(32px) !important; }
+</style>
+<script>
+(function(){
+var Z = window.zx;
+var $ = function(id){ return document.getElementById(id); };
+var en = function(){ return localStorage.getItem('lang') === 'en'; };
+var tx = function(a, b){ return en() ? b : a; };
+var arr = function(a){ return Array.isArray(a) ? a : []; };
+function el(html){ var d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstChild; }
+function pref(k, def){ try { var v = localStorage.getItem(k); return v === null ? def : v; } catch(e){ return def; } }
+function setPref(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+function isVideo(p){ return !!(p && (p.mediaType === 'video' || p.videoHls || p.videoUid)); }
+function videoSrc(p){ return p.videoHls || p.playbackUrl || p.mediaUrl || arr(p.mediaUrls)[0] || (p.videoUid ? 'https://videodelivery.net/' + p.videoUid + '/manifest/video.m3u8' : ''); }
+function isCloud(u){ return /res\.cloudinary\.com\/.+\/video\/upload\//.test(u || ''); }
+
+/* ---------- روابط تيليجرام تنتهي صلاحيتها بعد ساعة: نجددها عند الحاجة ---------- */
+var fresh = {};
+window.zxMediaUrl = async function(url, fileId, created, force){
+  if (!fileId || !/api\.telegram\.org\/file\//.test(url || '')) return url;
+  if (!force && fresh[fileId] && Date.now() - fresh[fileId].t < 45 * 60000) return fresh[fileId].u;
+  if (!force && created && Date.now() - new Date(created).getTime() < 45 * 60000) return url;
+  try {
+    var r = await fetch('https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/getFile?file_id=' + encodeURIComponent(fileId));
+    var j = await r.json(); if (!j.ok) return url;
+    var u = 'https://api.telegram.org/file/bot' + TELEGRAM_BOT_TOKEN + '/' + j.result.file_path;
+    fresh[fileId] = { u: u, t: Date.now() }; return u;
+  } catch(e){ return url; }
+};
+
+/* ---------- غلاف المقطع بدلاً من تحميل مشغل لكل منشور ---------- */
+var _media = window.buildPostMediaHtml;
+window.buildPostMediaHtml = function(p){
+  p = p || {};
+  if (!isVideo(p)) return _media(p).replace(/<img /g, '<img loading="lazy" decoding="async" ');
+  var src = videoSrc(p); if (!src) return '';
+  var poster = p.posterUrl || (isCloud(src) ? src.replace('/upload/', '/upload/so_0/').replace(/\.[a-z0-9]+$/i, '.jpg') : '');
+  return '<div class="post-video-wrap zx-vthumb" data-src="' + escapeAttr(src) + '" data-fid="' + escapeAttr(p.telegramFileId || '') + '" data-at="' + escapeAttr(p.createdAt || '') + '">' +
+    (poster ? '<img loading="lazy" decoding="async" alt="" src="' + escapeAttr(poster) + '">' : '') + '<span class="zx-play"><i class="fas fa-play"></i></span></div>';
+};
+function firstFrame(box){
+  if (box.querySelector('video')) return;
+  zxMediaUrl(box.dataset.src, box.dataset.fid, box.dataset.at).then(function(u){
+    if (box.querySelector('video') || !box.classList.contains('zx-vthumb')) return;
+    var v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = 'metadata';
+    v.src = isHlsUrl(u) ? u : u + '#t=0.1'; box.prepend(v);
+  });
+}
+var thumbs = new IntersectionObserver(function(list){ list.forEach(function(e){
+  if (!e.isIntersecting) return; thumbs.unobserve(e.target);
+  var img = e.target.querySelector('img');
+  if (!img) firstFrame(e.target);
+  else { var bad = function(){ img.remove(); firstFrame(e.target); }; if (img.complete && !img.naturalWidth && img.src) bad(); else img.addEventListener('error', bad, { once: true }); }
+}); }, { rootMargin: '250px' });
+var seenCards = new IntersectionObserver(function(list){ list.forEach(function(e){
+  if (e.isIntersecting && !e.target.closest('#zxReels')) { seenCards.unobserve(e.target); autoIncrementViews(e.target.dataset.zxId); }
+}); }, { threshold: .5 });
+window.zxWatch = function(card){ card.querySelectorAll('.zx-vthumb').forEach(function(b){ thumbs.observe(b); }); };
+
+window.autoIncrementViews = async function(id){
+  if (!id || viewedPosts[id]) return; viewedPosts[id] = true;
+  try {
+    var fb = await getFB(), ref = fb.doc(fb.db, 'posts', id), s = await fb.getDoc(ref); if (!s.exists()) return;
+    var d = s.data(); d.views = (d.views || 0) + 1;
+    await fb.setDoc(ref, { views: d.views }, { merge: true });
+    var shown = formatCountNum(getPostDisplayStats(d, 0).views);
+    document.querySelectorAll('[id="views-' + id + '"]').forEach(function(n){ n.textContent = shown; });
+  } catch(e){ console.warn(e); }
+};
+
+/* ---------- رسم المنشورات (بدون تكرار وعلى دفعات) ---------- */
+async function commentCounts(){
+  var map = {};
+  try { var fb = await getFB(); (await fb.getDocs(fb.collection(fb.db, 'comments'))).forEach(function(d){ var id = d.data().postId; map[id] = (map[id] || 0) + 1; }); } catch(e){}
+  return map;
+}
+function dedupe(list){
+  var ids = {}, kept = [];
+  return list.filter(function(x){
+    if (ids[x.id]) return false; ids[x.id] = 1;
+    var p = x.data, urls = arr(p.mediaUrls).join('|'), t = new Date(p.createdAt || 0).getTime();
+    // نفس الناشر ونفس المحتوى خلال دقيقتين = نشر مكرر بالخطأ
+    var twin = kept.some(function(k){ var o = k.data; return o.author === p.author && (o.caption || '') === (p.caption || '') && o.mediaType === p.mediaType && Math.abs(new Date(o.createdAt || 0).getTime() - t) < 120000 && ((p.caption || '') !== '' || urls === arr(o.mediaUrls).join('|')); });
+    if (!twin) kept.push(x);
+    return !twin;
+  });
+}
+var note = function(icon, text){ return '<div class="empty-state"><i class="fas ' + icon + '"></i><p></p></div>'.replace('<p></p>', '<p>' + escapeHtml(text) + '</p>'); };
+var lists = new WeakMap();
+async function render(box, items, token, decorateCard){
+  var next = 0, busy = false, end = el('<div style="height:2px"></div>');
+  box.innerHTML = '';
+  async function more(){
+    if (busy || next >= items.length || lists.get(box) !== token) return;
+    busy = true;
+    var part = items.slice(next, next += 8);
+    var cards = await Promise.all(part.map(function(x){ return Z.buildCard(x.id, x.data).catch(function(e){ console.warn(e); return null; }); }));
+    if (lists.get(box) !== token) return;
+    cards.forEach(function(c, i){ if (!c) return; if (decorateCard) decorateCard(c, part[i]); box.insertBefore(c, end); if (box.id === 'publicPostsContainer') seenCards.observe(c); });
+    busy = false;
+    if (next >= items.length) { io.disconnect(); end.remove(); }
+    else { io.unobserve(end); io.observe(end); }
+  }
+  var io = new IntersectionObserver(function(l){ if (l[0].isIntersecting) more(); }, { rootMargin: '700px' });
+  box.appendChild(end); await more(); if (end.isConnected) io.observe(end);
+}
+var feedIds = [];
+window.loadPublicPosts = async function(){
+  var box = $('publicPostsContainer'); if (!box) return;
+  var token = {}; lists.set(box, token);
+  if (!box.querySelector('.post-card')) box.innerHTML = note('fa-spinner fa-spin', tx('جاري تحميل المنشورات...', 'Loading posts...'));
+  try {
+    var following = Z.feed() === 'following' ? (await Z.me(true)).following : null;
+    var r = await Promise.all([Z.allPosts(), commentCounts()]);
+    if (lists.get(box) !== token) return;
+    var items = dedupe(r[0].filter(function(x){ return x.data.privacy !== 'private' && (!following || following.indexOf(x.data.author) > -1); }));
+    items.forEach(function(x){ x.data.commentsCount = r[1][x.id] || 0; });
+    feedIds = items.filter(function(x){ return isVideo(x.data); }).map(function(x){ return x.id; });
+    if (!items.length) { box.innerHTML = note('fa-images', following ? tx('لا توجد منشورات من حسابات تتابعها', 'No posts from accounts you follow') : tx('لا توجد منشورات', 'No posts yet')); return; }
+    await render(box, items, token);
+  } catch(e){ console.error(e); if (lists.get(box) === token) box.innerHTML = note('fa-exclamation-triangle', e.message); }
+};
+async function profileList(box, key, empty){
+  var token = {}; lists.set(box, token);
+  box.className = 'posts-container'; box.style.margin = '20px auto'; box.style.display = 'block';
+  if (!box.querySelector('.post-card')) box.innerHTML = note('fa-spinner fa-spin', tx('جاري تحميل المنشورات...', 'Loading posts...'));
+  try {
+    var fb = await getFB();
+    var r = await Promise.all([fb.getDocs(fb.query(fb.collection(fb.db, 'posts'), fb.where('author', '==', key))), commentCounts(), Z.profile(key)]);
+    if (lists.get(box) !== token) return;
+    var items = [];
+    r[0].forEach(function(d){ var p = d.data(); if (p.privacy === 'private' && p.author !== currentUserKey) return; p.commentsCount = r[1][d.id] || 0; Z.posts[d.id] = p; items.push({ id: d.id, data: p }); });
+    var pins = arr(r[2].pinnedPosts), rank = function(x){ var i = pins.indexOf(x.id); return i < 0 ? 99 : i; };
+    items.sort(function(a, b){ return rank(a) - rank(b) || new Date(b.data.createdAt || 0) - new Date(a.data.createdAt || 0); });
+    items = dedupe(items);
+    if (empty) empty.style.display = items.length ? 'none' : 'block';
+    if (!items.length) { box.innerHTML = empty ? '' : note('fa-images', tx('لا توجد منشورات', 'No posts yet')); return; }
+    await render(box, items, token, function(c, x){ if (pins.indexOf(x.id) > -1) c.prepend(el('<div class="zx-pin"><i class="fas fa-thumbtack"></i> ' + tx('منشور مثبت', 'Pinned') + '</div>')); });
+  } catch(e){ console.warn(e); if (lists.get(box) === token) box.innerHTML = note('fa-exclamation-triangle', e.message); }
+}
+window.loadMyPosts = async function(){
+  var box = $('myPostsGrid'), sec = $('myPostsSection'); if (!currentUserKey || !box || !sec) return;
+  sec.style.display = 'block'; await profileList(box, currentUserKey, $('myPostsEmpty'));
+};
+window.loadUserPosts = async function(key){
+  var box = $('pubPostsGrid'), sec = $('pubPostsSection'); if (!box || !sec || !key) return;
+  sec.style.display = 'block'; if (box.dataset.key !== key) { box.innerHTML = ''; box.dataset.key = key; } await profileList(box, key);
+};
+function reloadProfiles(){
+  if (currentUserKey && $('myPostsSection')) loadMyPosts();
+  if (typeof currentViewingProfileKey !== 'undefined' && currentViewingProfileKey && $('pubPostsGrid').dataset.key) loadUserPosts(currentViewingProfileKey);
+}
+
+/* ---------- مزامنة الأرقام في كل أماكن ظهور المنشور ---------- */
+['toggleLike', 'toggleDislike'].forEach(function(name){
+  var fn = window[name];
+  window[name] = async function(id){
+    await fn.apply(this, arguments);
+    if (!currentUserKey) return;
+    var p = await Z.getPost(id, true); if (!p) return;
+    var st = getPostDisplayStats(p, 0);
+    document.querySelectorAll('.post-card[data-zx-id="' + id + '"] .post-actions').forEach(function(bar){
+      var b = bar.querySelectorAll('.post-action-btn');
+      [['likes', 'liked'], ['dislikes', 'disliked']].forEach(function(k, i){ b[i].classList.toggle(k[1], arr(p[k[0]]).indexOf(currentUserKey) > -1); b[i].querySelector('.count').textContent = formatCountNum(st[k[0]]); });
+    });
+  };
+});
+var _comment = window.submitComment;
+window.submitComment = async function(){
+  var id = currentPostIdForComments;
+  await _comment.apply(this, arguments);
+  if (!id) return;
+  try { var fb = await getFB(), s = await fb.getDocs(fb.query(fb.collection(fb.db, 'comments'), fb.where('postId', '==', id))), p = await Z.getPost(id); p.commentsCount = s.size;
+    document.querySelectorAll('[id="comments-count-' + id + '"]').forEach(function(n){ n.textContent = formatCountNum(getPostDisplayStats(p, s.size).comments); }); } catch(e){}
+};
+
+/* ---------- منع نشر المنشور مرتين ---------- */
+var publishing = false, _publish = window.publishPost;
+window.publishPost = async function(){ if (publishing) return; publishing = true; try { return await _publish.apply(this, arguments); } finally { publishing = false; } };
+
+/* ---------- قائمة الثلاث نقاط: تثبيت، تعديل، تنزيل، حذف، إبلاغ ---------- */
+function canDownload(p){ return !!(p && arr(p.mediaUrls).length && (p.allowDownload || p.author === currentUserKey || currentBadgeType === 'black')); }
+async function download(p){
+  var urls = isVideo(p) ? [await zxMediaUrl(videoSrc(p), p.telegramFileId, p.createdAt)] : arr(p.mediaUrls);
+  for (var i = 0; i < urls.length; i++) {
+    var a = document.createElement('a'), u = urls[i];
+    if (isCloud(u)) a.href = u.replace('/upload/', '/upload/fl_attachment/');
+    else {
+      try { var r = await fetch(u); if (!r.ok) throw 0; var blob = await r.blob(); a.href = URL.createObjectURL(blob); }
+      catch(e){ a.href = u; a.target = '_blank'; a.rel = 'noopener'; }
+    }
+    a.download = (isVideo(p) ? 'video-' : p.mediaType === 'pdf' ? 'file-' : 'image-') + Date.now() + (i ? '-' + i : '') + (isVideo(p) ? '.mp4' : p.mediaType === 'pdf' ? '.pdf' : '.jpg');
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+}
+function paintEdit(id, p, authorBlack){
+  document.querySelectorAll('.post-card[data-zx-id="' + id + '"]').forEach(function(card){
+    card.querySelectorAll('.post-text-container, .post-caption-toggle').forEach(function(n){ n.remove(); });
+    var cap = card.querySelector('.post-caption');
+    if (!cap && p.caption) { cap = el('<div class="post-caption"></div>'); card.querySelector('.post-date').before(cap); }
+    if (cap) { cap.classList.remove('collapsed'); cap.style.display = p.caption ? '' : 'none'; cap.innerHTML = linkifyMentions(p.caption || ''); }
+    card.removeAttribute('data-enhanced');
+    var date = card.querySelector('.post-date');
+    if (date && !authorBlack && !date.querySelector('.zx-edited')) date.appendChild(el('<span class="zx-edited">· ' + tx('تم التعديل', 'Edited') + '</span>'));
+  });
+}
+function edit(id, p, authorBlack){
+  var m = Z.modal('<b>' + tx('تعديل المنشور', 'Edit post') + '</b><textarea class="zx-input" rows="6" maxlength="5000"></textarea><button type="button" class="main">' + tx('حفظ', 'Save') + '</button><button type="button" data-close>' + tx('إلغاء', 'Cancel') + '</button>');
+  var area = m.querySelector('textarea'); area.value = p.caption || '';
+  var ok = m.querySelector('.main');
+  ok.onclick = async function(){
+    var text = area.value.trim();
+    if (text === (p.caption || '')) return m.remove();
+    if (!text && !arr(p.mediaUrls).length) { alert(tx('لا يمكن ترك المنشور فارغاً', 'The post cannot be empty')); return; }
+    ok.disabled = true;
+    try { var now = new Date().toISOString(); await Z.save('posts', id, { caption: text, edited: true, editedAt: now, updatedAt: now }); p.caption = text; p.edited = true; m.remove(); paintEdit(id, p, authorBlack); }
+    catch(e){ ok.disabled = false; alert(e.message); }
+  };
+}
+window.zxPostMenu = async function(id){
+  try {
+    var p = await Z.getPost(id, true); if (!p) return;
+    var author = await Z.person(p.author), black = getBadgeTypeFromData(author) === 'black';
+    var mine = !!currentUserKey && p.author === currentUserKey, acts = [];
+    var pins = mine ? arr((await Z.profile(currentUserKey)).pinnedPosts) : [];
+    if (mine) {
+      var pinned = pins.indexOf(id) > -1;
+      acts.push(['fa-thumbtack', pinned ? tx('إلغاء التثبيت', 'Unpin') : tx('تثبيت في ملفي الشخصي', 'Pin to my profile'), async function(){
+        if (!pinned && pins.length >= 3) { alert(tx('يمكنك تثبيت 3 منشورات كحد أقصى', 'You can pin up to 3 posts')); return; }
+        await Z.save('profiles', currentUserKey, { pinnedPosts: pinned ? pins.filter(function(x){ return x !== id; }) : [id].concat(pins) });
+        Z.forget(currentUserKey); reloadProfiles(); if (window.toast) toast(pinned ? tx('أُلغي التثبيت', 'Unpinned') : tx('تم التثبيت في ملفك الشخصي', 'Pinned to your profile'));
+      }]);
+      acts.push(['fa-pen', tx('تعديل المنشور', 'Edit post'), function(){ edit(id, p, black); }]);
+    }
+    if (canDownload(p)) acts.push(['fa-download', tx('تنزيل', 'Download'), function(){ return download(p); }]);
+    if (mine || isAdminType(currentBadgeType)) acts.push(['fa-trash', tx('حذف المنشور', 'Delete post'), async function(){
+      await deletePost(id);
+      if (!(await Z.getPost(id, true))) { zxCloseReels(); Z.closeDetail(); document.querySelectorAll('.post-card[data-zx-id="' + id + '"]').forEach(function(c){ c.remove(); }); }
+    }]);
+    if (!mine && !black) acts.push(['fa-flag', tx('إبلاغ عن المنشور', 'Report post'), function(){ Z.report(id, p); }]);
+    if (!acts.length) return;
+    var m = Z.modal(acts.map(function(a){ return '<button type="button" style="text-align:start"><i class="fas ' + a[0] + '"></i>&nbsp; ' + a[1] + '</button>'; }).join('') + '<button type="button" data-close>' + tx('إلغاء', 'Cancel') + '</button>');
+    m.querySelectorAll('.zx-box button:not([data-close])').forEach(function(b, i){ b.onclick = function(){ m.remove(); Promise.resolve(acts[i][2]()).catch(function(e){ alert(e.message); }); }; });
+  } catch(e){ alert(e.message); }
+};
+
+/* ---------- الستوري: بدون تكرار، والاسم ظاهر دائماً ---------- */
+var storyData = [], storyGen = 0, animated = {};
+function seenStories(){ try { return JSON.parse(localStorage.getItem('seenStories_' + (currentUserKey || 'guest')) || '[]'); } catch(e){ return []; } }
+function viewerOpen(){ var v = $('storyViewer'); return v && v.style.display !== 'none' && v.style.display !== ''; }
+window.zxRenderStories = function(){
+  var bar = $('storiesBar'); if (!bar || viewerOpen()) return;
+  var seen = seenStories(), read = function(s){ return seen.indexOf(s.id) > -1 ? 1 : 0; };
+  storiesList = storyData.slice().sort(function(a, b){ return read(a) - read(b) || new Date(b.data.createdAt || 0) - new Date(a.data.createdAt || 0); });
+  var frag = document.createDocumentFragment();
+  storiesList.forEach(function(s, i){
+    var d = s.data, live = !!d.liveUrl;
+    var item = el('<div class="story-item"><div class="story-ring"' + (live ? ' style="background:linear-gradient(45deg,#e0245e,#ff6b8a)"' : '') + '><img class="story-avatar" alt="">' + (live ? '<span class="story-live-badge">LIVE</span>' : '') + '</div><span class="story-name zx-user"></span></div>');
+    var img = item.querySelector('img');
+    img.src = d.ringImage || (d.videoUrl && d.posterUrl) || d.avatar || DEFAULT_AVATAR;
+    img.onerror = function(){ img.onerror = null; img.src = d.avatar || DEFAULT_AVATAR; };
+    if (d.videoUrl && !live && !d.posterUrl) {
+      var v = el('<video class="story-avatar" muted playsinline preload="metadata"></video>'); img.replaceWith(v);
+      zxMediaUrl(d.videoUrl, d.telegramFileId, d.createdAt).then(function(u){ v.src = u + '#t=0.1'; });
+    }
+    item.querySelector('.story-name').textContent = s.name;
+    item.onclick = function(){ openStoryViewer(i); };
+    if (read(s)) markStoryAsRead(item); else if (!animated[s.id]) { animated[s.id] = 1; triggerNewStoryRingAnimation(item); }
+    frag.appendChild(item);
+  });
+  bar.innerHTML = ''; bar.appendChild(frag); bar.classList.toggle('has-stories', !!storiesList.length);
+};
+window.loadStories = async function(){
+  var gen = ++storyGen;
+  if (viewerOpen()) return;
+  try {
+    var fb = await getFB(), snap = await fb.getDocs(fb.collection(fb.db, 'stories')), list = [], keys = {};
+    snap.forEach(function(ds){
+      var d = ds.data(), age = (Date.now() - new Date(d.createdAt || 0).getTime()) / 3600000;
+      if (age >= 24 && !d.permanent) { fb.deleteDoc(fb.doc(fb.db, 'stories', ds.id)).catch(function(){}); return; }
+      list.push({ id: ds.id, data: d });
+    });
+    list.sort(function(a, b){ return new Date(b.data.createdAt || 0) - new Date(a.data.createdAt || 0); });
+    list = list.filter(function(s){
+      var d = s.data, minute = Math.floor(new Date(d.createdAt || 0).getTime() / 120000);
+      var same = [d.author, d.liveUrl || d.videoUrl || d.imageUrl], twice = [d.author, d.caption || '', !!d.videoUrl, !!d.liveUrl, minute];
+      var a = JSON.stringify(same), b = JSON.stringify(twice);
+      if (keys[a] || (d.caption && keys[b])) return false; keys[a] = keys[b] = 1; return true;
+    });
+    await Promise.all(list.map(async function(s){
+      var d = s.data; s.name = d.displayName || d.username || '';
+      if (!s.name) { try { var p = await Z.person(d.author); s.name = p.username || p.name || ''; } catch(e){} }
+      s.name = s.name || d.name || 'User';
+    }));
+    if (gen !== storyGen) return;
+    storyData = list; zxRenderStories();
+  } catch(e){ console.error(e); }
+};
+
+/* ---------- صفحة المنشور (رابط المشاركة) ---------- */
+window.zxInlineVideo = function(card, p){
+  var box = card.querySelector('.zx-vthumb'); if (!box) return;
+  var poster = box.querySelector('img'), v = el('<video controls playsinline preload="metadata" controlsList="nodownload" oncontextmenu="return false"></video>');
+  if (poster) v.poster = poster.src;
+  box.className = 'post-video-wrap zx-inline'; box.innerHTML = ''; box.appendChild(v);
+  var again = false;
+  function set(force){ zxMediaUrl(videoSrc(p), p.telegramFileId, p.createdAt, force).then(function(u){ if (isHlsUrl(u) && window.Hls && Hls.isSupported()) { var h = new Hls(); h.loadSource(u); h.attachMedia(v); } else v.src = u; }); }
+  v.onerror = function(){ if (!again) { again = true; set(true); } };
+  set();
+};
+var _open = window.zxOpenPost;
+window.zxOpenPost = async function(id){ history.pushState({ zx: 'post' }, ''); await _open(id); };
+
+/* ---------- الريلز: مقطع واحد لكل سحبة ---------- */
+var R = null;
+window.zxCloseReels = function(){
+  if (!R) return; var r = R; R = null;
+  r.player.pause(); if (r.hls) r.hls.destroy(); r.player.removeAttribute('src'); r.player.load(); if (r.next) { r.next.removeAttribute('src'); r.next.load(); }
+  document.removeEventListener('keydown', r.keys); r.box.remove(); document.body.classList.remove('zx-reels-open');
+};
+function openReels(startId, ids){
+  zxCloseReels();
+  document.querySelectorAll('video').forEach(function(v){ v.pause(); });
+  var box = el('<div id="zxReels"><div class="zx-track"></div><button type="button" id="zxReelsClose" aria-label="back"><i class="fas ' + (en() ? 'fa-arrow-left' : 'fa-arrow-right') + '"></i></button><i class="fas fa-circle-notch fa-spin zx-spin" hidden></i></div>');
+  var player = el('<video playsinline webkit-playsinline preload="auto" controlsList="nodownload" disablepictureinpicture oncontextmenu="return false"></video>');
+  var ctl = el('<div class="zx-ctl"><button type="button" data-c="play"></button><span data-c="now">0:00</span><input type="range" min="0" max="1000" value="0" step="1" aria-label="seek"><span data-c="dur">0:00</span><button type="button" data-c="mute"></button><button type="button" data-c="loop" title="' + tx('إعادة تلقائية', 'Auto replay') + '"><i class="fas fa-repeat"></i></button><button type="button" data-c="q" title="' + tx('الجودة', 'Quality') + '">HD</button><button type="button" data-c="dl" title="' + tx('تنزيل', 'Download') + '"><i class="fas fa-download"></i></button></div>');
+  var c = {}; ctl.querySelectorAll('[data-c]').forEach(function(n){ c[n.dataset.c] = n; });
+  var range = ctl.querySelector('input'), track = box.firstChild, spin = box.querySelector('.zx-spin');
+  var r = R = { box: box, player: player, i: 0, token: 0, post: null, hls: null, next: null };
+  var slides = ids.map(function(id, i){ var s = el('<div class="zx-reel"></div>'); s.dataset.id = id; s.style.top = (i * 100) + '%'; track.appendChild(s); return s; });
+  document.body.appendChild(box); document.body.classList.add('zx-reels-open');
+  player.load(); // داخل لمسة المستخدم حتى يسمح الهاتف بتشغيل الصوت
+  var soundHint = null, errorNote = null;
+  function wantMuted(){ return pref('reelsMuted', 'off') === 'on'; }
+  function time(s){ if (!isFinite(s)) return '0:00'; var h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = Math.floor(s % 60); return (h ? h + ':' + (m < 10 ? '0' : '') : '') + m + ':' + (x < 10 ? '0' : '') + x; }
+  function paint(){
+    c.play.innerHTML = '<i class="fas ' + (player.paused ? 'fa-play' : 'fa-pause') + '"></i>';
+    c.mute.innerHTML = '<i class="fas ' + (player.muted ? 'fa-volume-xmark' : 'fa-volume-high') + '"></i>';
+    player.loop = pref('reelsRepeat', 'on') === 'on'; c.loop.classList.toggle('on', player.loop);
+    if (soundHint && !player.muted) { soundHint.remove(); soundHint = null; }
+  }
+  function play(){
+    var pr = player.play(); if (!pr) return;
+    pr.catch(function(e){
+      if (R !== r || e.name !== 'NotAllowedError' || player.muted) return paint();
+      player.muted = true; player.play().catch(function(){});
+      if (!soundHint) { soundHint = el('<button type="button" class="zx-msg"><i class="fas fa-volume-high"></i> ' + tx('اضغط لتشغيل الصوت', 'Tap for sound') + '</button>'); soundHint.onclick = function(){ player.muted = false; play(); paint(); }; box.appendChild(soundHint); }
+      paint();
+    });
+  }
+  function attach(url){
+    if (r.hls) { r.hls.destroy(); r.hls = null; }
+    if (isHlsUrl(url) && window.Hls && Hls.isSupported()) { r.hls = new Hls(); r.hls.loadSource(url); r.hls.attachMedia(player); r.hls.on(Hls.Events.MANIFEST_PARSED, function(){ var q = pref('reelsQuality', 'auto'); r.hls.levels.forEach(function(l, i){ if (String(l.height) === q) r.hls.currentLevel = i; }); play(); }); }
+    else { player.src = url; play(); }
+  }
+  async function load(force, original){
+    var token = r.token, p = r.post, url = await zxMediaUrl(videoSrc(p), p.telegramFileId, p.createdAt, force);
+    if (R !== r || token !== r.token) return;
+    var q = pref('reelsQuality', 'auto');
+    r.transformed = !original && isCloud(url) && /^\d+$/.test(q);
+    if (r.transformed) url = url.replace('/upload/', '/upload/c_limit,h_' + q + ',w_' + q + ',q_auto/');
+    attach(url);
+  }
+  async function fill(i){
+    var s = slides[i]; if (!s || s.zxFill) return s && s.zxFill;
+    return (s.zxFill = (async function(){
+      var p = await Z.getPost(s.dataset.id); if (!p) return;
+      var card = await Z.buildCard(s.dataset.id, p);
+      var thumb = card.querySelector('.post-video-wrap img');
+      card.querySelectorAll('.post-video-wrap, .post-image-wrap').forEach(function(n){ n.remove(); });
+      if (thumb) { var im = el('<img class="zx-poster" alt="">'); im.src = thumb.src; im.onerror = function(){ im.remove(); }; s.appendChild(im); }
+      s.appendChild(card); s.classList.toggle('zx-sensitive', !!p.sensitive); s.zxPost = p;
+    })().catch(function(e){ s.zxFill = null; console.warn(e); }));
+  }
+  async function go(i){
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    track.style.transition = ''; track.style.transform = 'translate3d(0,' + (-i * 100) + '%,0)';
+    if (i === r.i && r.post) return;
+    r.i = i; var token = ++r.token; r.post = null; r.retried = false;
+    player.pause(); if (r.hls) { r.hls.destroy(); r.hls = null; } player.removeAttribute('src'); player.remove(); ctl.remove();
+    if (errorNote) { errorNote.remove(); errorNote = null; }
+    spin.hidden = false; range.value = 0; c.now.textContent = c.dur.textContent = '0:00';
+    // نبقي الشرائح القريبة فقط في الذاكرة
+    slides.forEach(function(s, j){ if (Math.abs(j - i) > 2 && s.zxFill) { s.innerHTML = ''; s.zxFill = null; } });
+    await fill(i); if (R !== r || token !== r.token) return;
+    var s = slides[i]; if (!s.zxPost) { spin.hidden = true; return; }
+    r.post = s.zxPost; s.insertBefore(player, s.querySelector('.post-card'));
+    s.querySelector('.post-actions').before(ctl);
+    c.dl.hidden = !canDownload(r.post);
+    var u = videoSrc(r.post); c.q.textContent = isCloud(u) && pref('reelsQuality', 'auto') !== 'auto' ? pref('reelsQuality') + 'p' : 'HD';
+    player.muted = wantMuted(); paint(); load();
+    autoIncrementViews(s.dataset.id);
+    fill(i - 1); Promise.resolve(fill(i + 1)).then(async function(){
+      var n = slides[i + 1]; if (R !== r || token !== r.token || !n || !n.zxPost) return;
+      var nu = await zxMediaUrl(videoSrc(n.zxPost), n.zxPost.telegramFileId, n.zxPost.createdAt);
+      if (R !== r || token !== r.token || isHlsUrl(nu)) return;
+      if (!r.next) { r.next = document.createElement('video'); r.next.preload = 'metadata'; r.next.muted = true; }
+      r.next.src = nu;
+    });
+  }
+  player.addEventListener('play', paint); player.addEventListener('pause', paint); player.addEventListener('volumechange', paint);
+  player.addEventListener('waiting', function(){ spin.hidden = false; });
+  ['playing', 'canplay'].forEach(function(n){ player.addEventListener(n, function(){ spin.hidden = true; var s = slides[r.i], im = s && s.querySelector('.zx-poster'); if (im) im.style.visibility = 'hidden'; }); });
+  player.addEventListener('loadedmetadata', function(){ c.dur.textContent = time(player.duration); });
+  player.addEventListener('timeupdate', function(){ c.now.textContent = time(player.currentTime); if (!r.seeking && player.duration) range.value = Math.round(player.currentTime / player.duration * 1000); });
+  player.addEventListener('ended', function(){ if (!player.loop && r.i < slides.length - 1) go(r.i + 1); });
+  player.addEventListener('error', function(){
+    if (R !== r || !r.post || !player.getAttribute('src')) return;
+    if (r.transformed) { if (window.toast) toast(tx('هذه الجودة غير متاحة لهذا المقطع', 'This quality is not available for this video')); c.q.textContent = 'HD'; load(false, true); return; }
+    if (!r.retried) { r.retried = true; load(true); return; }
+    spin.hidden = true; if (!errorNote) { errorNote = el('<div class="zx-msg">' + tx('تعذر تشغيل هذا المقطع', 'This video could not be played') + '</div>'); box.appendChild(errorNote); }
+  });
+  range.oninput = function(){ r.seeking = true; if (player.duration) c.now.textContent = time(player.duration * range.value / 1000); };
+  range.onchange = function(){ if (player.duration) player.currentTime = player.duration * range.value / 1000; r.seeking = false; };
+  c.play.onclick = function(){ if (player.paused) play(); else player.pause(); };
+  c.mute.onclick = function(){ player.muted = !player.muted; setPref('reelsMuted', player.muted ? 'on' : 'off'); if (!player.muted && player.paused) play(); paint(); };
+  c.loop.onclick = function(){ setPref('reelsRepeat', pref('reelsRepeat', 'on') === 'on' ? 'off' : 'on'); paint(); if (player.loop && player.ended) play(); };
+  c.dl.onclick = function(){ if (r.post) download(r.post).catch(function(e){ alert(e.message); }); };
+  c.q.onclick = function(){
+    if (!r.post) return;
+    var cur = pref('reelsQuality', 'auto'), opts = [['auto', tx('الأصلية', 'Original')]], u = videoSrc(r.post);
+    if (r.hls && r.hls.levels.length > 1) { opts[0][1] = tx('تلقائي', 'Auto'); r.hls.levels.forEach(function(l){ if (l.height) opts.push([String(l.height), l.height + 'p']); }); }
+    else if (isCloud(u)) ['720', '480', '360'].forEach(function(q){ opts.push([q, q + 'p']); });
+    else opts[0][1] += player.videoHeight ? ' (' + Math.min(player.videoWidth, player.videoHeight) + 'p)' : '';
+    var m = Z.modal('<b>' + tx('جودة المقطع', 'Video quality') + '</b>' + opts.map(function(o){ return '<button type="button" data-q="' + o[0] + '"' + (o[0] === cur || opts.length === 1 ? ' class="main"' : '') + '>' + o[1] + '</button>'; }).join('') + (opts.length === 1 ? '<small>' + tx('هذا المقطع متاح بجودة واحدة فقط', 'This video has only one quality') + '</small>' : '') + '<button type="button" data-close>' + tx('إغلاق', 'Close') + '</button>');
+    m.querySelectorAll('[data-q]').forEach(function(b){ b.onclick = function(){
+      m.remove(); if (opts.length === 1) return; var q = b.dataset.q; setPref('reelsQuality', q); c.q.textContent = q === 'auto' ? 'HD' : q + 'p';
+      if (r.hls) { r.hls.currentLevel = -1; r.hls.levels.forEach(function(l, i){ if (String(l.height) === q) r.hls.currentLevel = i; }); return; }
+      var at = player.currentTime; player.addEventListener('loadedmetadata', function(){ player.currentTime = at; }, { once: true }); load();
+    }; });
+  };
+  // السحب
+  var y0 = null, t0 = 0, dy = 0, dragged = false;
+  box.addEventListener('touchstart', function(e){ e.stopPropagation(); dragged = false; dy = 0; y0 = e.touches.length === 1 && !e.target.closest('.zx-ctl, .post-caption.zx-open') ? e.touches[0].clientY : null; t0 = Date.now(); }, { passive: true });
+  box.addEventListener('touchmove', function(e){
+    e.stopPropagation(); if (y0 === null) return; dy = e.touches[0].clientY - y0; if (Math.abs(dy) < 10 && !dragged) return;
+    dragged = true; e.preventDefault();
+    var h = box.clientHeight, edge = (dy > 0 && r.i === 0) || (dy < 0 && r.i === slides.length - 1), move = Math.max(-h, Math.min(h, edge ? dy / 4 : dy));
+    track.style.transition = 'none'; track.style.transform = 'translate3d(0,calc(' + (-r.i * 100) + '% + ' + move + 'px),0)';
+  }, { passive: false });
+  function release(e){
+    e.stopPropagation(); if (y0 === null) return; y0 = null; if (!dragged) return; setTimeout(function(){ dragged = false; }, 350);
+    var speed = dy / Math.max(1, Date.now() - t0), step = (dy < -70 || (speed < -.4 && dy < -25)) ? 1 : (dy > 70 || (speed > .4 && dy > 25)) ? -1 : 0;
+    go(r.i + step); // مهما كانت قوة السحبة: مقطع واحد فقط
+  }
+  box.addEventListener('touchend', release); box.addEventListener('touchcancel', release);
+  var wheelTimer = null;
+  box.addEventListener('wheel', function(e){
+    if (e.target.closest('.post-caption.zx-open')) return; e.preventDefault();
+    if (!wheelTimer && Math.abs(e.deltaY) > 8) go(r.i + (e.deltaY > 0 ? 1 : -1));
+    clearTimeout(wheelTimer); wheelTimer = setTimeout(function(){ wheelTimer = null; }, 280);
+  }, { passive: false });
+  r.keys = function(e){ if (/INPUT|TEXTAREA/.test(e.target.tagName)) return; if (e.key === 'ArrowDown') go(r.i + 1); else if (e.key === 'ArrowUp') go(r.i - 1); else if (e.key === 'Escape') zxCloseReels(); else return; e.preventDefault(); };
+  document.addEventListener('keydown', r.keys);
+  box.addEventListener('click', function(e){
+    if (dragged) { dragged = false; e.preventDefault(); e.stopPropagation(); return; }
+    if (e.target.closest('#zxReelsClose')) { zxCloseReels(); if (history.state && history.state.zx === 'reels') history.back(); return; }
+    var cap = e.target.closest('.post-caption'); if (cap && !e.target.closest('a')) { cap.classList.toggle('zx-open'); return; }
+    if (e.target === player || e.target.classList.contains('zx-reel') || e.target.classList.contains('zx-poster')) { if (player.paused) play(); else player.pause(); }
+  }, true);
+  history.pushState({ zx: 'reels' }, '');
+  r.i = -1; go(Math.max(0, ids.indexOf(startId)));
+}
+window.zxOpenReels = openReels;
+window.addEventListener('popstate', function(){
+  if (R) { if (!history.state || history.state.zx !== 'reels') zxCloseReels(); }
+  else if ($('zxDetail')) Z.closeDetail();
+});
+window.addEventListener('click', function(e){
+  var t = e.target; if (!t.closest) return;
+  var pdf = t.closest('.post-card a.post-pdf-wrap');
+  if (pdf) {
+    var pid = pdf.closest('.post-card').dataset.zxId, post = Z.posts[pid];
+    if (post && post.telegramFileId) { e.preventDefault(); e.stopImmediatePropagation(); var w = window.open('', '_blank'); zxMediaUrl(post.pdfUrl || post.mediaUrl, post.telegramFileId, post.createdAt).then(function(u){ if (w) { w.opener = null; w.location = u; } else location.href = u; }); }
+    return;
+  }
+  var wrap = t.closest('.post-card .zx-vthumb'); if (!wrap || t.closest('#zxReels')) return;
+  var card = wrap.closest('.post-card'), id = card.dataset.zxId; if (!id) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  var ids = card.parentElement.id === 'publicPostsContainer' ? feedIds.slice() : Array.prototype.map.call(card.parentElement.querySelectorAll('.post-card[data-zx-video]:not(.zx-hidden)'), function(n){ return n.dataset.zxId; });
+  if (ids.indexOf(id) < 0) ids = [id];
+  openReels(id, ids);
+}, true);
+
+/* ---------- فتح رابط منشور ---------- */
+var shared = new URLSearchParams(location.search).get('post');
+if (shared && /^[A-Za-z0-9_-]+$/.test(shared)) {
+  window.zxDeepPost = shared;
+  window.addEventListener('load', function(){ setTimeout(function(){ switchTab('morePage'); window.zxDeepPost = shared; zxOpenPost(shared).catch(function(e){ alert(e.message); }); }, 60); });
+}
 })();
 </script>
 </body>
